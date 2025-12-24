@@ -71843,7 +71843,6 @@ namespace {
     function _wpml_get_redirect_helper()
     {
     }
-    \define('ICL_DISABLE_CACHE', \false);
     function icl_disable_cache()
     {
     }
@@ -71859,131 +71858,16 @@ namespace {
     function w3tc_translate_cache_key_filter($key)
     {
     }
-    \define('WPML_TM_FOLDER', 'tm');
-    \define('WPML_TM_URL', \plugins_url('', \dirname(__FILE__)));
-    \define('TP_MIGRATION_NOT_STARTED', 0);
-    \define('TP_MIGRATION_REQUESTED', 2);
-    \define('TP_MIGRATION_IN_PROGRESS', 3);
-    \define('TP_MIGRATION_WAITING_CONFIRMATION', 4);
-    \define('TP_MIGRATION_COMPLETED', 1);
-    \define('TRANSLATION_PROXY_XLIFF_VERSION', '12');
-    \define('WPML_XLIFF_TM_URL', \plugins_url('', \dirname(__FILE__)));
-    \define('WPML_XLIFF_TM_NEWLINES_REPLACE', 1);
-    \define('WPML_XLIFF_TM_NEWLINES_ORIGINAL', 2);
-    \define('WPML_XLIFF_DEFAULT_VERSION', '12');
-    \define('TA_URL_ENDPOINT', 'https://www.icanlocalize.com');
-    \define('TA_SCHEDULE_OCCURENCE', 'daily');
-    \define('OTG_SANDBOX', \true);
-    \define('ICL_API_ENDPOINT', 'https://www.icanlocalize.com');
-    \define('OTG_TRANSLATION_PROXY_URL', 'https://tp.wpml.org');
-    \define('ICL_PLUGIN_INACTIVE', \false);
     // phpcs:disable PHPCompatibility.Constants.NewConstants.php_int_minFound -- A check for the presence of the constant is made
-    \define('WPML_PRIORITY_BEFORE_EVERYTHING', \PHP_INT_MIN);
-    \define('ICL_TM_NOT_TRANSLATED', 0);
-    \define('ICL_TM_WAITING_FOR_TRANSLATOR', 1);
-    \define('ICL_TM_IN_PROGRESS', 2);
-    \define('ICL_TM_NEEDS_UPDATE', 3);
     // virt. status code (based on needs_update)
-    \define('ICL_TM_TRANSLATION_READY_TO_DOWNLOAD', 4);
     // when translation is ready in TP
-    \define('ICL_TM_DUPLICATE', 9);
-    \define('ICL_TM_COMPLETE', 10);
-    \define('ICL_TM_IN_BASKET', 20);
-    \define('ICL_TM_NEEDS_REVIEW', 30);
     // Virtual status - NOT STORE IN DB.
-    \define('ICL_TM_ATE_NEEDS_RETRY', 40);
     // @since 3.2
-    \define('ICL_TM_PENDING_TP', 102);
-    \define('ICL_TM_ATE_CANCELLED', 42);
     /** @deprecated Use constants in WPML_TM_Emails_Settings instead */
-    \define('ICL_TM_NOTIFICATION_NONE', 0);
     /** @deprecated Use WPML_TM_Emails_Settings::NOTIFY_IMMEDIATELY instead */
-    \define('ICL_TM_NOTIFICATION_IMMEDIATELY', 1);
     /** @deprecated Use WPML_TM_Emails_Settings::NOTIFY_DAILY instead */
-    \define('ICL_TM_NOTIFICATION_DAILY', 2);
-    \define('ICL_TM_TMETHOD_MANUAL', 0);
-    \define('ICL_TM_TMETHOD_EDITOR', 1);
-    \define('ICL_TM_TMETHOD_PRO', 2);
-    \define('ICL_TM_TMETHOD_ATE', 'ATE');
-    \define('ICL_TM_DOCS_PER_PAGE', 20);
-    \define('ICL_ASIAN_LANGUAGE_CHAR_SIZE', 6);
     /* legacy? */
-    \define('CMS_REQUEST_WAITING_FOR_PROJECT_CREATION', 1);
-    \define('ICL_FINANCE_LINK', '/finance');
-    \define('MESSAGE_TRANSLATION_IN_PROGRESS', 3);
-    \define('MESSAGE_TRANSLATION_COMPLETE', 4);
-    \define('ICL_LANG_SEL_BLUE_FONT_CURRENT_NORMAL', '#ffffff');
-    \define('ICL_LANG_SEL_BLUE_FONT_CURRENT_HOVER', '#000000');
-    \define('ICL_LANG_SEL_BLUE_BACKGROUND_CURRENT_NORMAL', '#0099cc');
-    \define('ICL_LANG_SEL_BLUE_BACKGROUND_CURRENT_HOVER', '#0099cc');
-    \define('ICL_LANG_SEL_BLUE_FONT_OTHER_NORMAL', '#000000');
-    \define('ICL_LANG_SEL_BLUE_FONT_OTHER_HOVER', '#000000');
-    \define('ICL_LANG_SEL_BLUE_BACKGROUND_OTHER_NORMAL', '#eeeeee');
-    \define('ICL_LANG_SEL_BLUE_BACKGROUND_OTHER_HOVER', '#cccccc');
-    \define('ICL_LANG_SEL_BLUE_BORDER', '#000000');
-    \define('ICL_LANG_SEL_WHITE_FONT_CURRENT_NORMAL', '#444444');
-    \define('ICL_LANG_SEL_WHITE_FONT_CURRENT_HOVER', '#000000');
-    \define('ICL_LANG_SEL_WHITE_BACKGROUND_CURRENT_NORMAL', '#ffffff');
-    \define('ICL_LANG_SEL_WHITE_BACKGROUND_CURRENT_HOVER', '#eeeeee');
-    \define('ICL_LANG_SEL_WHITE_FONT_OTHER_NORMAL', '#444444');
-    \define('ICL_LANG_SEL_WHITE_FONT_OTHER_HOVER', '#000000');
-    \define('ICL_LANG_SEL_WHITE_BACKGROUND_OTHER_NORMAL', '#ffffff');
-    \define('ICL_LANG_SEL_WHITE_BACKGROUND_OTHER_HOVER', '#eeeeee');
-    \define('ICL_LANG_SEL_WHITE_BORDER', '#aaaaaa');
-    \define('ICL_LANG_SEL_GRAY_FONT_CURRENT_NORMAL', '#222222');
-    \define('ICL_LANG_SEL_GRAY_FONT_CURRENT_HOVER', '#000000');
-    \define('ICL_LANG_SEL_GRAY_BACKGROUND_CURRENT_NORMAL', '#eeeeee');
-    \define('ICL_LANG_SEL_GRAY_BACKGROUND_CURRENT_HOVER', '#dddddd');
-    \define('ICL_LANG_SEL_GRAY_FONT_OTHER_NORMAL', '#222222');
-    \define('ICL_LANG_SEL_GRAY_FONT_OTHER_HOVER', '#000000');
-    \define('ICL_LANG_SEL_GRAY_BACKGROUND_OTHER_NORMAL', '#eeeeee');
-    \define('ICL_LANG_SEL_GRAY_BACKGROUND_OTHER_HOVER', '#dddddd');
-    \define('ICL_LANG_SEL_GRAY_BORDER', '#555555');
-    \define('ICL_PRO_TRANSLATION_COST_PER_WORD', 0.09);
-    \define('ICL_PRO_TRANSLATION_PICKUP_XMLRPC', 0);
-    \define('ICL_PRO_TRANSLATION_PICKUP_POLLING', 1);
-    \define('ICL_REMOTE_WPML_CONFIG_FILES_INDEX', 'http://cdn.wpml.org/');
-    \define('ICL_ICONS_URL', \ICL_PLUGIN_URL . '/res/img/');
-    \define('WPML_ELEMENT_IS_NOT_TRANSLATED', 0);
-    \define('WPML_ELEMENT_IS_TRANSLATED', 1);
-    \define('WPML_ELEMENT_IS_DUPLICATED', 2);
-    \define('WPML_ELEMENT_IS_A_DUPLICATE', 3);
-    \define('WPML_STRING_TABLE_NAME_CONTEXT_LENGTH', 160);
-    \define('WPML_QUERY_IS_ROOT', 1);
-    \define('WPML_QUERY_IS_OTHER_THAN_ROOT', 2);
-    \define('WPML_QUERY_IS_NOT_FOR_POST', 3);
-    \define('WPML_XDOMAIN_DATA_OFF', 0);
-    \define('WPML_XDOMAIN_DATA_GET', 1);
-    \define('WPML_XDOMAIN_DATA_POST', 2);
-    \define('WPML_TT_TAXONOMIES_NOT_TRANSLATED', 1);
-    \define('WPML_TT_TAXONOMIES_ALL', 0);
     // This sets the number of rows in the table to be displayed by this class, not the actual number of terms.
-    \define('WPML_TT_TERMS_PER_PAGE', 10);
-    \define('WPML_TRANSLATE_CUSTOM_FIELD', 2);
-    \define('WPML_COPY_CUSTOM_FIELD', 1);
-    \define('WPML_IGNORE_CUSTOM_FIELD', 0);
-    \define('WPML_COPY_ONCE_CUSTOM_FIELD', 3);
-    \define('WPML_POST_META_CONFIG_INDEX_SINGULAR', 'custom-field');
-    \define('WPML_POST_META_SETTING_INDEX_SINGULAR', 'custom_field');
-    \define('WPML_POST_META_CONFIG_INDEX_PLURAL', 'custom-fields');
-    \define('WPML_POST_META_SETTING_INDEX_PLURAL', 'custom_fields_translation');
-    \define('WPML_TERM_META_CONFIG_INDEX_SINGULAR', 'custom-term-field');
-    \define('WPML_TERM_META_CONFIG_INDEX_PLURAL', 'custom-term-fields');
-    \define('WPML_TERM_META_SETTING_INDEX_SINGULAR', 'custom_term_field');
-    \define('WPML_TERM_META_SETTING_INDEX_PLURAL', 'custom_term_fields_translation');
-    \define('WPML_POST_META_READONLY_SETTING_INDEX', 'custom_fields_readonly_config');
-    \define('WPML_TERM_META_READONLY_SETTING_INDEX', 'custom_term_fields_readonly_config');
-    \define('WPML_POST_META_UNLOCKED_SETTING_INDEX', 'custom_fields_unlocked_config');
-    \define('WPML_TERM_META_UNLOCKED_SETTING_INDEX', 'custom_term_fields_unlocked_config');
-    \define('WPML_POST_TYPE_READONLY_SETTING_INDEX', 'custom_types_readonly_config');
-    \define('WPML_LANGUAGE_NEGOTIATION_TYPE_DIRECTORY', 1);
-    \define('WPML_LANGUAGE_NEGOTIATION_TYPE_DOMAIN', 2);
-    \define('WPML_LANGUAGE_NEGOTIATION_TYPE_PARAMETER', 3);
-    \define('WPML_ELEMENT_TRANSLATIONS_CACHE_GROUP', 'element_translations');
-    \define('WEBSITE_DETAILS_TRANSIENT_KEY', 'wpml_icl_query_website_details');
-    \define('WPML_CONTENT_TYPE_DONT_TRANSLATE', 0);
-    \define('WPML_CONTENT_TYPE_TRANSLATE', 1);
-    \define('WPML_CONTENT_TYPE_DISPLAY_AS_IF_TRANSLATED', 2);
     function deprecated_icl_data_from_pro_translation($translation)
     {
     }
@@ -73837,8 +73721,6 @@ namespace {
     function translation_service_details($service, $show_project = \false)
     {
     }
-    \define('ICL_LANGUAGE_NOT_SUPPORTED', 3);
-    \define('CUSTOM_TEXT_MAX_LENGTH', 1000);
     function update_string_statuses()
     {
     }
@@ -73872,7 +73754,6 @@ namespace {
     function upgrade_3_5_1_get_language_charset_and_collation()
     {
     }
-    \define('WPML_UPGRADE_NOT_POSSIBLE', \true);
     function icl_plugin_upgrade()
     {
     }
@@ -73913,21 +73794,6 @@ namespace {
      @todo: [WPML 3.3] check if needed in 3.3 */
     /* This file includes a set of functions that can be used by WP plugins developers to make their plugins interact with WPML */
     /* constants */
-    \define('WPML_API_SUCCESS', 0);
-    \define('WPML_API_ERROR', 99);
-    \define('WPML_API_INVALID_LANGUAGE_CODE', 1);
-    \define('WPML_API_INVALID_TRID', 2);
-    \define('WPML_API_LANGUAGE_CODE_EXISTS', 3);
-    \define('WPML_API_CONTENT_NOT_FOUND', 4);
-    \define('WPML_API_TRANSLATION_NOT_FOUND', 5);
-    \define('WPML_API_INVALID_CONTENT_TYPE', 6);
-    \define('WPML_API_CONTENT_EXISTS', 7);
-    \define('WPML_API_FUNCTION_ALREADY_DECLARED', 8);
-    \define('WPML_API_CONTENT_TRANSLATION_DISABLED', 9);
-    \define('WPML_API_GET_CONTENT_ERROR', 0);
-    \define('WPML_API_MAGIC_NUMBER', 6);
-    \define('WPML_API_ASIAN_LANGUAGES', 'zh-hans|zh-hant|ja|ko');
-    \define('WPML_API_COST_PER_WORD', 0.09);
     function _wpml_api_allowed_content_type($content_type)
     {
     }
@@ -74281,30 +74147,18 @@ namespace {
     {
     }
     /** @var \WPML_TM_AMS_ATE_Console_Section|null $ateConsoleSection */
-    \define('ICL_SITEPRESS_VERSION', '4.8.6');
     // Script version, first 3 digits are the same as the plugin version.
     // Increase the last 3 digits by 1 for intermediate packages (i.e. beta, rc, internal).
-    \define('ICL_SITEPRESS_SCRIPT_VERSION', '486900');
     // Do not uncomment the following line!
     // If you need to use this constant, use it in the wp-config.php file
     // define('ICL_SITEPRESS_DEV_VERSION', '3.4-dev');
-    \define('WPML_PLUGIN_BASENAME', \plugin_basename(__FILE__));
-    \define('WPML_PLUGIN_FOLDER', \dirname(\WPML_PLUGIN_BASENAME));
-    \define('WPML_PLUGIN_PATH', __DIR__);
-    \define('WPML_PLUGINS_DIR', \realpath(__DIR__ . '/..'));
-    \define('WPML_PLUGIN_FILE', \basename(\WPML_PLUGIN_BASENAME));
     /** @deprecated since 3.7.0 and will be removed in 3.8.0, use `WPML_PLUGIN_BASENAME` instead */
-    \define('ICL_PLUGIN_FULL_PATH', \WPML_PLUGIN_BASENAME);
     /** @deprecated since 3.7.0 and will be removed in 3.8.0, use `WPML_PLUGIN_FOLDER` instead */
-    \define('ICL_PLUGIN_FOLDER', \WPML_PLUGIN_FOLDER);
     /** @deprecated since 3.7.0 and will be removed in 3.8.0, use `WPML_PLUGIN_PATH` instead */
-    \define('ICL_PLUGIN_PATH', \WPML_PLUGIN_PATH);
     /** @deprecated since 3.7.0 and will be removed in 3.8.0, use `WPML_PLUGIN_FILE` instead */
-    \define('ICL_PLUGIN_FILE', \WPML_PLUGIN_FILE);
     function wpml_disable_outdated_plugins()
     {
     }
-    \define('ICL_PLUGIN_URL', $icl_plugin_url);
     /** @var \WPML_WP_API $wpml_wp_api */
     /** @var \WPML\PHP\Logger\WPML_TF_Settings $tf_settings */
     /** @var array $sitepress_settings */
@@ -74332,8 +74186,6 @@ namespace {
     function wpml_init_language_cookie_settings()
     {
     }
-    \define('WPML_TM_VERSION', '2.11.0');
-    \define('WPML_TM_PATH', \dirname(__FILE__));
     function initialize_wpml_cache_factory()
     {
     }
@@ -74375,7 +74227,6 @@ namespace {
     function otgs_icons_register()
     {
     }
-    \define('OTGS_ICONS_VERSION', '1.0.4');
     function otgs_icons()
     {
     }
@@ -74407,7 +74258,6 @@ namespace {
     function WP_Installer_get_local_components_setting_ui($args)
     {
     }
-    \define('WP_INSTALLER_VERSION', $delegate['version']);
     /**
      * Returns true if the current request is a REST one.
      *
@@ -74524,13 +74374,8 @@ namespace {
     {
     }
     // WPML version.
-    \define('WPML_VERSION', \defined('ICL_SITEPRESS_SCRIPT_VERSION') ? \ICL_SITEPRESS_SCRIPT_VERSION : '4.7.0');
     // Directories.
-    \define('WPML_ROOT_DIR', __DIR__ . '/..');
-    \define('WPML_PUBLIC_DIR', \WPML_ROOT_DIR . '/public');
     // Capabliities.
-    \define('WPML_CAP_MANAGE_OPTIONS', 'manage_options');
-    \define('WPML_CAP_MANAGE_TRANSLATIONS', 'manage_translations');
 }
 namespace WPML\PB {
     class App
@@ -82376,8 +82221,6 @@ namespace {
     }
 }
 namespace {
-    \define('WPML_PAGE_BUILDERS_VERSION', '2.4.0.1');
-    \define('WPML_PAGE_BUILDERS_PATH', __DIR__);
     /**
      * WPML Page Builders can be installed as a standalone glue plugin,
      * but it also comes packaged with WPML Core.

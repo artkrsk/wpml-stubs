@@ -131,13 +131,13 @@ $content = removeStrayCodeStatements( $content );
 // 3. Resolve unqualified class names in PHPDoc annotations
 $content = resolvePhpDocClassNames( $content, $wpmlPath );
 
-// 4. Extract version from source
+// 4. Extract version and add self-contained guarded constants
+// Note: We remove WPML's unguarded define() calls (stray code) but add our own guarded ones at top
 $version = extractWpmlVersion( $wpmlPath );
-
-// 5. Add self-contained constants with extracted version
 $content = addSelfContainedConstants( $content, $version );
+echo color( "WPML version: $version\n", 'yellow' );
 
-// 6. Write final output
+// 5. Write final output
 file_put_contents( __DIR__ . '/wpml-stubs.php', $content );
 
 echo color( "✓ Stubs generated successfully\n", 'green' );
@@ -240,6 +240,11 @@ function removeStrayCodeStatements( string $content ): string {
 
 			// Skip all variable statements (assignments, method calls, etc.)
 			if ( str_starts_with( $trimmed, '$' ) ) {
+				continue;
+			}
+
+			// Skip stray define() calls (unguarded constant definitions from WPML source)
+			if ( preg_match( '/^\\\\?define\(/', $trimmed ) ) {
 				continue;
 			}
 

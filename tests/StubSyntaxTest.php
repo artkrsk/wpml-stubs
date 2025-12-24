@@ -121,6 +121,50 @@ class StubSyntaxTest extends TestCase {
 		);
 	}
 
+	public function testNoStrayCodeStatements(): void {
+		$stubContent = file_get_contents( $this->stubsFile );
+		$this->assertNotFalse( $stubContent, 'Stub file should be readable' );
+
+		// No stray Container::make() calls
+		$this->assertStringNotContainsString(
+			'Container\make(',
+			$stubContent,
+			'Should not have stray Container\make() calls at namespace level'
+		);
+
+		// No global variable usage outside functions
+		$this->assertDoesNotMatchRegularExpression(
+			'/^\s+\$\w+\s*=\s*\$\w+->/m',
+			$stubContent,
+			'Should not have stray global variable method calls (e.g., $sitepress->...)'
+		);
+	}
+
+	public function testNoDuplicateConstants(): void {
+		$stubContent = file_get_contents( $this->stubsFile );
+		$this->assertNotFalse( $stubContent, 'Stub file should be readable' );
+
+		// Count define() calls for WPML constants - should only appear once (our guarded version)
+		$constants = array( 'ICL_SITEPRESS_VERSION', 'WPML_PLUGIN_PATH', 'ICL_PLUGIN_PATH' );
+
+		foreach ( $constants as $constant ) {
+			$count = substr_count( $stubContent, "define('$constant'" );
+			$this->assertLessThanOrEqual(
+				1,
+				$count,
+				"Constant $constant should be defined at most once (found $count times)"
+			);
+		}
+
+		// No unguarded define() calls (all should have if (!defined()) guards)
+		// Match: \define('CONST') but not inside if (!defined('CONST'))
+		$this->assertDoesNotMatchRegularExpression(
+			'/^\s+\\\\define\(/m',
+			$stubContent,
+			'Should not have unguarded \define() calls from WPML source (stray code)'
+		);
+	}
+
 	/**
 	 * Test that PHPDoc class names are fully qualified in generated stubs.
 	 *
