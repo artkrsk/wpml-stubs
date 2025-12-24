@@ -62,24 +62,43 @@ echo color( "Generating stubs from: $wpmlPath\n", 'yellow' );
 // 1. Generate stubs from main WPML directory
 $finder = Finder::create()
 	->in( $wpmlPath )
-	->exclude( array( 'lib', 'tests', 'docs', 'addons', 'inc/hacks' ) )
-	// Exclude third-party vendor packages but keep WPML's own vendor packages
-	->notPath( '#vendor/a5hleyrich#' )
+	->exclude( array( 'tests', 'docs', 'addons', 'inc/hacks', 'classes/twig-extensions' ) )
+	// Exclude top-level lib/ (third-party libraries like Twig) but not lib/ in vendor packages
+	->notPath( '#^lib/#' )
+	// Exclude third-party vendor packages (but keep libraries WPML extends/uses)
+	// Keep: a5hleyrich (WP_Background_Process - WPML extends it)
 	->notPath( '#vendor/composer#' )
 	->notPath( '#vendor/jakeasmith#' )
 	->notPath( '#vendor/psr#' )
 	->notPath( '#vendor/symfony#' )
 	->notPath( '#vendor/yoast#' )
+	// Exclude third-party libraries bundled in vendor/wpml
+	->notPath( '#vendor/wpml/sql-parser#' )
 	// Also exclude root-level vendor files (autoload.php, etc.)
 	->notName( 'autoload*.php' )
-	->filter( function ( $file ) {
-		// Additional filter to exclude Composer internals
-		$path = $file->getRelativePathname();
-		if ( strpos( $path, 'vendor/composer/' ) !== false ) {
-			return false;
+	->filter(
+		function ( $file ) {
+			$path = $file->getRelativePathname();
+
+			// Exclude Composer internals
+			if ( strpos( $path, 'vendor/composer/' ) !== false ) {
+					return false;
+			}
+
+			// Exclude test files (Test.php, *Test.php, TestCase.php, etc.)
+			$filename = $file->getFilename();
+			if ( preg_match( '/Test(Case)?\.php$/i', $filename ) ) {
+				return false;
+			}
+
+			// Exclude files in test-related directories (case-insensitive)
+			if ( preg_match( '#/(tests?|spec|__tests__)/#i', $path ) ) {
+				return false;
+			}
+
+			return true;
 		}
-		return true;
-	} )
+	)
 	->sortByName();
 
 $generator = new StubsGenerator( StubsGenerator::DEFAULT );
@@ -188,20 +207,44 @@ function removeComposerInternals( string $content ): string {
  * These are code snippets from WPML source that the stub generator incorrectly includes.
  */
 function removeStrayCodeStatements( string $content ): string {
-	$lines  = explode( "\n", $content );
-	$output = array();
+	$lines         = explode( "\n", $content );
+	$output        = array();
+	$depth         = 0;
+	$inClassOrFunc = false;
 
 	foreach ( $lines as $line ) {
 		$trimmed = trim( $line );
 
-		// Skip stray code patterns that use $this outside object context
-		if ( preg_match( '/^\s*\$\w+\s*=.*\$this->/', $line ) ) {
-			continue;
+		// Track if we're inside a class, interface, trait, or function
+		if ( preg_match( '/^(class|interface|trait|function|abstract\s+class|final\s+class)\s/', $trimmed ) ) {
+			$inClassOrFunc = true;
 		}
 
-		// Skip stray apply_filters calls at top level
-		if ( preg_match( '/^\s*\$\w+\s*=\s*apply_filters\(/', $line ) ) {
-			continue;
+		// Track brace depth
+		$depth += substr_count( $line, '{' );
+		$depth -= substr_count( $line, '}' );
+
+		// Reset when we exit all blocks
+		if ( 0 === $depth && $inClassOrFunc ) {
+			$inClassOrFunc = false;
+		}
+
+		// Skip stray code statements at namespace level (outside class/function)
+		if ( ! $inClassOrFunc && 0 === $depth ) {
+			// Skip global variable declarations
+			if ( preg_match( '/^\s*global\s+\$/', $trimmed ) ) {
+				continue;
+			}
+
+			// Skip variable assignments at top level
+			if ( preg_match( '/^\s*\$\w+\s*=/', $trimmed ) ) {
+				continue;
+			}
+
+			// Skip standalone function/method calls
+			if ( preg_match( '/^\s*\$?\w+(::|->)/', $trimmed ) && ! str_starts_with( $trimmed, '/*' ) && ! str_starts_with( $trimmed, '//' ) ) {
+				continue;
+			}
 		}
 
 		$output[] = $line;
@@ -231,7 +274,7 @@ function addSelfContainedConstants( string $content, string $version ): string {
 
 	$constants = <<<CONSTANTS
 namespace {
-	// WPML Core constants
+	// WPML Core constants (path-related constants that might not be in source)
 	if (!defined('ICL_SITEPRESS_VERSION')) {
 		define('ICL_SITEPRESS_VERSION', '{$version}');
 	}
@@ -252,20 +295,6 @@ namespace {
 	}
 	if (!defined('ICL_PLUGIN_URL')) {
 		define('ICL_PLUGIN_URL', plugins_url('/', __FILE__));
-	}
-
-	// Translation status constants
-	if (!defined('ICL_TM_COMPLETE')) {
-		define('ICL_TM_COMPLETE', 10);
-	}
-	if (!defined('ICL_TM_NOT_TRANSLATED')) {
-		define('ICL_TM_NOT_TRANSLATED', 0);
-	}
-	if (!defined('ICL_TM_IN_PROGRESS')) {
-		define('ICL_TM_IN_PROGRESS', 2);
-	}
-	if (!defined('ICL_TM_DUPLICATE')) {
-		define('ICL_TM_DUPLICATE', 9);
 	}
 }
 

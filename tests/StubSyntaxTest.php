@@ -29,21 +29,95 @@ class StubSyntaxTest extends TestCase {
 	}
 
 	public function testWpmlVersionConstant(): void {
+		$stubContent = file_get_contents( $this->stubsFile );
+		$this->assertNotFalse( $stubContent, 'Stub file should be readable' );
+
+		// Extract version from define statement
 		$this->assertMatchesRegularExpression(
-			'/^\d+\.\d+\.\d+$/',
-			ICL_SITEPRESS_VERSION,
-			'ICL_SITEPRESS_VERSION should be in semantic version format (e.g., 4.6.6)'
+			"/define\('ICL_SITEPRESS_VERSION', '\d+\.\d+\.\d+'\)/",
+			$stubContent,
+			'ICL_SITEPRESS_VERSION should be defined in semantic version format (e.g., 4.8.6)'
 		);
 	}
 
 	public function testCoreClassesExist(): void {
-		$this->assertTrue(
-			class_exists( 'SitePress' ),
+		$stubContent = file_get_contents( $this->stubsFile );
+		$this->assertNotFalse( $stubContent, 'Stub file should be readable' );
+
+		$this->assertStringContainsString(
+			'class SitePress',
+			$stubContent,
 			'SitePress class should exist'
 		);
-		$this->assertTrue(
-			class_exists( 'WPML_Language_Switcher' ),
+		$this->assertStringContainsString(
+			'class WPML_Language_Switcher',
+			$stubContent,
 			'WPML_Language_Switcher class should exist'
+		);
+	}
+
+	public function testElementorIntegrationClassesExist(): void {
+		$stubContent = file_get_contents( $this->stubsFile );
+		$this->assertNotFalse( $stubContent, 'Stub file should be readable' );
+
+		$this->assertStringContainsString(
+			'class WPML_PB_String',
+			$stubContent,
+			'WPML_PB_String class should exist for Elementor integration'
+		);
+		$this->assertStringContainsString(
+			'interface IWPML_Page_Builders_Module',
+			$stubContent,
+			'IWPML_Page_Builders_Module interface should exist'
+		);
+		$this->assertStringContainsString(
+			'class WPML_Elementor_Module_With_Items',
+			$stubContent,
+			'WPML_Elementor_Module_With_Items class should exist'
+		);
+		$this->assertStringContainsString(
+			'class WPML_Elementor_Translatable_Nodes',
+			$stubContent,
+			'WPML_Elementor_Translatable_Nodes class should exist'
+		);
+	}
+
+	public function testNoThirdPartyNamespaces(): void {
+		$stubContent = file_get_contents( $this->stubsFile );
+		$this->assertNotFalse( $stubContent, 'Stub file should be readable' );
+
+		// Check for third-party namespaces that shouldn't be in WPML stubs
+		$this->assertStringNotContainsString(
+			'namespace PhpMyAdmin',
+			$stubContent,
+			'PhpMyAdmin namespace should not be in WPML stubs'
+		);
+		$this->assertStringNotContainsString(
+			'namespace Composer\Autoload',
+			$stubContent,
+			'Composer\Autoload namespace should not be in WPML stubs'
+		);
+		$this->assertStringNotContainsString(
+			'composerRequire',
+			$stubContent,
+			'Composer autoloader functions should not be in WPML stubs'
+		);
+	}
+
+	public function testNoWordPressDuplicateFunctions(): void {
+		$stubContent = file_get_contents( $this->stubsFile );
+		$this->assertNotFalse( $stubContent, 'Stub file should be readable' );
+
+		// WordPress core functions that are already in wordpress-stubs should not be redeclared
+		$this->assertStringNotContainsString(
+			'function _cleanup_header_comment',
+			$stubContent,
+			'_cleanup_header_comment is a WordPress core function and should not be redeclared'
+		);
+		$this->assertStringNotContainsString(
+			'function esc_textarea',
+			$stubContent,
+			'esc_textarea is a WordPress core function and should not be redeclared'
 		);
 	}
 

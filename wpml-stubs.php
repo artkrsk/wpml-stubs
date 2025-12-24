@@ -2,7 +2,7 @@
 
 
 namespace {
-	// WPML Core constants
+	// WPML Core constants (path-related constants that might not be in source)
 	if (!defined('ICL_SITEPRESS_VERSION')) {
 		define('ICL_SITEPRESS_VERSION', '4.8.6');
 	}
@@ -23,20 +23,6 @@ namespace {
 	}
 	if (!defined('ICL_PLUGIN_URL')) {
 		define('ICL_PLUGIN_URL', plugins_url('/', __FILE__));
-	}
-
-	// Translation status constants
-	if (!defined('ICL_TM_COMPLETE')) {
-		define('ICL_TM_COMPLETE', 10);
-	}
-	if (!defined('ICL_TM_NOT_TRANSLATED')) {
-		define('ICL_TM_NOT_TRANSLATED', 0);
-	}
-	if (!defined('ICL_TM_IN_PROGRESS')) {
-		define('ICL_TM_IN_PROGRESS', 2);
-	}
-	if (!defined('ICL_TM_DUPLICATE')) {
-		define('ICL_TM_DUPLICATE', 9);
 	}
 }
 namespace WPML\TM\API {
@@ -30835,22 +30821,6 @@ namespace {
         {
         }
     }
-    class WPML_Twig_WP_Plugin_Extension extends \WPML\Core\Twig_Extension
-    {
-        /**
-         * Returns the name of the extension.
-         * @return string The extension name
-         */
-        public function getName()
-        {
-        }
-        public function getFilters()
-        {
-        }
-        public function wp_do_action_filter($tag)
-        {
-        }
-    }
     /**
      * @package wpml-core
      */
@@ -36700,6 +36670,386 @@ namespace {
         public function create_requested_types()
         {
         }
+    }
+    /**
+     * WP Async Request
+     *
+     * @package WP-Background-Processing
+     */
+    /**
+     * Abstract WP_Async_Request class.
+     *
+     * @abstract
+     */
+    abstract class WP_Async_Request
+    {
+        /**
+         * Prefix
+         *
+         * (default value: 'wp')
+         *
+         * @var string
+         * @access protected
+         */
+        protected $prefix = 'wp';
+        /**
+         * Action
+         *
+         * (default value: 'async_request')
+         *
+         * @var string
+         * @access protected
+         */
+        protected $action = 'async_request';
+        /**
+         * Identifier
+         *
+         * @var mixed
+         * @access protected
+         */
+        protected $identifier;
+        /**
+         * Data
+         *
+         * (default value: array())
+         *
+         * @var array
+         * @access protected
+         */
+        protected $data = array();
+        /**
+         * Initiate new async request
+         */
+        public function __construct()
+        {
+        }
+        /**
+         * Set data used during the request
+         *
+         * @param array $data Data.
+         *
+         * @return $this
+         */
+        public function data($data)
+        {
+        }
+        /**
+         * Dispatch the async request
+         *
+         * @return array|\WPML\Utilities\WP_Error
+         */
+        public function dispatch()
+        {
+        }
+        /**
+         * Get query args
+         *
+         * @return array
+         */
+        protected function get_query_args()
+        {
+        }
+        /**
+         * Get query URL
+         *
+         * @return string
+         */
+        protected function get_query_url()
+        {
+        }
+        /**
+         * Get post args
+         *
+         * @return array
+         */
+        protected function get_post_args()
+        {
+        }
+        /**
+         * Maybe handle
+         *
+         * Check for correct nonce and pass to handler.
+         */
+        public function maybe_handle()
+        {
+        }
+        /**
+         * Handle
+         *
+         * Override this method to perform any actions required
+         * during the async request.
+         */
+        abstract protected function handle();
+    }
+    /**
+     * WP Background Process
+     *
+     * @package WP-Background-Processing
+     */
+    /**
+     * Abstract WP_Background_Process class.
+     *
+     * @abstract
+     * @extends WP_Async_Request
+     */
+    abstract class WP_Background_Process extends \WP_Async_Request
+    {
+        /**
+         * Action
+         *
+         * (default value: 'background_process')
+         *
+         * @var string
+         * @access protected
+         */
+        protected $action = 'background_process';
+        /**
+         * Start time of current process.
+         *
+         * (default value: 0)
+         *
+         * @var int
+         * @access protected
+         */
+        protected $start_time = 0;
+        /**
+         * Cron_hook_identifier
+         *
+         * @var mixed
+         * @access protected
+         */
+        protected $cron_hook_identifier;
+        /**
+         * Cron_interval_identifier
+         *
+         * @var mixed
+         * @access protected
+         */
+        protected $cron_interval_identifier;
+        /**
+         * Initiate new background process
+         */
+        public function __construct()
+        {
+        }
+        /**
+         * Dispatch
+         *
+         * @access public
+         * @return void
+         */
+        public function dispatch()
+        {
+        }
+        /**
+         * Push to queue
+         *
+         * @param mixed $data Data.
+         *
+         * @return $this
+         */
+        public function push_to_queue($data)
+        {
+        }
+        /**
+         * Save queue
+         *
+         * @return $this
+         */
+        public function save()
+        {
+        }
+        /**
+         * Update queue
+         *
+         * @param string $key  Key.
+         * @param array  $data Data.
+         *
+         * @return $this
+         */
+        public function update($key, $data)
+        {
+        }
+        /**
+         * Delete queue
+         *
+         * @param string $key Key.
+         *
+         * @return $this
+         */
+        public function delete($key)
+        {
+        }
+        /**
+         * Generate key
+         *
+         * Generates a unique key based on microtime. Queue items are
+         * given a unique key so that they can be merged upon save.
+         *
+         * @param int $length Length.
+         *
+         * @return string
+         */
+        protected function generate_key($length = 64)
+        {
+        }
+        /**
+         * Maybe process queue
+         *
+         * Checks whether data exists within the queue and that
+         * the process is not already running.
+         */
+        public function maybe_handle()
+        {
+        }
+        /**
+         * Is queue empty
+         *
+         * @return bool
+         */
+        protected function is_queue_empty()
+        {
+        }
+        /**
+         * Is process running
+         *
+         * Check whether the current process is already running
+         * in a background process.
+         */
+        protected function is_process_running()
+        {
+        }
+        /**
+         * Lock process
+         *
+         * Lock the process so that multiple instances can't run simultaneously.
+         * Override if applicable, but the duration should be greater than that
+         * defined in the time_exceeded() method.
+         */
+        protected function lock_process()
+        {
+        }
+        /**
+         * Unlock process
+         *
+         * Unlock the process so that other instances can spawn.
+         *
+         * @return $this
+         */
+        protected function unlock_process()
+        {
+        }
+        /**
+         * Get batch
+         *
+         * @return stdClass Return the first batch from the queue
+         */
+        protected function get_batch()
+        {
+        }
+        /**
+         * Handle
+         *
+         * Pass each queue item to the task handler, while remaining
+         * within server memory and time limit constraints.
+         */
+        protected function handle()
+        {
+        }
+        /**
+         * Memory exceeded
+         *
+         * Ensures the batch process never exceeds 90%
+         * of the maximum WordPress memory.
+         *
+         * @return bool
+         */
+        protected function memory_exceeded()
+        {
+        }
+        /**
+         * Get memory limit
+         *
+         * @return int
+         */
+        protected function get_memory_limit()
+        {
+        }
+        /**
+         * Time exceeded.
+         *
+         * Ensures the batch never exceeds a sensible time limit.
+         * A timeout limit of 30s is common on shared hosting.
+         *
+         * @return bool
+         */
+        protected function time_exceeded()
+        {
+        }
+        /**
+         * Complete.
+         *
+         * Override if applicable, but ensure that the below actions are
+         * performed, or, call parent::complete().
+         */
+        protected function complete()
+        {
+        }
+        /**
+         * Schedule cron healthcheck
+         *
+         * @access public
+         *
+         * @param mixed $schedules Schedules.
+         *
+         * @return mixed
+         */
+        public function schedule_cron_healthcheck($schedules)
+        {
+        }
+        /**
+         * Handle cron healthcheck
+         *
+         * Restart the background process if not already running
+         * and data exists in the queue.
+         */
+        public function handle_cron_healthcheck()
+        {
+        }
+        /**
+         * Schedule event
+         */
+        protected function schedule_event()
+        {
+        }
+        /**
+         * Clear scheduled event
+         */
+        protected function clear_scheduled_event()
+        {
+        }
+        /**
+         * Cancel Process
+         *
+         * Stop processing queue items, clear cronjob and delete batch.
+         *
+         */
+        public function cancel_process()
+        {
+        }
+        /**
+         * Task
+         *
+         * Override this method to perform any actions required on each
+         * queue item. Return the modified item for further processing
+         * in the next pass through. Or, return false to remove the
+         * item from the queue.
+         *
+         * @param mixed $item Queue item to iterate over.
+         *
+         * @return mixed
+         */
+        abstract protected function task($item);
     }
     abstract class WPML_TM_Word_Count_Background_Process extends \WP_Background_Process
     {
@@ -46641,6 +46991,341 @@ namespace {
         }
     }
 }
+namespace WPML\Auryn {
+    interface Reflector
+    {
+        /**
+         * Retrieves ReflectionClass instances, caching them for future retrieval
+         *
+         * @param string $class
+         * @return \ReflectionClass
+         */
+        public function getClass($class);
+        /**
+         * Retrieves and caches the constructor (ReflectionMethod) for the specified class
+         *
+         * @param string $class
+         * @return \ReflectionMethod
+         */
+        public function getCtor($class);
+        /**
+         * Retrieves and caches an array of constructor parameters for the given class
+         *
+         * @param string $class
+         * @return \ReflectionParameter[]
+         */
+        public function getCtorParams($class);
+        /**
+         * Retrieves the class type-hint from a given ReflectionParameter
+         *
+         * There is no way to directly access a parameter's type-hint without
+         * instantiating a new ReflectionClass instance and calling its getName()
+         * method. This method stores the results of this approach so that if
+         * the same parameter type-hint or ReflectionClass is needed again we
+         * already have it cached.
+         *
+         * @param \ReflectionFunctionAbstract $function
+         * @param \ReflectionParameter $param
+         */
+        public function getParamTypeHint(\ReflectionFunctionAbstract $function, \ReflectionParameter $param);
+        /**
+         * Retrieves and caches a reflection for the specified function
+         *
+         * @param string $functionName
+         * @return \ReflectionFunction
+         */
+        public function getFunction($functionName);
+        /**
+         * Retrieves and caches a reflection for the specified class method
+         *
+         * @param mixed $classNameOrInstance
+         * @param string $methodName
+         * @return \ReflectionMethod
+         */
+        public function getMethod($classNameOrInstance, $methodName);
+    }
+    class CachingReflector implements \WPML\Auryn\Reflector
+    {
+        const CACHE_KEY_CLASSES = 'auryn.refls.classes.';
+        const CACHE_KEY_CTORS = 'auryn.refls.ctors.';
+        const CACHE_KEY_CTOR_PARAMS = 'auryn.refls.ctor-params.';
+        const CACHE_KEY_FUNCS = 'auryn.refls.funcs.';
+        const CACHE_KEY_METHODS = 'auryn.refls.methods.';
+        public function __construct(\WPML\Auryn\Reflector $reflector = null, \WPML\Auryn\ReflectionCache $cache = null)
+        {
+        }
+        public function getClass($class)
+        {
+        }
+        public function getCtor($class)
+        {
+        }
+        public function getCtorParams($class)
+        {
+        }
+        public function getParamTypeHint(\ReflectionFunctionAbstract $function, \ReflectionParameter $param)
+        {
+        }
+        public function getFunction($functionName)
+        {
+        }
+        public function getMethod($classNameOrInstance, $methodName)
+        {
+        }
+    }
+    class InjectorException extends \Exception
+    {
+    }
+    class ConfigException extends \WPML\Auryn\InjectorException
+    {
+    }
+    class Executable
+    {
+        public function __construct(\ReflectionFunctionAbstract $reflFunc, $invocationObject = null)
+        {
+        }
+        public function __invoke()
+        {
+        }
+        public function getCallableReflection()
+        {
+        }
+        public function getInvocationObject()
+        {
+        }
+        public function isInstanceMethod()
+        {
+        }
+    }
+    class InjectionException extends \WPML\Auryn\InjectorException
+    {
+        public $dependencyChain;
+        public function __construct(array $inProgressMakes, $message = "", $code = 0, \Exception $previous = null)
+        {
+        }
+        /**
+         * Add a human readable version of the invalid callable to the standard 'invalid invokable' message.
+         */
+        public static function fromInvalidCallable(array $inProgressMakes, $callableOrMethodStr, \Exception $previous = null)
+        {
+        }
+        /**
+         * Returns the hierarchy of dependencies that were being created when
+         * the exception occurred.
+         * @return array
+         */
+        public function getDependencyChain()
+        {
+        }
+    }
+    class Injector
+    {
+        const A_RAW = ':';
+        const A_DELEGATE = '+';
+        const A_DEFINE = '@';
+        const I_BINDINGS = 1;
+        const I_DELEGATES = 2;
+        const I_PREPARES = 4;
+        const I_ALIASES = 8;
+        const I_SHARES = 16;
+        const I_ALL = 31;
+        const E_NON_EMPTY_STRING_ALIAS = 1;
+        const M_NON_EMPTY_STRING_ALIAS = "Invalid alias: non-empty string required at arguments 1 and 2";
+        const E_SHARED_CANNOT_ALIAS = 2;
+        const M_SHARED_CANNOT_ALIAS = "Cannot alias class %s to %s because it is currently shared";
+        const E_SHARE_ARGUMENT = 3;
+        const M_SHARE_ARGUMENT = "%s::share() requires a string class name or object instance at Argument 1; %s specified";
+        const E_ALIASED_CANNOT_SHARE = 4;
+        const M_ALIASED_CANNOT_SHARE = "Cannot share class %s because it is currently aliased to %s";
+        const E_INVOKABLE = 5;
+        const M_INVOKABLE = "Invalid invokable: callable or provisional string required";
+        const E_NON_PUBLIC_CONSTRUCTOR = 6;
+        const M_NON_PUBLIC_CONSTRUCTOR = "Cannot instantiate protected/private constructor in class %s";
+        const E_NEEDS_DEFINITION = 7;
+        const M_NEEDS_DEFINITION = "Injection definition required for %s %s";
+        const E_MAKE_FAILURE = 8;
+        const M_MAKE_FAILURE = "Could not make %s: %s";
+        const E_UNDEFINED_PARAM = 9;
+        const M_UNDEFINED_PARAM = "No definition available to provision typeless parameter \$%s at position %d in %s()%s";
+        const E_DELEGATE_ARGUMENT = 10;
+        const M_DELEGATE_ARGUMENT = "%s::delegate expects a valid callable or executable class::method string at Argument 2%s";
+        const E_CYCLIC_DEPENDENCY = 11;
+        const M_CYCLIC_DEPENDENCY = "Detected a cyclic dependency while provisioning %s";
+        const E_MAKING_FAILED = 12;
+        const M_MAKING_FAILED = "Making %s did not result in an object, instead result is of type '%s'";
+        public function __construct(\WPML\Auryn\Reflector $reflector = null)
+        {
+        }
+        public function __clone()
+        {
+        }
+        /**
+         * Define instantiation directives for the specified class
+         *
+         * @param string $name The class (or alias) whose constructor arguments we wish to define
+         * @param array $args An array mapping parameter names to values/instructions
+         * @return self
+         */
+        public function define($name, array $args)
+        {
+        }
+        /**
+         * Assign a global default value for all parameters named $paramName
+         *
+         * Global parameter definitions are only used for parameters with no typehint, pre-defined or
+         * call-time definition.
+         *
+         * @param string $paramName The parameter name for which this value applies
+         * @param mixed $value The value to inject for this parameter name
+         * @return self
+         */
+        public function defineParam($paramName, $value)
+        {
+        }
+        /**
+         * Define an alias for all occurrences of a given typehint
+         *
+         * Use this method to specify implementation classes for interface and abstract class typehints.
+         *
+         * @param string $original The typehint to replace
+         * @param string $alias The implementation name
+         * @throws \WPML\Auryn\ConfigException if any argument is empty or not a string
+         * @return self
+         */
+        public function alias($original, $alias)
+        {
+        }
+        /**
+         * Share the specified class/instance across the Injector context
+         *
+         * @param mixed $nameOrInstance The class or object to share
+         * @throws \WPML\Auryn\ConfigException if $nameOrInstance is not a string or an object
+         * @return self
+         */
+        public function share($nameOrInstance)
+        {
+        }
+        /**
+         * Register a prepare callable to modify/prepare objects of type $name after instantiation
+         *
+         * Any callable or provisionable invokable may be specified. Preparers are passed two
+         * arguments: the instantiated object to be mutated and the current Injector instance.
+         *
+         * @param string $name
+         * @param mixed $callableOrMethodStr Any callable or provisionable invokable method
+         * @throws \WPML\Auryn\InjectionException if $callableOrMethodStr is not a callable.
+         *                            See https://github.com/rdlowrey/auryn#injecting-for-execution
+         * @return self
+         */
+        public function prepare($name, $callableOrMethodStr)
+        {
+        }
+        /**
+         * Delegate the creation of $name instances to the specified callable
+         *
+         * @param string $name
+         * @param mixed $callableOrMethodStr Any callable or provisionable invokable method
+         * @throws \WPML\Auryn\ConfigException if $callableOrMethodStr is not a callable.
+         * @return self
+         */
+        public function delegate($name, $callableOrMethodStr)
+        {
+        }
+        /**
+         * Retrieve stored data for the specified definition type
+         *
+         * Exposes introspection of existing binds/delegates/shares/etc for decoration and composition.
+         *
+         * @param string $nameFilter An optional class name filter
+         * @param int $typeFilter A bitmask of Injector::* type constant flags
+         * @return array
+         */
+        public function inspect($nameFilter = null, $typeFilter = null)
+        {
+        }
+        /**
+         * Instantiate/provision a class instance
+         *
+         * @param string $name
+         * @param array $args
+         * @throws \WPML\Auryn\InjectionException if a cyclic gets detected when provisioning
+         * @return mixed
+         */
+        public function make($name, array $args = array())
+        {
+        }
+        /**
+         * Invoke the specified callable or class::method string, provisioning dependencies along the way
+         *
+         * @param mixed $callableOrMethodStr A valid PHP callable or a provisionable ClassName::methodName string
+         * @param array $args Optional array specifying params with which to invoke the provisioned callable
+         * @throws \Auryn\InjectionException
+         * @return mixed Returns the invocation result returned from calling the generated executable
+         */
+        public function execute($callableOrMethodStr, array $args = array())
+        {
+        }
+        /**
+         * Provision an Executable instance from any valid callable or class::method string
+         *
+         * @param mixed $callableOrMethodStr A valid PHP callable or a provisionable ClassName::methodName string
+         * @return \Auryn\Executable
+         */
+        public function buildExecutable($callableOrMethodStr)
+        {
+        }
+    }
+    interface ReflectionCache
+    {
+        public function fetch($key);
+        public function store($key, $data);
+    }
+    class ReflectionCacheApc implements \WPML\Auryn\ReflectionCache
+    {
+        public function __construct(\WPML\Auryn\ReflectionCache $localCache = null)
+        {
+        }
+        public function setTimeToLive($seconds)
+        {
+        }
+        public function fetch($key)
+        {
+        }
+        public function store($key, $data)
+        {
+        }
+    }
+    class ReflectionCacheArray implements \WPML\Auryn\ReflectionCache
+    {
+        public function fetch($key)
+        {
+        }
+        public function store($key, $data)
+        {
+        }
+    }
+    class StandardReflector implements \WPML\Auryn\Reflector
+    {
+        public function getClass($class)
+        {
+        }
+        public function getCtor($class)
+        {
+        }
+        public function getCtorParams($class)
+        {
+        }
+        public function getParamTypeHint(\ReflectionFunctionAbstract $function, \ReflectionParameter $param)
+        {
+        }
+        public function getFunction($functionName)
+        {
+        }
+        public function getMethod($classNameOrInstance, $methodName)
+        {
+        }
+    }
+}
 namespace OTGS\Installer\CDTClient\Api {
     class Api
     {
@@ -49529,28 +50214,6 @@ namespace {
     }
     class OTGS_Installer_Connection_Test_Exception extends \Exception
     {
-    }
-    class OTGS_Installer_Connection_Test
-    {
-        public function __construct(\OTGS_Installer_Repositories $repositories, \OTGS_Installer_Upgrade_Response $upgrade_response, \OTGS_Installer_Logger_Storage $logger_storage, \OTGS_Installer_Log_Factory $log_factory)
-        {
-        }
-        /**
-         * @param string $repo_id
-         *
-         * @return null|string
-         */
-        public function get_api_status($repo_id)
-        {
-        }
-        /**
-         * @param string $plugin_id
-         *
-         * @return bool|string
-         */
-        public function get_download_status($plugin_id)
-        {
-        }
     }
     class OTGS_Installer_Requirements
     {
@@ -55491,5621 +56154,6 @@ namespace WPML\FP\Monoid {
         }
     }
 }
-namespace PhpMyAdmin\SqlParser {
-    /**
-     * A component (of a statement) is a part of a statement that is common to
-     * multiple query types.
-     *
-     * @category Components
-     *
-     * @license  https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    abstract class Component
-    {
-        /**
-         * Parses the tokens contained in the given list in the context of the given
-         * parser.
-         *
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser  the parser that serves as context
-         * @param \PhpMyAdmin\SqlParser\TokensList $list    the list of tokens that are being parsed
-         * @param array      $options parameters for parsing
-         *
-         * @throws \Exception not implemented yet
-         *
-         * @return mixed
-         */
-        public static function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list, array $options = array())
-        {
-        }
-        /**
-         * Builds the string representation of a component of this type.
-         *
-         * In other words, this function represents the inverse function of
-         * `static::parse`.
-         *
-         * @param mixed $component the component to be built
-         * @param array $options   parameters for building
-         *
-         * @throws \Exception not implemented yet
-         *
-         * @return string
-         */
-        public static function build($component, array $options = array())
-        {
-        }
-        /**
-         * Builds the string representation of a component of this type.
-         *
-         * @see static::build
-         *
-         * @return string
-         */
-        public function __toString()
-        {
-        }
-    }
-}
-namespace PhpMyAdmin\SqlParser\Components {
-    /**
-     * Parses an alter operation.
-     *
-     * @category   Components
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class AlterOperation extends \PhpMyAdmin\SqlParser\Component
-    {
-        /**
-         * All database options.
-         *
-         * @var array
-         */
-        public static $DB_OPTIONS = array('CHARACTER SET' => array(1, 'var'), 'CHARSET' => array(1, 'var'), 'DEFAULT CHARACTER SET' => array(1, 'var'), 'DEFAULT CHARSET' => array(1, 'var'), 'UPGRADE' => array(1, 'var'), 'COLLATE' => array(2, 'var'), 'DEFAULT COLLATE' => array(2, 'var'));
-        /**
-         * All table options.
-         *
-         * @var array
-         */
-        public static $TABLE_OPTIONS = array('ENGINE' => array(1, 'var='), 'AUTO_INCREMENT' => array(1, 'var='), 'AVG_ROW_LENGTH' => array(1, 'var'), 'MAX_ROWS' => array(1, 'var'), 'ROW_FORMAT' => array(1, 'var'), 'COMMENT' => array(1, 'var'), 'ADD' => 1, 'ALTER' => 1, 'ANALYZE' => 1, 'CHANGE' => 1, 'CHARSET' => 1, 'CHECK' => 1, 'COALESCE' => 1, 'CONVERT' => 1, 'DEFAULT CHARSET' => 1, 'DISABLE' => 1, 'DISCARD' => 1, 'DROP' => 1, 'ENABLE' => 1, 'IMPORT' => 1, 'MODIFY' => 1, 'OPTIMIZE' => 1, 'ORDER' => 1, 'PARTITION' => 1, 'REBUILD' => 1, 'REMOVE' => 1, 'RENAME' => 1, 'REORGANIZE' => 1, 'REPAIR' => 1, 'UPGRADE' => 1, 'COLUMN' => 2, 'CONSTRAINT' => 2, 'DEFAULT' => 2, 'TO' => 2, 'BY' => 2, 'FOREIGN' => 2, 'FULLTEXT' => 2, 'KEY' => 2, 'KEYS' => 2, 'PARTITIONING' => 2, 'PRIMARY KEY' => 2, 'SPATIAL' => 2, 'TABLESPACE' => 2, 'INDEX' => 2, 'CHARACTER SET' => 3);
-        /**
-         * All user options.
-         *
-         * @var array
-         */
-        public static $USER_OPTIONS = array('ATTRIBUTE' => array(1, 'var'), 'COMMENT' => array(1, 'var'), 'REQUIRE' => array(1, 'var'), 'BY' => array(2, 'expr'), 'PASSWORD' => array(2, 'var'), 'WITH' => array(2, 'var'), 'ACCOUNT' => 1, 'DEFAULT' => 1, 'LOCK' => 2, 'UNLOCK' => 2, 'IDENTIFIED' => 3);
-        /**
-         * All view options.
-         *
-         * @var array
-         */
-        public static $VIEW_OPTIONS = array('AS' => 1);
-        /**
-         * Options of this operation.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\OptionsArray
-         */
-        public $options;
-        /**
-         * The altered field.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression
-         */
-        public $field;
-        /**
-         * Unparsed tokens.
-         *
-         * @var \PhpMyAdmin\SqlParser\Token[]|string
-         */
-        public $unknown = array();
-        /**
-         * Constructor.
-         *
-         * @param \PhpMyAdmin\SqlParser\Components\OptionsArray $options options of alter operation
-         * @param \PhpMyAdmin\SqlParser\Components\Expression   $field   altered field
-         * @param array        $unknown unparsed tokens found at the end of operation
-         */
-        public function __construct($options = null, $field = null, $unknown = array())
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser  the parser that serves as context
-         * @param \PhpMyAdmin\SqlParser\TokensList $list    the list of tokens that are being parsed
-         * @param array      $options parameters for parsing
-         *
-         * @return \PhpMyAdmin\SqlParser\Components\AlterOperation
-         */
-        public static function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list, array $options = array())
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Components\AlterOperation $component the component to be built
-         * @param array          $options   parameters for building
-         *
-         * @return string
-         */
-        public static function build($component, array $options = array())
-        {
-        }
-    }
-    /**
-     * `VALUES` keyword parser.
-     *
-     * @category   Keywords
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class Array2d extends \PhpMyAdmin\SqlParser\Component
-    {
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser  the parser that serves as context
-         * @param \PhpMyAdmin\SqlParser\TokensList $list    the list of tokens that are being parsed
-         * @param array      $options parameters for parsing
-         *
-         * @return \PhpMyAdmin\SqlParser\Components\ArrayObj[]
-         */
-        public static function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list, array $options = array())
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Components\ArrayObj[] $component the component to be built
-         * @param array      $options   parameters for building
-         *
-         * @return string
-         */
-        public static function build($component, array $options = array())
-        {
-        }
-    }
-    /**
-     * Parses an array.
-     *
-     * @category   Components
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class ArrayObj extends \PhpMyAdmin\SqlParser\Component
-    {
-        /**
-         * The array that contains the unprocessed value of each token.
-         *
-         * @var array
-         */
-        public $raw = array();
-        /**
-         * The array that contains the processed value of each token.
-         *
-         * @var array
-         */
-        public $values = array();
-        /**
-         * Constructor.
-         *
-         * @param array $raw    the unprocessed values
-         * @param array $values the processed values
-         */
-        public function __construct(array $raw = array(), array $values = array())
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser  the parser that serves as context
-         * @param \PhpMyAdmin\SqlParser\TokensList $list    the list of tokens that are being parsed
-         * @param array      $options parameters for parsing
-         *
-         * @return \PhpMyAdmin\SqlParser\Components\ArrayObj|\PhpMyAdmin\SqlParser\Component[]
-         */
-        public static function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list, array $options = array())
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Components\ArrayObj|\PhpMyAdmin\SqlParser\Components\ArrayObj[] $component the component to be built
-         * @param array               $options   parameters for building
-         *
-         * @return string
-         */
-        public static function build($component, array $options = array())
-        {
-        }
-    }
-    /**
-     * Parses a reference to a CASE expression.
-     *
-     * @category   Components
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class CaseExpression extends \PhpMyAdmin\SqlParser\Component
-    {
-        /**
-         * The value to be compared.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression
-         */
-        public $value;
-        /**
-         * The conditions in WHEN clauses.
-         *
-         * @var array
-         */
-        public $conditions = array();
-        /**
-         * The results matching with the WHEN clauses.
-         *
-         * @var array
-         */
-        public $results = array();
-        /**
-         * The values to be compared against.
-         *
-         * @var array
-         */
-        public $compare_values = array();
-        /**
-         * The result in ELSE section of expr.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression
-         */
-        public $else_result;
-        /**
-         * The alias of this CASE statement.
-         *
-         * @var string
-         */
-        public $alias;
-        /**
-         * The sub-expression.
-         *
-         * @var string
-         */
-        public $expr = '';
-        /**
-         * Constructor.
-         */
-        public function __construct()
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser  the parser that serves as context
-         * @param \PhpMyAdmin\SqlParser\TokensList $list    the list of tokens that are being parsed
-         * @param array      $options parameters for parsing
-         *
-         * @return \PhpMyAdmin\SqlParser\Components\CaseExpression
-         */
-        public static function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list, array $options = array())
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Components\CaseExpression $component the component to be built
-         * @param array          $options   parameters for building
-         *
-         * @return string
-         */
-        public static function build($component, array $options = array())
-        {
-        }
-    }
-    /**
-     * `WHERE` keyword parser.
-     *
-     * @category   Keywords
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class Condition extends \PhpMyAdmin\SqlParser\Component
-    {
-        /**
-         * Logical operators that can be used to delimit expressions.
-         *
-         * @var array
-         */
-        public static $DELIMITERS = array('&&', '||', 'AND', 'OR', 'XOR');
-        /**
-         * List of allowed reserved keywords in conditions.
-         *
-         * @var array
-         */
-        public static $ALLOWED_KEYWORDS = array('ALL' => 1, 'AND' => 1, 'BETWEEN' => 1, 'EXISTS' => 1, 'IF' => 1, 'IN' => 1, 'INTERVAL' => 1, 'IS' => 1, 'LIKE' => 1, 'MATCH' => 1, 'NOT IN' => 1, 'NOT NULL' => 1, 'NOT' => 1, 'NULL' => 1, 'OR' => 1, 'REGEXP' => 1, 'RLIKE' => 1, 'XOR' => 1);
-        /**
-         * Identifiers recognized.
-         *
-         * @var array
-         */
-        public $identifiers = array();
-        /**
-         * Whether this component is an operator.
-         *
-         * @var bool
-         */
-        public $isOperator = false;
-        /**
-         * The condition.
-         *
-         * @var string
-         */
-        public $expr;
-        /**
-         * Constructor.
-         *
-         * @param string $expr the condition or the operator
-         */
-        public function __construct($expr = null)
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser  the parser that serves as context
-         * @param \PhpMyAdmin\SqlParser\TokensList $list    the list of tokens that are being parsed
-         * @param array      $options parameters for parsing
-         *
-         * @return \PhpMyAdmin\SqlParser\Components\Condition[]
-         */
-        public static function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list, array $options = array())
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Components\Condition[] $component the component to be built
-         * @param array       $options   parameters for building
-         *
-         * @return string
-         */
-        public static function build($component, array $options = array())
-        {
-        }
-    }
-    /**
-     * Parses the create definition of a column or a key.
-     *
-     * Used for parsing `CREATE TABLE` statement.
-     *
-     * @category   Components
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class CreateDefinition extends \PhpMyAdmin\SqlParser\Component
-    {
-        /**
-         * All field options.
-         *
-         * @var array
-         */
-        public static $FIELD_OPTIONS = array(
-            // Tells the `OptionsArray` to not sort the options.
-            // See the note below.
-            '_UNSORTED' => true,
-            'NOT NULL' => 1,
-            'NULL' => 1,
-            'DEFAULT' => array(2, 'expr', array('breakOnAlias' => true)),
-            /* Following are not according to grammar, but MySQL happily accepts
-             * these at any location */
-            'CHARSET' => array(2, 'var'),
-            'COLLATE' => array(3, 'var'),
-            'AUTO_INCREMENT' => 3,
-            'PRIMARY' => 4,
-            'PRIMARY KEY' => 4,
-            'UNIQUE' => 4,
-            'UNIQUE KEY' => 4,
-            'COMMENT' => array(5, 'var'),
-            'COLUMN_FORMAT' => array(6, 'var'),
-            'ON UPDATE' => array(7, 'expr'),
-            // Generated columns options.
-            'GENERATED ALWAYS' => 8,
-            'AS' => array(9, 'expr', array('parenthesesDelimited' => true)),
-            'VIRTUAL' => 10,
-            'PERSISTENT' => 11,
-            'STORED' => 11,
-            'CHECK' => array(12, 'expr', array('parenthesesDelimited' => true)),
-            'INVISIBLE' => 13,
-            'ENFORCED' => 14,
-            'NOT' => 15,
-        );
-        /**
-         * The name of the new column.
-         *
-         * @var string
-         */
-        public $name;
-        /**
-         * Whether this field is a constraint or not.
-         *
-         * @var bool
-         */
-        public $isConstraint;
-        /**
-         * The data type of thew new column.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\DataType
-         */
-        public $type;
-        /**
-         * The key.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Key
-         */
-        public $key;
-        /**
-         * The table that is referenced.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Reference
-         */
-        public $references;
-        /**
-         * The options of this field.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\OptionsArray
-         */
-        public $options;
-        /**
-         * Constructor.
-         *
-         * @param string       $name         the name of the field
-         * @param \PhpMyAdmin\SqlParser\Components\OptionsArray $options      the options of this field
-         * @param \PhpMyAdmin\SqlParser\Components\DataType|\PhpMyAdmin\SqlParser\Components\Key $type         the data type of this field or the key
-         * @param bool         $isConstraint whether this field is a constraint or not
-         * @param \PhpMyAdmin\SqlParser\Components\Reference    $references   references
-         */
-        public function __construct($name = null, $options = null, $type = null, $isConstraint = false, $references = null)
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser  the parser that serves as context
-         * @param \PhpMyAdmin\SqlParser\TokensList $list    the list of tokens that are being parsed
-         * @param array      $options parameters for parsing
-         *
-         * @return \PhpMyAdmin\SqlParser\Components\CreateDefinition[]
-         */
-        public static function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list, array $options = array())
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Components\CreateDefinition|\PhpMyAdmin\SqlParser\Components\CreateDefinition[] $component the component to be built
-         * @param array                               $options   parameters for building
-         *
-         * @return string
-         */
-        public static function build($component, array $options = array())
-        {
-        }
-    }
-    /**
-     * Parses a data type.
-     *
-     * @category   Components
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class DataType extends \PhpMyAdmin\SqlParser\Component
-    {
-        /**
-         * All data type options.
-         *
-         * @var array
-         */
-        public static $DATA_TYPE_OPTIONS = array('BINARY' => 1, 'CHARACTER SET' => array(2, 'var'), 'CHARSET' => array(2, 'var'), 'COLLATE' => array(3, 'var'), 'UNSIGNED' => 4, 'ZEROFILL' => 5);
-        /**
-         * The name of the data type.
-         *
-         * @var string
-         */
-        public $name;
-        /**
-         * The parameters of this data type.
-         *
-         * Some data types have no parameters.
-         * Numeric types might have parameters for the maximum number of digits,
-         * precision, etc.
-         * String types might have parameters for the maximum length stored.
-         * `ENUM` and `SET` have parameters for possible values.
-         *
-         * For more information, check the MySQL manual.
-         *
-         * @var array
-         */
-        public $parameters = array();
-        /**
-         * The options of this data type.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\OptionsArray
-         */
-        public $options;
-        /**
-         * Constructor.
-         *
-         * @param string       $name       the name of this data type
-         * @param array        $parameters the parameters (size or possible values)
-         * @param \PhpMyAdmin\SqlParser\Components\OptionsArray $options    the options of this data type
-         */
-        public function __construct($name = null, array $parameters = array(), $options = null)
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser  the parser that serves as context
-         * @param \PhpMyAdmin\SqlParser\TokensList $list    the list of tokens that are being parsed
-         * @param array      $options parameters for parsing
-         *
-         * @return \PhpMyAdmin\SqlParser\Components\DataType|null
-         */
-        public static function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list, array $options = array())
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Components\DataType $component the component to be built
-         * @param array    $options   parameters for building
-         *
-         * @return string
-         */
-        public static function build($component, array $options = array())
-        {
-        }
-    }
-    /**
-     * Parses a reference to an expression (column, table or database name, function
-     * call, mathematical expression, etc.).
-     *
-     * @category   Components
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class Expression extends \PhpMyAdmin\SqlParser\Component
-    {
-        /**
-         * The name of this database.
-         *
-         * @var string
-         */
-        public $database;
-        /**
-         * The name of this table.
-         *
-         * @var string
-         */
-        public $table;
-        /**
-         * The name of the column.
-         *
-         * @var string
-         */
-        public $column;
-        /**
-         * The sub-expression.
-         *
-         * @var string
-         */
-        public $expr = '';
-        /**
-         * The alias of this expression.
-         *
-         * @var string
-         */
-        public $alias;
-        /**
-         * The name of the function.
-         *
-         * @var mixed
-         */
-        public $function;
-        /**
-         * The type of subquery.
-         *
-         * @var string
-         */
-        public $subquery;
-        /**
-         * Constructor.
-         *
-         * Syntax:
-         *     new Expression('expr')
-         *     new Expression('expr', 'alias')
-         *     new Expression('database', 'table', 'column')
-         *     new Expression('database', 'table', 'column', 'alias')
-         *
-         * If the database, table or column name is not required, pass an empty
-         * string.
-         *
-         * @param string $database The name of the database or the the expression.
-         *                         the the expression.
-         * @param string $table    The name of the table or the alias of the expression.
-         *                         the alias of the expression.
-         * @param string $column   the name of the column
-         * @param string $alias    the name of the alias
-         */
-        public function __construct($database = null, $table = null, $column = null, $alias = null)
-        {
-        }
-        /**
-         * Possible options:.
-         *
-         *      `field`
-         *
-         *          First field to be filled.
-         *          If this is not specified, it takes the value of `parseField`.
-         *
-         *      `parseField`
-         *
-         *          Specifies the type of the field parsed. It may be `database`,
-         *          `table` or `column`. These expressions may not include
-         *          parentheses.
-         *
-         *      `breakOnAlias`
-         *
-         *          If not empty, breaks when the alias occurs (it is not included).
-         *
-         *      `breakOnParentheses`
-         *
-         *          If not empty, breaks when the first parentheses occurs.
-         *
-         *      `parenthesesDelimited`
-         *
-         *          If not empty, breaks after last parentheses occurred.
-         *
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser  the parser that serves as context
-         * @param \PhpMyAdmin\SqlParser\TokensList $list    the list of tokens that are being parsed
-         * @param array      $options parameters for parsing
-         *
-         * @return \PhpMyAdmin\SqlParser\Components\Expression|null
-         * @throws \PhpMyAdmin\SqlParser\Exceptions\ParserException
-         */
-        public static function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list, array $options = array())
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Components\Expression|\PhpMyAdmin\SqlParser\Components\Expression[] $component the component to be built
-         * @param array                   $options   parameters for building
-         *
-         * @return string
-         */
-        public static function build($component, array $options = array())
-        {
-        }
-    }
-    /**
-     * Parses a list of expressions delimited by a comma.
-     *
-     * @category   Keywords
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class ExpressionArray extends \PhpMyAdmin\SqlParser\Component
-    {
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser  the parser that serves as context
-         * @param \PhpMyAdmin\SqlParser\TokensList $list    the list of tokens that are being parsed
-         * @param array      $options parameters for parsing
-         *
-         * @return \PhpMyAdmin\SqlParser\Components\Expression[]
-         * @throws \PhpMyAdmin\SqlParser\Exceptions\ParserException
-         */
-        public static function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list, array $options = array())
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Components\Expression[] $component the component to be built
-         * @param array        $options   parameters for building
-         *
-         * @return string
-         */
-        public static function build($component, array $options = array())
-        {
-        }
-    }
-    /**
-     * Parses a function call.
-     *
-     * @category   Keywords
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class FunctionCall extends \PhpMyAdmin\SqlParser\Component
-    {
-        /**
-         * The name of this function.
-         *
-         * @var string
-         */
-        public $name;
-        /**
-         * The list of parameters.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\ArrayObj
-         */
-        public $parameters;
-        /**
-         * Constructor.
-         *
-         * @param string         $name       the name of the function to be called
-         * @param array|\PhpMyAdmin\SqlParser\Components\ArrayObj $parameters the parameters of this function
-         */
-        public function __construct($name = null, $parameters = null)
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser  the parser that serves as context
-         * @param \PhpMyAdmin\SqlParser\TokensList $list    the list of tokens that are being parsed
-         * @param array      $options parameters for parsing
-         *
-         * @return \PhpMyAdmin\SqlParser\Components\FunctionCall
-         */
-        public static function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list, array $options = array())
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Components\FunctionCall $component the component to be built
-         * @param array        $options   parameters for building
-         *
-         * @return string
-         */
-        public static function build($component, array $options = array())
-        {
-        }
-    }
-    /**
-     * `GROUP BY` keyword parser.
-     *
-     * @category   Keywords
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class GroupKeyword extends \PhpMyAdmin\SqlParser\Component
-    {
-        /**
-         * The expression that is used for grouping.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression
-         */
-        public $expr;
-        /**
-         * Constructor.
-         *
-         * @param \PhpMyAdmin\SqlParser\Components\Expression $expr the expression that we are sorting by
-         */
-        public function __construct($expr = null)
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser  the parser that serves as context
-         * @param \PhpMyAdmin\SqlParser\TokensList $list    the list of tokens that are being parsed
-         * @param array      $options parameters for parsing
-         *
-         * @return \PhpMyAdmin\SqlParser\Components\GroupKeyword[]
-         */
-        public static function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list, array $options = array())
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Components\GroupKeyword|\PhpMyAdmin\SqlParser\Components\GroupKeyword[] $component the component to be built
-         * @param array                       $options   parameters for building
-         *
-         * @return string
-         */
-        public static function build($component, array $options = array())
-        {
-        }
-    }
-    /**
-     * Parses an Index hint.
-     *
-     * @category   Components
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class IndexHint extends \PhpMyAdmin\SqlParser\Component
-    {
-        /**
-         * The type of hint (USE/FORCE/IGNORE)
-         *
-         * @var string
-         */
-        public $type;
-        /**
-         * What the hint is for (INDEX/KEY)
-         *
-         * @var string
-         */
-        public $indexOrKey;
-        /**
-         * The clause for which this hint is (JOIN/ORDER BY/GROUP BY)
-         *
-         * @var string
-         */
-        public $for;
-        /**
-         * List of indexes in this hint
-         *
-         * @var array
-         */
-        public $indexes = array();
-        /**
-         * Constructor.
-         *
-         * @param string $type       the type of hint (USE/FORCE/IGNORE)
-         * @param string $indexOrKey What the hint is for (INDEX/KEY)
-         * @param string $for        the clause for which this hint is (JOIN/ORDER BY/GROUP BY)
-         * @param string $indexes    List of indexes in this hint
-         */
-        public function __construct(string $type = null, string $indexOrKey = null, string $for = null, array $indexes = array())
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser  the parser that serves as context
-         * @param \PhpMyAdmin\SqlParser\TokensList $list    the list of tokens that are being parsed
-         * @param array      $options parameters for parsing
-         *
-         * @return \PhpMyAdmin\SqlParser\Components\IndexHint|\PhpMyAdmin\SqlParser\Component[]
-         */
-        public static function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list, array $options = array())
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Components\ArrayObj|\PhpMyAdmin\SqlParser\Components\ArrayObj[] $component the component to be built
-         * @param array               $options   parameters for building
-         *
-         * @return string
-         */
-        public static function build($component, array $options = array())
-        {
-        }
-    }
-    /**
-     * `INTO` keyword parser.
-     *
-     * @category   Keywords
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class IntoKeyword extends \PhpMyAdmin\SqlParser\Component
-    {
-        /**
-         * FIELDS/COLUMNS Options for `SELECT...INTO` statements.
-         *
-         * @var array
-         */
-        public static $FIELDS_OPTIONS = array('TERMINATED BY' => array(1, 'expr'), 'OPTIONALLY' => 2, 'ENCLOSED BY' => array(3, 'expr'), 'ESCAPED BY' => array(4, 'expr'));
-        /**
-         * LINES Options for `SELECT...INTO` statements.
-         *
-         * @var array
-         */
-        public static $LINES_OPTIONS = array('STARTING BY' => array(1, 'expr'), 'TERMINATED BY' => array(2, 'expr'));
-        /**
-         * Type of target (OUTFILE or SYMBOL).
-         *
-         * @var string
-         */
-        public $type;
-        /**
-         * The destination, which can be a table or a file.
-         *
-         * @var string|\PhpMyAdmin\SqlParser\Components\Expression
-         */
-        public $dest;
-        /**
-         * The name of the columns.
-         *
-         * @var array
-         */
-        public $columns;
-        /**
-         * The values to be selected into (SELECT .. INTO @var1).
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression[]
-         */
-        public $values;
-        /**
-         * Options for FIELDS/COLUMNS keyword.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\OptionsArray
-         *
-         * @see static::$FIELDS_OPTIONS
-         */
-        public $fields_options;
-        /**
-         * Whether to use `FIELDS` or `COLUMNS` while building.
-         *
-         * @var bool
-         */
-        public $fields_keyword;
-        /**
-         * Options for OPTIONS keyword.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\OptionsArray
-         *
-         * @see static::$LINES_OPTIONS
-         */
-        public $lines_options;
-        /**
-         * Constructor.
-         *
-         * @param string            $type           type of destination (may be OUTFILE)
-         * @param string|\PhpMyAdmin\SqlParser\Components\Expression $dest           actual destination
-         * @param array             $columns        column list of destination
-         * @param array             $values         selected fields
-         * @param \PhpMyAdmin\SqlParser\Components\OptionsArray      $fields_options options for FIELDS/COLUMNS keyword
-         * @param bool              $fields_keyword options for OPTIONS keyword
-         */
-        public function __construct($type = null, $dest = null, $columns = null, $values = null, $fields_options = null, $fields_keyword = null)
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser  the parser that serves as context
-         * @param \PhpMyAdmin\SqlParser\TokensList $list    the list of tokens that are being parsed
-         * @param array      $options parameters for parsing
-         *
-         * @return \PhpMyAdmin\SqlParser\Components\IntoKeyword
-         */
-        public static function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list, array $options = array())
-        {
-        }
-        public function parseFileOptions(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list, $keyword = 'FIELDS')
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Components\IntoKeyword $component the component to be built
-         * @param array       $options   parameters for building
-         *
-         * @return string
-         */
-        public static function build($component, array $options = array())
-        {
-        }
-    }
-    /**
-     * `JOIN` keyword parser.
-     *
-     * @category   Keywords
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class JoinKeyword extends \PhpMyAdmin\SqlParser\Component
-    {
-        /**
-         * Types of join.
-         *
-         * @var array
-         */
-        public static $JOINS = array('CROSS JOIN' => 'CROSS', 'FULL JOIN' => 'FULL', 'FULL OUTER JOIN' => 'FULL', 'INNER JOIN' => 'INNER', 'JOIN' => 'JOIN', 'LEFT JOIN' => 'LEFT', 'LEFT OUTER JOIN' => 'LEFT', 'RIGHT JOIN' => 'RIGHT', 'RIGHT OUTER JOIN' => 'RIGHT', 'NATURAL JOIN' => 'NATURAL', 'NATURAL LEFT JOIN' => 'NATURAL LEFT', 'NATURAL RIGHT JOIN' => 'NATURAL RIGHT', 'NATURAL LEFT OUTER JOIN' => 'NATURAL LEFT OUTER', 'NATURAL RIGHT OUTER JOIN' => 'NATURAL RIGHT OUTER', 'STRAIGHT_JOIN' => 'STRAIGHT');
-        /**
-         * Type of this join.
-         *
-         * @see static::$JOINS
-         *
-         * @var string
-         */
-        public $type;
-        /**
-         * Join expression.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression
-         */
-        public $expr;
-        /**
-         * Join conditions.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Condition[]
-         */
-        public $on;
-        /**
-         * Columns in Using clause.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\ArrayObj
-         */
-        public $using;
-        /**
-         * Constructor.
-         *
-         * @param string      $type  Join type
-         * @param \PhpMyAdmin\SqlParser\Components\Expression  $expr  join expression
-         * @param \PhpMyAdmin\SqlParser\Components\Condition[] $on    join conditions
-         * @param \PhpMyAdmin\SqlParser\Components\ArrayObj    $using columns joined
-         *
-         * @see JoinKeyword::$JOINS
-         */
-        public function __construct($type = null, $expr = null, $on = null, $using = null)
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser  the parser that serves as context
-         * @param \PhpMyAdmin\SqlParser\TokensList $list    the list of tokens that are being parsed
-         * @param array      $options parameters for parsing
-         *
-         * @return \PhpMyAdmin\SqlParser\Components\JoinKeyword[]
-         */
-        public static function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list, array $options = array())
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Components\JoinKeyword[] $component the component to be built
-         * @param array         $options   parameters for building
-         *
-         * @return string
-         */
-        public static function build($component, array $options = array())
-        {
-        }
-    }
-    /**
-     * Parses the definition of a key.
-     *
-     * Used for parsing `CREATE TABLE` statement.
-     *
-     * @category   Components
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class Key extends \PhpMyAdmin\SqlParser\Component
-    {
-        /**
-         * All key options.
-         *
-         * @var array
-         */
-        public static $KEY_OPTIONS = array(
-            'KEY_BLOCK_SIZE' => array(1, 'var='),
-            'USING' => array(2, 'var'),
-            'WITH PARSER' => array(3, 'var'),
-            'COMMENT' => array(4, 'var'),
-            // MariaDB options
-            'CLUSTERING' => array(4, 'var='),
-            'ENGINE_ATTRIBUTE' => array(5, 'var='),
-            'SECONDARY_ENGINE_ATTRIBUTE' => array(5, 'var='),
-            // MariaDB & MySQL options
-            'VISIBLE' => 6,
-            'INVISIBLE' => 6,
-            // MariaDB options
-            'IGNORED' => 10,
-            'NOT IGNORED' => 10,
-        );
-        /**
-         * The name of this key.
-         *
-         * @var string
-         */
-        public $name;
-        /**
-         * The key columns
-         *
-         * @var array[]
-         * @phpstan-var array{name?: string, length?: int, order?: string}[]
-         */
-        public $columns;
-        /**
-         * The type of this key.
-         *
-         * @var string
-         */
-        public $type;
-        /**
-         * The expression if the Key is not using column names
-         *
-         * @var string|null
-         */
-        public $expr = null;
-        /**
-         * The options of this key or null if none where found.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\OptionsArray|null
-         */
-        public $options;
-        /**
-         * Constructor.
-         *
-         * @param string       $name    the name of the key
-         * @param array        $columns the columns covered by this key
-         * @param string       $type    the type of this key
-         * @param \PhpMyAdmin\SqlParser\Components\OptionsArray $options the options of this key
-         */
-        public function __construct($name = null, array $columns = array(), $type = null, $options = null)
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser  the parser that serves as context
-         * @param \PhpMyAdmin\SqlParser\TokensList $list    the list of tokens that are being parsed
-         * @param array      $options parameters for parsing
-         *
-         * @return \PhpMyAdmin\SqlParser\Components\Key
-         */
-        public static function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list, array $options = array())
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Components\Key   $component the component to be built
-         * @param array $options   parameters for building
-         *
-         * @return string
-         */
-        public static function build($component, array $options = array())
-        {
-        }
-    }
-    /**
-     * `LIMIT` keyword parser.
-     *
-     * @category   Keywords
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class Limit extends \PhpMyAdmin\SqlParser\Component
-    {
-        /**
-         * The number of rows skipped.
-         *
-         * @var int
-         */
-        public $offset;
-        /**
-         * The number of rows to be returned.
-         *
-         * @var int
-         */
-        public $rowCount;
-        /**
-         * Constructor.
-         *
-         * @param int $rowCount the row count
-         * @param int $offset   the offset
-         */
-        public function __construct($rowCount = 0, $offset = 0)
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser  the parser that serves as context
-         * @param \PhpMyAdmin\SqlParser\TokensList $list    the list of tokens that are being parsed
-         * @param array      $options parameters for parsing
-         *
-         * @return \PhpMyAdmin\SqlParser\Components\Limit
-         */
-        public static function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list, array $options = array())
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Components\Limit $component the component to be built
-         * @param array $options   parameters for building
-         *
-         * @return string
-         */
-        public static function build($component, array $options = array())
-        {
-        }
-    }
-    /**
-     * Parses a reference to a LOCK expression.
-     *
-     * @category   Components
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class LockExpression extends \PhpMyAdmin\SqlParser\Component
-    {
-        /**
-         * The table to be locked.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression
-         */
-        public $table;
-        /**
-         * The type of lock to be applied.
-         *
-         * @var string
-         */
-        public $type;
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser  the parser that serves as context
-         * @param \PhpMyAdmin\SqlParser\TokensList $list    the list of tokens that are being parsed
-         * @param array      $options parameters for parsing
-         *
-         * @return \PhpMyAdmin\SqlParser\Components\CaseExpression
-         */
-        public static function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list, array $options = array())
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Components\LockExpression|\PhpMyAdmin\SqlParser\Components\LockExpression[] $component the component to be built
-         * @param array                           $options   parameters for building
-         *
-         * @return string
-         */
-        public static function build($component, array $options = array())
-        {
-        }
-    }
-    /**
-     * Parses a list of options.
-     *
-     * @category   Components
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class OptionsArray extends \PhpMyAdmin\SqlParser\Component
-    {
-        /**
-         * ArrayObj of selected options.
-         *
-         * @var array
-         */
-        public $options = array();
-        /**
-         * Constructor.
-         *
-         * @param array $options The array of options. Options that have a value
-         *                       must be an array with at least two keys `name` and
-         *                       `expr` or `value`.
-         */
-        public function __construct(array $options = array())
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser  the parser that serves as context
-         * @param \PhpMyAdmin\SqlParser\TokensList $list    the list of tokens that are being parsed
-         * @param array      $options parameters for parsing
-         *
-         * @return \PhpMyAdmin\SqlParser\Components\OptionsArray
-         */
-        public static function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list, array $options = array())
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Components\OptionsArray $component the component to be built
-         * @param array        $options   parameters for building
-         *
-         * @return string
-         */
-        public static function build($component, array $options = array())
-        {
-        }
-        /**
-         * Checks if it has the specified option and returns it value or true.
-         *
-         * @param string $key     the key to be checked
-         * @param bool   $getExpr Gets the expression instead of the value.
-         *                        The value is the processed form of the expression.
-         *
-         * @return mixed
-         */
-        public function has($key, $getExpr = false)
-        {
-        }
-        /**
-         * Removes the option from the array.
-         *
-         * @param string $key the key to be removed
-         *
-         * @return bool whether the key was found and deleted or not
-         */
-        public function remove($key)
-        {
-        }
-        /**
-         * Merges the specified options with these ones. Values with same ID will be
-         * replaced.
-         *
-         * @param array|\PhpMyAdmin\SqlParser\Components\OptionsArray $options the options to be merged
-         */
-        public function merge($options)
-        {
-        }
-        /**
-         * Checks tf there are no options set.
-         *
-         * @return bool
-         */
-        public function isEmpty()
-        {
-        }
-    }
-    /**
-     * `ORDER BY` keyword parser.
-     *
-     * @category   Keywords
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class OrderKeyword extends \PhpMyAdmin\SqlParser\Component
-    {
-        /**
-         * The expression that is used for ordering.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression
-         */
-        public $expr;
-        /**
-         * The order type.
-         *
-         * @var string
-         */
-        public $type;
-        /**
-         * Constructor.
-         *
-         * @param \PhpMyAdmin\SqlParser\Components\Expression $expr the expression that we are sorting by
-         * @param string     $type the sorting type
-         */
-        public function __construct($expr = null, $type = 'ASC')
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser  the parser that serves as context
-         * @param \PhpMyAdmin\SqlParser\TokensList $list    the list of tokens that are being parsed
-         * @param array      $options parameters for parsing
-         *
-         * @return \PhpMyAdmin\SqlParser\Components\OrderKeyword[]
-         */
-        public static function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list, array $options = array())
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Components\OrderKeyword|\PhpMyAdmin\SqlParser\Components\OrderKeyword[] $component the component to be built
-         * @param array                       $options   parameters for building
-         *
-         * @return string
-         */
-        public static function build($component, array $options = array())
-        {
-        }
-    }
-    /**
-     * The definition of a parameter of a function or procedure.
-     *
-     * @category   Components
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class ParameterDefinition extends \PhpMyAdmin\SqlParser\Component
-    {
-        /**
-         * The name of the new column.
-         *
-         * @var string
-         */
-        public $name;
-        /**
-         * Parameter's direction (IN, OUT or INOUT).
-         *
-         * @var string
-         */
-        public $inOut;
-        /**
-         * The data type of thew new column.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\DataType
-         */
-        public $type;
-        /**
-         * Constructor.
-         *
-         * @param string   $name  parameter's name
-         * @param string   $inOut parameter's directional type (IN / OUT or None)
-         * @param \PhpMyAdmin\SqlParser\Components\DataType $type  parameter's type
-         */
-        public function __construct($name = null, $inOut = null, $type = null)
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser  the parser that serves as context
-         * @param \PhpMyAdmin\SqlParser\TokensList $list    the list of tokens that are being parsed
-         * @param array      $options parameters for parsing
-         *
-         * @return \PhpMyAdmin\SqlParser\Components\ParameterDefinition[]
-         */
-        public static function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list, array $options = array())
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Components\ParameterDefinition[] $component the component to be built
-         * @param array                 $options   parameters for building
-         *
-         * @return string
-         */
-        public static function build($component, array $options = array())
-        {
-        }
-    }
-    /**
-     * Parses the create definition of a partition.
-     *
-     * Used for parsing `CREATE TABLE` statement.
-     *
-     * @category   Components
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class PartitionDefinition extends \PhpMyAdmin\SqlParser\Component
-    {
-        /**
-         * All field options.
-         *
-         * @var array
-         */
-        public static $OPTIONS = array('STORAGE ENGINE' => array(1, 'var'), 'ENGINE' => array(1, 'var'), 'COMMENT' => array(2, 'var'), 'DATA DIRECTORY' => array(3, 'var'), 'INDEX DIRECTORY' => array(4, 'var'), 'MAX_ROWS' => array(5, 'var'), 'MIN_ROWS' => array(6, 'var'), 'TABLESPACE' => array(7, 'var'), 'NODEGROUP' => array(8, 'var'));
-        /**
-         * Whether this entry is a subpartition or a partition.
-         *
-         * @var bool
-         */
-        public $isSubpartition;
-        /**
-         * The name of this partition.
-         *
-         * @var string
-         */
-        public $name;
-        /**
-         * The type of this partition (what follows the `VALUES` keyword).
-         *
-         * @var string
-         */
-        public $type;
-        /**
-         * The expression used to defined this partition.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression|string
-         */
-        public $expr;
-        /**
-         * The subpartitions of this partition.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\PartitionDefinition[]
-         */
-        public $subpartitions;
-        /**
-         * The options of this field.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\OptionsArray
-         */
-        public $options;
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser  the parser that serves as context
-         * @param \PhpMyAdmin\SqlParser\TokensList $list    the list of tokens that are being parsed
-         * @param array      $options parameters for parsing
-         *
-         * @return \PhpMyAdmin\SqlParser\Components\PartitionDefinition
-         */
-        public static function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list, array $options = array())
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Components\PartitionDefinition|\PhpMyAdmin\SqlParser\Components\PartitionDefinition[] $component the component to be built
-         * @param array                                     $options   parameters for building
-         *
-         * @return string
-         */
-        public static function build($component, array $options = array())
-        {
-        }
-    }
-    /**
-     * `REFERENCES` keyword parser.
-     *
-     * @category   Keywords
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class Reference extends \PhpMyAdmin\SqlParser\Component
-    {
-        /**
-         * All references options.
-         *
-         * @var array
-         */
-        public static $REFERENCES_OPTIONS = array('MATCH' => array(1, 'var'), 'ON DELETE' => array(2, 'var'), 'ON UPDATE' => array(3, 'var'));
-        /**
-         * The referenced table.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression
-         */
-        public $table;
-        /**
-         * The referenced columns.
-         *
-         * @var array
-         */
-        public $columns;
-        /**
-         * The options of the referencing.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\OptionsArray
-         */
-        public $options;
-        /**
-         * Constructor.
-         *
-         * @param \PhpMyAdmin\SqlParser\Components\Expression   $table   the name of the table referenced
-         * @param array        $columns the columns referenced
-         * @param \PhpMyAdmin\SqlParser\Components\OptionsArray $options the options
-         */
-        public function __construct($table = null, array $columns = array(), $options = null)
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser  the parser that serves as context
-         * @param \PhpMyAdmin\SqlParser\TokensList $list    the list of tokens that are being parsed
-         * @param array      $options parameters for parsing
-         *
-         * @return \PhpMyAdmin\SqlParser\Components\Reference
-         */
-        public static function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list, array $options = array())
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Components\Reference $component the component to be built
-         * @param array     $options   parameters for building
-         *
-         * @return string
-         */
-        public static function build($component, array $options = array())
-        {
-        }
-    }
-    /**
-     * `RENAME TABLE` keyword parser.
-     *
-     * @category   Keywords
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class RenameOperation extends \PhpMyAdmin\SqlParser\Component
-    {
-        /**
-         * The old table name.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression
-         */
-        public $old;
-        /**
-         * The new table name.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression
-         */
-        public $new;
-        /**
-         * Constructor.
-         *
-         * @param \PhpMyAdmin\SqlParser\Components\Expression $old old expression
-         * @param \PhpMyAdmin\SqlParser\Components\Expression $new new expression containing new name
-         */
-        public function __construct($old = null, $new = null)
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser  the parser that serves as context
-         * @param \PhpMyAdmin\SqlParser\TokensList $list    the list of tokens that are being parsed
-         * @param array      $options parameters for parsing
-         *
-         * @return \PhpMyAdmin\SqlParser\Components\RenameOperation[]
-         */
-        public static function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list, array $options = array())
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Components\RenameOperation $component the component to be built
-         * @param array           $options   parameters for building
-         *
-         * @return string
-         */
-        public static function build($component, array $options = array())
-        {
-        }
-    }
-    /**
-     * `SET` keyword parser.
-     *
-     * @category   Keywords
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class SetOperation extends \PhpMyAdmin\SqlParser\Component
-    {
-        /**
-         * The name of the column that is being updated.
-         *
-         * @var string
-         */
-        public $column;
-        /**
-         * The new value.
-         *
-         * @var string
-         */
-        public $value;
-        /**
-         * Constructor.
-         *
-         * @param string $column Field's name..
-         * @param string $value  new value
-         */
-        public function __construct($column = '', $value = '')
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser  the parser that serves as context
-         * @param \PhpMyAdmin\SqlParser\TokensList $list    the list of tokens that are being parsed
-         * @param array      $options parameters for parsing
-         *
-         * @return \PhpMyAdmin\SqlParser\Components\SetOperation[]
-         */
-        public static function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list, array $options = array())
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Components\SetOperation|\PhpMyAdmin\SqlParser\Components\SetOperation[] $component the component to be built
-         * @param array                       $options   parameters for building
-         *
-         * @return string
-         */
-        public static function build($component, array $options = array())
-        {
-        }
-    }
-    /**
-     * `UNION` keyword builder.
-     *
-     * @category   Keywords
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class UnionKeyword extends \PhpMyAdmin\SqlParser\Component
-    {
-        /**
-         * @param array<\PhpMyAdmin\SqlParser\Components\UnionKeyword[]> $component the component to be built
-         * @param array                 $options   parameters for building
-         *
-         * @return string
-         */
-        public static function build($component, array $options = array())
-        {
-        }
-    }
-}
-namespace PhpMyAdmin\SqlParser {
-    /**
-     * Holds the configuration of the context that is currently used.
-     *
-     * @category Contexts
-     *
-     * @license  https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    abstract class Context
-    {
-        /**
-         * The maximum length of a keyword.
-         *
-         * @see static::$TOKEN_KEYWORD
-         *
-         * @var int
-         */
-        const KEYWORD_MAX_LENGTH = 30;
-        /**
-         * The maximum length of a label.
-         *
-         * @see static::$TOKEN_LABEL
-         * Ref: https://dev.mysql.com/doc/refman/5.7/en/statement-labels.html
-         *
-         * @var int
-         */
-        const LABEL_MAX_LENGTH = 16;
-        /**
-         * The maximum length of an operator.
-         *
-         * @see static::$TOKEN_OPERATOR
-         *
-         * @var int
-         */
-        const OPERATOR_MAX_LENGTH = 4;
-        /**
-         * The name of the default content.
-         *
-         * @var string
-         */
-        public static $defaultContext = '\PhpMyAdmin\SqlParser\Contexts\ContextMySql50700';
-        /**
-         * The name of the loaded context.
-         *
-         * @var string
-         */
-        public static $loadedContext = '\PhpMyAdmin\SqlParser\Contexts\ContextMySql50700';
-        /**
-         * The prefix concatenated to the context name when an incomplete class name
-         * is specified.
-         *
-         * @var string
-         */
-        public static $contextPrefix = '\PhpMyAdmin\SqlParser\Contexts\Context';
-        /**
-         * List of keywords.
-         *
-         * Because, PHP's associative arrays are basically hash tables, it is more
-         * efficient to store keywords as keys instead of values.
-         *
-         * The value associated to each keyword represents its flags.
-         *
-         * @see Token::FLAG_KEYWORD_RESERVED Token::FLAG_KEYWORD_COMPOSED
-         *      Token::FLAG_KEYWORD_DATA_TYPE Token::FLAG_KEYWORD_KEY
-         *      Token::FLAG_KEYWORD_FUNCTION
-         *
-         * Elements are sorted by flags, length and keyword.
-         *
-         * @var array
-         */
-        public static $KEYWORDS = array();
-        /**
-         * List of operators and their flags.
-         *
-         * @var array
-         */
-        public static $OPERATORS = array(
-            // Some operators (*, =) may have ambiguous flags, because they depend on
-            // the context they are being used in.
-            // For example: 1. SELECT * FROM table; # SQL specific (wildcard)
-            //                 SELECT 2 * 3;        # arithmetic
-            //              2. SELECT * FROM table WHERE foo = 'bar';
-            //                 SET @i = 0;
-            // @see Token::FLAG_OPERATOR_ARITHMETIC
-            '%' => 1,
-            '*' => 1,
-            '+' => 1,
-            '-' => 1,
-            '/' => 1,
-            // @see Token::FLAG_OPERATOR_LOGICAL
-            '!' => 2,
-            '!=' => 2,
-            '&&' => 2,
-            '<' => 2,
-            '<=' => 2,
-            '<=>' => 2,
-            '<>' => 2,
-            '=' => 2,
-            '>' => 2,
-            '>=' => 2,
-            '||' => 2,
-            // @see Token::FLAG_OPERATOR_BITWISE
-            '&' => 4,
-            '<<' => 4,
-            '>>' => 4,
-            '^' => 4,
-            '|' => 4,
-            '~' => 4,
-            // @see Token::FLAG_OPERATOR_ASSIGNMENT
-            ':=' => 8,
-            // @see Token::FLAG_OPERATOR_SQL
-            '(' => 16,
-            ')' => 16,
-            '.' => 16,
-            ',' => 16,
-            ';' => 16,
-        );
-        /**
-         * The mode of the MySQL server that will be used in lexing, parsing and
-         * building the statements.
-         *
-         * @var int
-         */
-        public static $MODE = 0;
-        /*
-         * Server SQL Modes
-         * https://dev.mysql.com/doc/refman/5.0/en/sql-mode.html
-         */
-        // Compatibility mode for Microsoft's SQL server.
-        // This is the equivalent of ANSI_QUOTES.
-        const SQL_MODE_COMPAT_MYSQL = 2;
-        // https://dev.mysql.com/doc/refman/5.0/en/sql-mode.html#sqlmode_allow_invalid_dates
-        const SQL_MODE_ALLOW_INVALID_DATES = 1;
-        // https://dev.mysql.com/doc/refman/5.0/en/sql-mode.html#sqlmode_ansi_quotes
-        const SQL_MODE_ANSI_QUOTES = 2;
-        // https://dev.mysql.com/doc/refman/5.0/en/sql-mode.html#sqlmode_error_for_division_by_zero
-        const SQL_MODE_ERROR_FOR_DIVISION_BY_ZERO = 4;
-        // https://dev.mysql.com/doc/refman/5.0/en/sql-mode.html#sqlmode_high_not_precedence
-        const SQL_MODE_HIGH_NOT_PRECEDENCE = 8;
-        // https://dev.mysql.com/doc/refman/5.0/en/sql-mode.html#sqlmode_ignore_space
-        const SQL_MODE_IGNORE_SPACE = 16;
-        // https://dev.mysql.com/doc/refman/5.0/en/sql-mode.html#sqlmode_no_auto_create_user
-        const SQL_MODE_NO_AUTO_CREATE_USER = 32;
-        // https://dev.mysql.com/doc/refman/5.0/en/sql-mode.html#sqlmode_no_auto_value_on_zero
-        const SQL_MODE_NO_AUTO_VALUE_ON_ZERO = 64;
-        // https://dev.mysql.com/doc/refman/5.0/en/sql-mode.html#sqlmode_no_backslash_escapes
-        const SQL_MODE_NO_BACKSLASH_ESCAPES = 128;
-        // https://dev.mysql.com/doc/refman/5.0/en/sql-mode.html#sqlmode_no_dir_in_create
-        const SQL_MODE_NO_DIR_IN_CREATE = 256;
-        // https://dev.mysql.com/doc/refman/5.0/en/sql-mode.html#sqlmode_no_dir_in_create
-        const SQL_MODE_NO_ENGINE_SUBSTITUTION = 512;
-        // https://dev.mysql.com/doc/refman/5.0/en/sql-mode.html#sqlmode_no_field_options
-        const SQL_MODE_NO_FIELD_OPTIONS = 1024;
-        // https://dev.mysql.com/doc/refman/5.0/en/sql-mode.html#sqlmode_no_key_options
-        const SQL_MODE_NO_KEY_OPTIONS = 2048;
-        // https://dev.mysql.com/doc/refman/5.0/en/sql-mode.html#sqlmode_no_table_options
-        const SQL_MODE_NO_TABLE_OPTIONS = 4096;
-        // https://dev.mysql.com/doc/refman/5.0/en/sql-mode.html#sqlmode_no_unsigned_subtraction
-        const SQL_MODE_NO_UNSIGNED_SUBTRACTION = 8192;
-        // https://dev.mysql.com/doc/refman/5.0/en/sql-mode.html#sqlmode_no_zero_date
-        const SQL_MODE_NO_ZERO_DATE = 16384;
-        // https://dev.mysql.com/doc/refman/5.0/en/sql-mode.html#sqlmode_no_zero_in_date
-        const SQL_MODE_NO_ZERO_IN_DATE = 32768;
-        // https://dev.mysql.com/doc/refman/5.0/en/sql-mode.html#sqlmode_only_full_group_by
-        const SQL_MODE_ONLY_FULL_GROUP_BY = 65536;
-        // https://dev.mysql.com/doc/refman/5.0/en/sql-mode.html#sqlmode_pipes_as_concat
-        const SQL_MODE_PIPES_AS_CONCAT = 131072;
-        // https://dev.mysql.com/doc/refman/5.0/en/sql-mode.html#sqlmode_real_as_float
-        const SQL_MODE_REAL_AS_FLOAT = 262144;
-        // https://dev.mysql.com/doc/refman/5.0/en/sql-mode.html#sqlmode_strict_all_tables
-        const SQL_MODE_STRICT_ALL_TABLES = 524288;
-        // https://dev.mysql.com/doc/refman/5.0/en/sql-mode.html#sqlmode_strict_trans_tables
-        const SQL_MODE_STRICT_TRANS_TABLES = 1048576;
-        // Custom modes.
-        // The table and column names and any other field that must be escaped will
-        // not be.
-        // Reserved keywords are being escaped regardless this mode is used or not.
-        const SQL_MODE_NO_ENCLOSING_QUOTES = 1073741824;
-        /*
-         * Combination SQL Modes
-         * https://dev.mysql.com/doc/refman/5.0/en/sql-mode.html#sql-mode-combo
-         */
-        // REAL_AS_FLOAT, PIPES_AS_CONCAT, ANSI_QUOTES, IGNORE_SPACE
-        const SQL_MODE_ANSI = 393234;
-        // PIPES_AS_CONCAT, ANSI_QUOTES, IGNORE_SPACE, NO_KEY_OPTIONS,
-        // NO_TABLE_OPTIONS, NO_FIELD_OPTIONS,
-        const SQL_MODE_DB2 = 138258;
-        // PIPES_AS_CONCAT, ANSI_QUOTES, IGNORE_SPACE, NO_KEY_OPTIONS,
-        // NO_TABLE_OPTIONS, NO_FIELD_OPTIONS, NO_AUTO_CREATE_USER
-        const SQL_MODE_MAXDB = 138290;
-        // PIPES_AS_CONCAT, ANSI_QUOTES, IGNORE_SPACE, NO_KEY_OPTIONS,
-        // NO_TABLE_OPTIONS, NO_FIELD_OPTIONS
-        const SQL_MODE_MSSQL = 138258;
-        // PIPES_AS_CONCAT, ANSI_QUOTES, IGNORE_SPACE, NO_KEY_OPTIONS,
-        // NO_TABLE_OPTIONS, NO_FIELD_OPTIONS, NO_AUTO_CREATE_USER
-        const SQL_MODE_ORACLE = 138290;
-        // PIPES_AS_CONCAT, ANSI_QUOTES, IGNORE_SPACE, NO_KEY_OPTIONS,
-        // NO_TABLE_OPTIONS, NO_FIELD_OPTIONS
-        const SQL_MODE_POSTGRESQL = 138258;
-        // STRICT_TRANS_TABLES, STRICT_ALL_TABLES, NO_ZERO_IN_DATE, NO_ZERO_DATE,
-        // ERROR_FOR_DIVISION_BY_ZERO, NO_AUTO_CREATE_USER
-        const SQL_MODE_TRADITIONAL = 1622052;
-        // -------------------------------------------------------------------------
-        // Keyword.
-        /**
-         * Checks if the given string is a keyword.
-         *
-         * @param string $str        string to be checked
-         * @param bool   $isReserved checks if the keyword is reserved
-         *
-         * @return int|null
-         */
-        public static function isKeyword($str, $isReserved = false)
-        {
-        }
-        // -------------------------------------------------------------------------
-        // Operator.
-        /**
-         * Checks if the given string is an operator.
-         *
-         * @param string $str string to be checked
-         *
-         * @return int|null the appropriate flag for the operator
-         */
-        public static function isOperator($str)
-        {
-        }
-        // -------------------------------------------------------------------------
-        // Whitespace.
-        /**
-         * Checks if the given character is a whitespace.
-         *
-         * @param string $str string to be checked
-         *
-         * @return bool
-         */
-        public static function isWhitespace($str)
-        {
-        }
-        // -------------------------------------------------------------------------
-        // Comment.
-        /**
-         * Checks if the given string is the beginning of a whitespace.
-         *
-         * @param string $str string to be checked
-         * @param mixed  $end
-         *
-         * @return int|null the appropriate flag for the comment type
-         */
-        public static function isComment($str, $end = false)
-        {
-        }
-        // -------------------------------------------------------------------------
-        // Bool.
-        /**
-         * Checks if the given string is a boolean value.
-         * This actually check only for `TRUE` and `FALSE` because `1` or `0` are
-         * actually numbers and are parsed by specific methods.
-         *
-         * @param string $str string to be checked
-         *
-         * @return bool
-         */
-        public static function isBool($str)
-        {
-        }
-        // -------------------------------------------------------------------------
-        // Number.
-        /**
-         * Checks if the given character can be a part of a number.
-         *
-         * @param string $str string to be checked
-         *
-         * @return bool
-         */
-        public static function isNumber($str)
-        {
-        }
-        // -------------------------------------------------------------------------
-        // Symbol.
-        /**
-         * Checks if the given character is the beginning of a symbol. A symbol
-         * can be either a variable or a field name.
-         *
-         * @param string $str string to be checked
-         *
-         * @return int|null the appropriate flag for the symbol type
-         */
-        public static function isSymbol($str)
-        {
-        }
-        // -------------------------------------------------------------------------
-        // String.
-        /**
-         * Checks if the given character is the beginning of a string.
-         *
-         * @param string $str string to be checked
-         *
-         * @return int|null the appropriate flag for the string type
-         */
-        public static function isString($str)
-        {
-        }
-        // -------------------------------------------------------------------------
-        // Delimiter.
-        /**
-         * Checks if the given character can be a separator for two lexeme.
-         *
-         * @param string $str string to be checked
-         *
-         * @return bool
-         */
-        public static function isSeparator($str)
-        {
-        }
-        /**
-         * Loads the specified context.
-         *
-         * Contexts may be used by accessing the context directly.
-         *
-         * @param string $context name of the context or full class name that
-         *                        defines the context
-         *
-         * @throws \PhpMyAdmin\SqlParser\Exceptions\LoaderException if the specified context doesn't exist
-         */
-        public static function load($context = '')
-        {
-        }
-        /**
-         * Loads the context with the closest version to the one specified.
-         *
-         * The closest context is found by replacing last digits with zero until one
-         * is loaded successfully.
-         *
-         * @see Context::load()
-         *
-         * @param string $context name of the context or full class name that
-         *                        defines the context
-         *
-         * @return string|null The loaded context. `null` if no context was loaded.
-         */
-        public static function loadClosest($context = '')
-        {
-        }
-        /**
-         * Sets the SQL mode.
-         *
-         * @param string $mode The list of modes. If empty, the mode is reset.
-         */
-        public static function setMode($mode = '')
-        {
-        }
-        /**
-         * Escapes the symbol by adding surrounding backticks.
-         *
-         * @param array|string $str   the string to be escaped
-         * @param string       $quote quote to be used when escaping
-         *
-         * @return string|array
-         */
-        public static function escape($str, $quote = '`')
-        {
-        }
-        /**
-         * Returns char used to quote identifiers based on currently set SQL Mode (ie. standard or ANSI_QUOTES)
-         * @return string either " (double quote, ansi_quotes mode) or ` (backtick, standard mode)
-         */
-        public static function getIdentifierQuote()
-        {
-        }
-        /**
-         * Function verifies that given SQL Mode constant is currently set
-         *
-         * @return boolean false on empty param, true/false on given constant/int value
-         * @param int $flag for example Context::SQL_MODE_ANSI_QUOTES
-         */
-        public static function hasMode($flag = null)
-        {
-        }
-    }
-}
-namespace PhpMyAdmin\SqlParser\Contexts {
-    /**
-     * Context for MariaDB 10.0.
-     *
-     * @category   Contexts
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class ContextMariaDb100000 extends \PhpMyAdmin\SqlParser\Context
-    {
-        /**
-         * List of keywords.
-         *
-         * The value associated to each keyword represents its flags.
-         *
-         * @see Token::FLAG_KEYWORD_RESERVED Token::FLAG_KEYWORD_COMPOSED
-         *      Token::FLAG_KEYWORD_DATA_TYPE Token::FLAG_KEYWORD_KEY
-         *      Token::FLAG_KEYWORD_FUNCTION
-         *
-         * @var array
-         */
-        public static $KEYWORDS = array('AT' => 1, 'DO' => 1, 'IO' => 1, 'NO' => 1, 'XA' => 1, 'ANY' => 1, 'CPU' => 1, 'END' => 1, 'IPC' => 1, 'NDB' => 1, 'NEW' => 1, 'ONE' => 1, 'ROW' => 1, 'BOOL' => 1, 'BYTE' => 1, 'CODE' => 1, 'CUBE' => 1, 'DATA' => 1, 'DISK' => 1, 'ENDS' => 1, 'FAST' => 1, 'FILE' => 1, 'FULL' => 1, 'HASH' => 1, 'HELP' => 1, 'HOST' => 1, 'LAST' => 1, 'LESS' => 1, 'LIST' => 1, 'LOGS' => 1, 'MODE' => 1, 'NAME' => 1, 'NEXT' => 1, 'NONE' => 1, 'OPEN' => 1, 'PAGE' => 1, 'PORT' => 1, 'PREV' => 1, 'ROWS' => 1, 'SLOW' => 1, 'SOME' => 1, 'STOP' => 1, 'THAN' => 1, 'TYPE' => 1, 'VIEW' => 1, 'WAIT' => 1, 'WORK' => 1, 'X509' => 1, 'AFTER' => 1, 'BEGIN' => 1, 'BLOCK' => 1, 'BTREE' => 1, 'CACHE' => 1, 'CHAIN' => 1, 'CLOSE' => 1, 'ERROR' => 1, 'EVENT' => 1, 'EVERY' => 1, 'FIRST' => 1, 'FIXED' => 1, 'FLUSH' => 1, 'FOUND' => 1, 'HOSTS' => 1, 'LEVEL' => 1, 'LOCAL' => 1, 'LOCKS' => 1, 'MERGE' => 1, 'MUTEX' => 1, 'NAMES' => 1, 'NCHAR' => 1, 'OWNER' => 1, 'PHASE' => 1, 'PROXY' => 1, 'QUERY' => 1, 'QUICK' => 1, 'RELAY' => 1, 'RESET' => 1, 'RTREE' => 1, 'SHARE' => 1, 'SLAVE' => 1, 'START' => 1, 'SUPER' => 1, 'SWAPS' => 1, 'TYPES' => 1, 'UNTIL' => 1, 'VALUE' => 1, 'ACTION' => 1, 'BACKUP' => 1, 'BINLOG' => 1, 'CIPHER' => 1, 'CLIENT' => 1, 'COMMIT' => 1, 'ENABLE' => 1, 'ENGINE' => 1, 'ERRORS' => 1, 'ESCAPE' => 1, 'EVENTS' => 1, 'FAULTS' => 1, 'FIELDS' => 1, 'GLOBAL' => 1, 'GRANTS' => 1, 'IMPORT' => 1, 'INNODB' => 1, 'ISSUER' => 1, 'LEAVES' => 1, 'MASTER' => 1, 'MEDIUM' => 1, 'MEMORY' => 1, 'MODIFY' => 1, 'OFFSET' => 1, 'PARSER' => 1, 'PLUGIN' => 1, 'RELOAD' => 1, 'REMOVE' => 1, 'REPAIR' => 1, 'RESUME' => 1, 'ROLLUP' => 1, 'SERVER' => 1, 'SIGNED' => 1, 'SIMPLE' => 1, 'SOCKET' => 1, 'SONAME' => 1, 'SOUNDS' => 1, 'SOURCE' => 1, 'STARTS' => 1, 'STATUS' => 1, 'STRING' => 1, 'TABLES' => 1, 'AUTHORS' => 1, 'CHANGED' => 1, 'COLUMNS' => 1, 'COMMENT' => 1, 'COMPACT' => 1, 'CONTEXT' => 1, 'DEFINER' => 1, 'DISABLE' => 1, 'DISCARD' => 1, 'DYNAMIC' => 1, 'ENGINES' => 1, 'EXECUTE' => 1, 'GENERAL' => 1, 'HANDLER' => 1, 'INDEXES' => 1, 'INSTALL' => 1, 'INVOKER' => 1, 'LOGFILE' => 1, 'MIGRATE' => 1, 'NO_WAIT' => 1, 'OPTIONS' => 1, 'PARTIAL' => 1, 'PLUGINS' => 1, 'PREPARE' => 1, 'PROFILE' => 1, 'REBUILD' => 1, 'RECOVER' => 1, 'RESTORE' => 1, 'RETURNS' => 1, 'ROUTINE' => 1, 'SESSION' => 1, 'STORAGE' => 1, 'SUBJECT' => 1, 'SUSPEND' => 1, 'UNICODE' => 1, 'UNKNOWN' => 1, 'UPGRADE' => 1, 'USE_FRM' => 1, 'VIRTUAL' => 1, 'WRAPPER' => 1, 'CASCADED' => 1, 'CHECKSUM' => 1, 'DATAFILE' => 1, 'DUMPFILE' => 1, 'EXTENDED' => 1, 'FUNCTION' => 1, 'INNOBASE' => 1, 'LANGUAGE' => 1, 'MAX_ROWS' => 1, 'MAX_SIZE' => 1, 'MIN_ROWS' => 1, 'NATIONAL' => 1, 'NVARCHAR' => 1, 'ONE_SHOT' => 1, 'PRESERVE' => 1, 'PROFILES' => 1, 'REDOFILE' => 1, 'RELAYLOG' => 1, 'ROLLBACK' => 1, 'SCHEDULE' => 1, 'SECURITY' => 1, 'SHUTDOWN' => 1, 'SNAPSHOT' => 1, 'SWITCHES' => 1, 'TRIGGERS' => 1, 'UNDOFILE' => 1, 'WARNINGS' => 1, 'AGGREGATE' => 1, 'ALGORITHM' => 1, 'COMMITTED' => 1, 'DIRECTORY' => 1, 'DUPLICATE' => 1, 'EXPANSION' => 1, 'IO_THREAD' => 1, 'ISOLATION' => 1, 'NODEGROUP' => 1, 'PACK_KEYS' => 1, 'READ_ONLY' => 1, 'REDUNDANT' => 1, 'SAVEPOINT' => 1, 'SQL_CACHE' => 1, 'TEMPORARY' => 1, 'TEMPTABLE' => 1, 'UNDEFINED' => 1, 'UNINSTALL' => 1, 'VARIABLES' => 1, 'COMPLETION' => 1, 'COMPRESSED' => 1, 'CONCURRENT' => 1, 'CONNECTION' => 1, 'CONSISTENT' => 1, 'DEALLOCATE' => 1, 'IDENTIFIED' => 1, 'MASTER_SSL' => 1, 'NDBCLUSTER' => 1, 'PARTITIONS' => 1, 'PERSISTENT' => 1, 'PRIVILEGES' => 1, 'REORGANIZE' => 1, 'REPEATABLE' => 1, 'ROW_FORMAT' => 1, 'SQL_THREAD' => 1, 'TABLESPACE' => 1, 'TABLE_NAME' => 1, 'COLUMN_NAME' => 1, 'CURSOR_NAME' => 1, 'EXTENT_SIZE' => 1, 'FRAC_SECOND' => 1, 'MASTER_HOST' => 1, 'MASTER_PORT' => 1, 'MASTER_USER' => 1, 'MYSQL_ERRNO' => 1, 'PROCESSLIST' => 1, 'REPLICATION' => 1, 'SCHEMA_NAME' => 1, 'SQL_TSI_DAY' => 1, 'TRANSACTION' => 1, 'UNCOMMITTED' => 1, 'CATALOG_NAME' => 1, 'CLASS_ORIGIN' => 1, 'CONTRIBUTORS' => 1, 'DES_KEY_FILE' => 1, 'INITIAL_SIZE' => 1, 'MESSAGE_TEXT' => 1, 'PARTITIONING' => 1, 'RELAY_THREAD' => 1, 'SERIALIZABLE' => 1, 'SQL_NO_CACHE' => 1, 'SQL_TSI_HOUR' => 1, 'SQL_TSI_WEEK' => 1, 'SQL_TSI_YEAR' => 1, 'SUBPARTITION' => 1, 'INSERT_METHOD' => 1, 'MASTER_SSL_CA' => 1, 'RELAY_LOG_POS' => 1, 'SQL_TSI_MONTH' => 1, 'SUBPARTITIONS' => 1, 'AUTO_INCREMENT' => 1, 'AVG_ROW_LENGTH' => 1, 'KEY_BLOCK_SIZE' => 1, 'MASTER_LOG_POS' => 1, 'MASTER_SSL_KEY' => 1, 'RELAY_LOG_FILE' => 1, 'SQL_TSI_MINUTE' => 1, 'SQL_TSI_SECOND' => 1, 'TABLE_CHECKSUM' => 1, 'USER_RESOURCES' => 1, 'AUTOEXTEND_SIZE' => 1, 'CONSTRAINT_NAME' => 1, 'DELAY_KEY_WRITE' => 1, 'MASTER_LOG_FILE' => 1, 'MASTER_PASSWORD' => 1, 'MASTER_SSL_CERT' => 1, 'SQL_TSI_QUARTER' => 1, 'SUBCLASS_ORIGIN' => 1, 'MASTER_SERVER_ID' => 1, 'REDO_BUFFER_SIZE' => 1, 'UNDO_BUFFER_SIZE' => 1, 'CONSTRAINT_SCHEMA' => 1, 'IGNORE_SERVER_IDS' => 1, 'MASTER_SSL_CAPATH' => 1, 'MASTER_SSL_CIPHER' => 1, 'SQL_BUFFER_RESULT' => 1, 'CONSTRAINT_CATALOG' => 1, 'SQL_TSI_FRAC_SECOND' => 1, 'MASTER_CONNECT_RETRY' => 1, 'MAX_QUERIES_PER_HOUR' => 1, 'MAX_UPDATES_PER_HOUR' => 1, 'MAX_USER_CONNECTIONS' => 1, 'MASTER_HEARTBEAT_PERIOD' => 1, 'MAX_CONNECTIONS_PER_HOUR' => 1, 'AS' => 3, 'BY' => 3, 'IS' => 3, 'ON' => 3, 'OR' => 3, 'TO' => 3, 'ADD' => 3, 'ALL' => 3, 'AND' => 3, 'ASC' => 3, 'DEC' => 3, 'DIV' => 3, 'FOR' => 3, 'NOT' => 3, 'OUT' => 3, 'SQL' => 3, 'SSL' => 3, 'USE' => 3, 'XOR' => 3, 'BOTH' => 3, 'CALL' => 3, 'CASE' => 3, 'DESC' => 3, 'DROP' => 3, 'DUAL' => 3, 'EACH' => 3, 'ELSE' => 3, 'EXIT' => 3, 'FROM' => 3, 'INT1' => 3, 'INT2' => 3, 'INT3' => 3, 'INT4' => 3, 'INT8' => 3, 'INTO' => 3, 'JOIN' => 3, 'KEYS' => 3, 'KILL' => 3, 'LIKE' => 3, 'LOAD' => 3, 'LOCK' => 3, 'LONG' => 3, 'LOOP' => 3, 'NULL' => 3, 'READ' => 3, 'SHOW' => 3, 'THEN' => 3, 'TRUE' => 3, 'UNDO' => 3, 'WHEN' => 3, 'WITH' => 3, 'ALTER' => 3, 'CHECK' => 3, 'CROSS' => 3, 'FALSE' => 3, 'FETCH' => 3, 'FORCE' => 3, 'GRANT' => 3, 'GROUP' => 3, 'INNER' => 3, 'INOUT' => 3, 'LEAVE' => 3, 'LIMIT' => 3, 'LINES' => 3, 'ORDER' => 3, 'OUTER' => 3, 'PURGE' => 3, 'RANGE' => 3, 'READS' => 3, 'RLIKE' => 3, 'TABLE' => 3, 'UNION' => 3, 'USAGE' => 3, 'USING' => 3, 'WHERE' => 3, 'WHILE' => 3, 'WRITE' => 3, 'BEFORE' => 3, 'CHANGE' => 3, 'COLUMN' => 3, 'CREATE' => 3, 'CURSOR' => 3, 'DELETE' => 3, 'ELSEIF' => 3, 'FLOAT4' => 3, 'FLOAT8' => 3, 'HAVING' => 3, 'IGNORE' => 3, 'INFILE' => 3, 'LINEAR' => 3, 'OPTION' => 3, 'REGEXP' => 3, 'RENAME' => 3, 'RETURN' => 3, 'REVOKE' => 3, 'SELECT' => 3, 'SIGNAL' => 3, 'UNLOCK' => 3, 'UPDATE' => 3, 'ANALYZE' => 3, 'BETWEEN' => 3, 'CASCADE' => 3, 'COLLATE' => 3, 'DECLARE' => 3, 'DELAYED' => 3, 'ESCAPED' => 3, 'EXPLAIN' => 3, 'FOREIGN' => 3, 'ITERATE' => 3, 'LEADING' => 3, 'NATURAL' => 3, 'OUTFILE' => 3, 'PRIMARY' => 3, 'RELEASE' => 3, 'REQUIRE' => 3, 'SCHEMAS' => 3, 'TRIGGER' => 3, 'VARYING' => 3, 'CONTINUE' => 3, 'DAY_HOUR' => 3, 'DESCRIBE' => 3, 'DISTINCT' => 3, 'ENCLOSED' => 3, 'MAXVALUE' => 3, 'MODIFIES' => 3, 'OPTIMIZE' => 3, 'RESIGNAL' => 3, 'RESTRICT' => 3, 'SPECIFIC' => 3, 'SQLSTATE' => 3, 'STARTING' => 3, 'TRAILING' => 3, 'UNSIGNED' => 3, 'ZEROFILL' => 3, 'CONDITION' => 3, 'DATABASES' => 3, 'MIDDLEINT' => 3, 'PARTITION' => 3, 'PRECISION' => 3, 'PROCEDURE' => 3, 'SENSITIVE' => 3, 'SEPARATOR' => 3, 'ACCESSIBLE' => 3, 'ASENSITIVE' => 3, 'CONSTRAINT' => 3, 'DAY_MINUTE' => 3, 'DAY_SECOND' => 3, 'OPTIONALLY' => 3, 'READ_WRITE' => 3, 'REFERENCES' => 3, 'SQLWARNING' => 3, 'TERMINATED' => 3, 'YEAR_MONTH' => 3, 'DISTINCTROW' => 3, 'HOUR_MINUTE' => 3, 'HOUR_SECOND' => 3, 'INSENSITIVE' => 3, 'LOW_PRIORITY' => 3, 'SQLEXCEPTION' => 3, 'VARCHARACTER' => 3, 'DETERMINISTIC' => 3, 'HIGH_PRIORITY' => 3, 'MINUTE_SECOND' => 3, 'STRAIGHT_JOIN' => 3, 'SQL_BIG_RESULT' => 3, 'DAY_MICROSECOND' => 3, 'HOUR_MICROSECOND' => 3, 'SQL_SMALL_RESULT' => 3, 'MINUTE_MICROSECOND' => 3, 'NO_WRITE_TO_BINLOG' => 3, 'SECOND_MICROSECOND' => 3, 'SQL_CALC_FOUND_ROWS' => 3, 'MASTER_SSL_VERIFY_SERVER_CERT' => 3, 'GROUP BY' => 7, 'NOT NULL' => 7, 'ORDER BY' => 7, 'SET NULL' => 7, 'AND CHAIN' => 7, 'FULL JOIN' => 7, 'IF EXISTS' => 7, 'LEFT JOIN' => 7, 'LESS THAN' => 7, 'LOAD DATA' => 7, 'NO ACTION' => 7, 'ON DELETE' => 7, 'ON UPDATE' => 7, 'UNION ALL' => 7, 'CROSS JOIN' => 7, 'ESCAPED BY' => 7, 'FOR UPDATE' => 7, 'INNER JOIN' => 7, 'LINEAR KEY' => 7, 'NO RELEASE' => 7, 'OR REPLACE' => 7, 'RIGHT JOIN' => 7, 'ENCLOSED BY' => 7, 'LINEAR HASH' => 7, 'STARTING BY' => 7, 'AND NO CHAIN' => 7, 'FOR EACH ROW' => 7, 'NATURAL JOIN' => 7, 'PARTITION BY' => 7, 'SET PASSWORD' => 7, 'SQL SECURITY' => 7, 'CHARACTER SET' => 7, 'IF NOT EXISTS' => 7, 'TERMINATED BY' => 7, 'DATA DIRECTORY' => 7, 'UNION DISTINCT' => 7, 'DEFAULT CHARSET' => 7, 'DEFAULT COLLATE' => 7, 'FULL OUTER JOIN' => 7, 'INDEX DIRECTORY' => 7, 'LEFT OUTER JOIN' => 7, 'SUBPARTITION BY' => 7, 'GENERATED ALWAYS' => 7, 'RIGHT OUTER JOIN' => 7, 'NATURAL LEFT JOIN' => 7, 'START TRANSACTION' => 7, 'LOCK IN SHARE MODE' => 7, 'NATURAL RIGHT JOIN' => 7, 'SELECT TRANSACTION' => 7, 'DEFAULT CHARACTER SET' => 7, 'NATURAL LEFT OUTER JOIN' => 7, 'NATURAL RIGHT OUTER JOIN' => 7, 'WITH CONSISTENT SNAPSHOT' => 7, 'BIT' => 9, 'XML' => 9, 'ENUM' => 9, 'JSON' => 9, 'TEXT' => 9, 'ARRAY' => 9, 'SERIAL' => 9, 'BOOLEAN' => 9, 'DATETIME' => 9, 'GEOMETRY' => 9, 'MULTISET' => 9, 'MULTILINEPOINT' => 9, 'MULTILINEPOLYGON' => 9, 'INT' => 11, 'SET' => 11, 'BLOB' => 11, 'REAL' => 11, 'FLOAT' => 11, 'BIGINT' => 11, 'DOUBLE' => 11, 'DECIMAL' => 11, 'INTEGER' => 11, 'NUMERIC' => 11, 'TINYINT' => 11, 'VARCHAR' => 11, 'LONGBLOB' => 11, 'LONGTEXT' => 11, 'SMALLINT' => 11, 'TINYBLOB' => 11, 'TINYTEXT' => 11, 'CHARACTER' => 11, 'MEDIUMINT' => 11, 'VARBINARY' => 11, 'MEDIUMBLOB' => 11, 'MEDIUMTEXT' => 11, 'BINARY VARYING' => 15, 'KEY' => 19, 'INDEX' => 19, 'UNIQUE' => 19, 'SPATIAL' => 19, 'FULLTEXT' => 19, 'INDEX KEY' => 23, 'UNIQUE KEY' => 23, 'FOREIGN KEY' => 23, 'PRIMARY KEY' => 23, 'SPATIAL KEY' => 23, 'FULLTEXT KEY' => 23, 'UNIQUE INDEX' => 23, 'SPATIAL INDEX' => 23, 'FULLTEXT INDEX' => 23, 'X' => 33, 'Y' => 33, 'LN' => 33, 'PI' => 33, 'ABS' => 33, 'AVG' => 33, 'BIN' => 33, 'COS' => 33, 'COT' => 33, 'DAY' => 33, 'ELT' => 33, 'EXP' => 33, 'HEX' => 33, 'LOG' => 33, 'MAX' => 33, 'MD5' => 33, 'MID' => 33, 'MIN' => 33, 'NOW' => 33, 'OCT' => 33, 'ORD' => 33, 'POW' => 33, 'SHA' => 33, 'SIN' => 33, 'STD' => 33, 'SUM' => 33, 'TAN' => 33, 'ACOS' => 33, 'AREA' => 33, 'ASIN' => 33, 'ATAN' => 33, 'CAST' => 33, 'CEIL' => 33, 'CONV' => 33, 'HOUR' => 33, 'LOG2' => 33, 'LPAD' => 33, 'RAND' => 33, 'RPAD' => 33, 'SHA1' => 33, 'SHA2' => 33, 'SIGN' => 33, 'SQRT' => 33, 'SRID' => 33, 'TRIM' => 33, 'USER' => 33, 'UUID' => 33, 'WEEK' => 33, 'ASCII' => 33, 'ASWKB' => 33, 'ASWKT' => 33, 'ATAN2' => 33, 'COUNT' => 33, 'CRC32' => 33, 'FIELD' => 33, 'FLOOR' => 33, 'INSTR' => 33, 'LCASE' => 33, 'LEAST' => 33, 'LOG10' => 33, 'LOWER' => 33, 'LTRIM' => 33, 'MONTH' => 33, 'POWER' => 33, 'QUOTE' => 33, 'ROUND' => 33, 'RTRIM' => 33, 'SLEEP' => 33, 'SPACE' => 33, 'UCASE' => 33, 'UNHEX' => 33, 'UPPER' => 33, 'ASTEXT' => 33, 'BIT_OR' => 33, 'CONCAT' => 33, 'DECODE' => 33, 'ENCODE' => 33, 'EQUALS' => 33, 'FORMAT' => 33, 'IFNULL' => 33, 'ISNULL' => 33, 'LENGTH' => 33, 'LOCATE' => 33, 'MINUTE' => 33, 'NULLIF' => 33, 'POINTN' => 33, 'SECOND' => 33, 'STDDEV' => 33, 'STRCMP' => 33, 'SUBSTR' => 33, 'WITHIN' => 33, 'ADDDATE' => 33, 'ADDTIME' => 33, 'AGAINST' => 33, 'BIT_AND' => 33, 'BIT_XOR' => 33, 'CEILING' => 33, 'CHARSET' => 33, 'CROSSES' => 33, 'CURDATE' => 33, 'CURTIME' => 33, 'DAYNAME' => 33, 'DEGREES' => 33, 'ENCRYPT' => 33, 'EXTRACT' => 33, 'GLENGTH' => 33, 'ISEMPTY' => 33, 'QUARTER' => 33, 'RADIANS' => 33, 'REVERSE' => 33, 'SOUNDEX' => 33, 'SUBDATE' => 33, 'SUBTIME' => 33, 'SYSDATE' => 33, 'TOUCHES' => 33, 'TO_DAYS' => 33, 'VAR_POP' => 33, 'VERSION' => 33, 'WEEKDAY' => 33, 'ASBINARY' => 33, 'CENTROID' => 33, 'COALESCE' => 33, 'COMPRESS' => 33, 'CONTAINS' => 33, 'DATEDIFF' => 33, 'DATE_ADD' => 33, 'DATE_SUB' => 33, 'DISJOINT' => 33, 'ENDPOINT' => 33, 'ENVELOPE' => 33, 'GET_LOCK' => 33, 'GREATEST' => 33, 'ISCLOSED' => 33, 'ISSIMPLE' => 33, 'MAKEDATE' => 33, 'MAKETIME' => 33, 'MAKE_SET' => 33, 'MBREQUAL' => 33, 'OVERLAPS' => 33, 'PASSWORD' => 33, 'POSITION' => 33, 'TIMEDIFF' => 33, 'TRUNCATE' => 33, 'VARIANCE' => 33, 'VAR_SAMP' => 33, 'YEARWEEK' => 33, 'BENCHMARK' => 33, 'BIT_COUNT' => 33, 'COLLATION' => 33, 'CONCAT_WS' => 33, 'DAYOFWEEK' => 33, 'DAYOFYEAR' => 33, 'DIMENSION' => 33, 'FROM_DAYS' => 33, 'GEOMETRYN' => 33, 'INET_ATON' => 33, 'INET_NTOA' => 33, 'LOAD_FILE' => 33, 'MBRWITHIN' => 33, 'MONTHNAME' => 33, 'NUMPOINTS' => 33, 'ROW_COUNT' => 33, 'SUBSTRING' => 33, 'UPDATEXML' => 33, 'BIT_LENGTH' => 33, 'CONVERT_TZ' => 33, 'DAYOFMONTH' => 33, 'EXPORT_SET' => 33, 'FOUND_ROWS' => 33, 'GET_FORMAT' => 33, 'INTERSECTS' => 33, 'MBRTOUCHES' => 33, 'MULTIPOINT' => 33, 'NAME_CONST' => 33, 'PERIOD_ADD' => 33, 'STARTPOINT' => 33, 'STDDEV_POP' => 33, 'TO_SECONDS' => 33, 'UNCOMPRESS' => 33, 'UUID_SHORT' => 33, 'WEEKOFYEAR' => 33, 'AES_DECRYPT' => 33, 'AES_ENCRYPT' => 33, 'CHAR_LENGTH' => 33, 'DATE_FORMAT' => 33, 'DES_DECRYPT' => 33, 'DES_ENCRYPT' => 33, 'FIND_IN_SET' => 33, 'GEOMFROMWKB' => 33, 'LINEFROMWKB' => 33, 'MBRCONTAINS' => 33, 'MBRDISJOINT' => 33, 'MBROVERLAPS' => 33, 'MICROSECOND' => 33, 'PERIOD_DIFF' => 33, 'POLYFROMWKB' => 33, 'SEC_TO_TIME' => 33, 'STDDEV_SAMP' => 33, 'STR_TO_DATE' => 33, 'SYSTEM_USER' => 33, 'TIME_FORMAT' => 33, 'TIME_TO_SEC' => 33, 'COERCIBILITY' => 33, 'EXTERIORRING' => 33, 'EXTRACTVALUE' => 33, 'GEOMETRYTYPE' => 33, 'GEOMFROMTEXT' => 33, 'GROUP_CONCAT' => 33, 'IS_FREE_LOCK' => 33, 'IS_USED_LOCK' => 33, 'LINEFROMTEXT' => 33, 'MLINEFROMWKB' => 33, 'MPOLYFROMWKB' => 33, 'MULTIPOLYGON' => 33, 'OCTET_LENGTH' => 33, 'OLD_PASSWORD' => 33, 'POINTFROMWKB' => 33, 'POLYFROMTEXT' => 33, 'RELEASE_LOCK' => 33, 'SESSION_USER' => 33, 'TIMESTAMPADD' => 33, 'CONNECTION_ID' => 33, 'FROM_UNIXTIME' => 33, 'INTERIORRINGN' => 33, 'MBRINTERSECTS' => 33, 'MLINEFROMTEXT' => 33, 'MPOINTFROMWKB' => 33, 'MPOLYFROMTEXT' => 33, 'NUMGEOMETRIES' => 33, 'POINTFROMTEXT' => 33, 'TIMESTAMPDIFF' => 33, 'LAST_INSERT_ID' => 33, 'MPOINTFROMTEXT' => 33, 'POLYGONFROMWKB' => 33, 'UNIX_TIMESTAMP' => 33, 'GEOMCOLLFROMWKB' => 33, 'MASTER_POS_WAIT' => 33, 'POLYGONFROMTEXT' => 33, 'SUBSTRING_INDEX' => 33, 'CHARACTER_LENGTH' => 33, 'GEOMCOLLFROMTEXT' => 33, 'GEOMETRYFROMTEXT' => 33, 'NUMINTERIORRINGS' => 33, 'LINESTRINGFROMWKB' => 33, 'MULTIPOINTFROMWKB' => 33, 'MULTIPOINTFROMTEXT' => 33, 'MULTIPOLYGONFROMWKB' => 33, 'UNCOMPRESSED_LENGTH' => 33, 'MULTIPOLYGONFROMTEXT' => 33, 'MULTILINESTRINGFROMWKB' => 33, 'MULTILINESTRINGFROMTEXT' => 33, 'GEOMETRYCOLLECTIONFROMWKB' => 33, 'GEOMETRYCOLLECTIONFROMTEXT' => 33, 'IF' => 35, 'IN' => 35, 'MOD' => 35, 'LEFT' => 35, 'MATCH' => 35, 'RIGHT' => 35, 'EXISTS' => 35, 'INSERT' => 35, 'REPEAT' => 35, 'SCHEMA' => 35, 'VALUES' => 35, 'CONVERT' => 35, 'DEFAULT' => 35, 'REPLACE' => 35, 'DATABASE' => 35, 'UTC_DATE' => 35, 'UTC_TIME' => 35, 'LOCALTIME' => 35, 'CURRENT_DATE' => 35, 'CURRENT_TIME' => 35, 'CURRENT_USER' => 35, 'UTC_TIMESTAMP' => 35, 'LOCALTIMESTAMP' => 35, 'CURRENT_TIMESTAMP' => 35, 'NOT IN' => 39, 'DATE' => 41, 'TIME' => 41, 'YEAR' => 41, 'POINT' => 41, 'POLYGON' => 41, 'TIMESTAMP' => 41, 'LINESTRING' => 41, 'MULTILINESTRING' => 41, 'GEOMETRYCOLLECTION' => 41, 'CHAR' => 43, 'BINARY' => 43, 'INTERVAL' => 43);
-    }
-    /**
-     * Context for MariaDB 10.1.
-     *
-     * @category   Contexts
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class ContextMariaDb100100 extends \PhpMyAdmin\SqlParser\Context
-    {
-        /**
-         * List of keywords.
-         *
-         * The value associated to each keyword represents its flags.
-         *
-         * @see Token::FLAG_KEYWORD_RESERVED Token::FLAG_KEYWORD_COMPOSED
-         *      Token::FLAG_KEYWORD_DATA_TYPE Token::FLAG_KEYWORD_KEY
-         *      Token::FLAG_KEYWORD_FUNCTION
-         *
-         * @var array
-         */
-        public static $KEYWORDS = array('AT' => 1, 'DO' => 1, 'IO' => 1, 'NO' => 1, 'XA' => 1, 'ANY' => 1, 'CPU' => 1, 'END' => 1, 'IPC' => 1, 'NDB' => 1, 'NEW' => 1, 'ONE' => 1, 'ROW' => 1, 'XID' => 1, 'BOOL' => 1, 'BYTE' => 1, 'CODE' => 1, 'CUBE' => 1, 'DATA' => 1, 'DISK' => 1, 'ENDS' => 1, 'FAST' => 1, 'FILE' => 1, 'FULL' => 1, 'HASH' => 1, 'HELP' => 1, 'HOST' => 1, 'LAST' => 1, 'LESS' => 1, 'LIST' => 1, 'LOGS' => 1, 'MODE' => 1, 'NAME' => 1, 'NEXT' => 1, 'NONE' => 1, 'ONLY' => 1, 'OPEN' => 1, 'PAGE' => 1, 'PORT' => 1, 'PREV' => 1, 'ROWS' => 1, 'SLOW' => 1, 'SOME' => 1, 'STOP' => 1, 'THAN' => 1, 'TYPE' => 1, 'VIEW' => 1, 'WAIT' => 1, 'WORK' => 1, 'X509' => 1, 'AFTER' => 1, 'BEGIN' => 1, 'BLOCK' => 1, 'BTREE' => 1, 'CACHE' => 1, 'CHAIN' => 1, 'CLOSE' => 1, 'ERROR' => 1, 'EVENT' => 1, 'EVERY' => 1, 'FIRST' => 1, 'FIXED' => 1, 'FLUSH' => 1, 'FOUND' => 1, 'HOSTS' => 1, 'LEVEL' => 1, 'LOCAL' => 1, 'LOCKS' => 1, 'MERGE' => 1, 'MUTEX' => 1, 'NAMES' => 1, 'NCHAR' => 1, 'NEVER' => 1, 'OWNER' => 1, 'PHASE' => 1, 'PROXY' => 1, 'QUERY' => 1, 'QUICK' => 1, 'RELAY' => 1, 'RESET' => 1, 'RTREE' => 1, 'SHARE' => 1, 'SLAVE' => 1, 'START' => 1, 'SUPER' => 1, 'SWAPS' => 1, 'TYPES' => 1, 'UNTIL' => 1, 'VALUE' => 1, 'ACTION' => 1, 'ALWAYS' => 1, 'BACKUP' => 1, 'BINLOG' => 1, 'CIPHER' => 1, 'CLIENT' => 1, 'COMMIT' => 1, 'ENABLE' => 1, 'ENGINE' => 1, 'ERRORS' => 1, 'ESCAPE' => 1, 'EVENTS' => 1, 'EXPIRE' => 1, 'EXPORT' => 1, 'FAULTS' => 1, 'FIELDS' => 1, 'FILTER' => 1, 'GLOBAL' => 1, 'GRANTS' => 1, 'IMPORT' => 1, 'ISSUER' => 1, 'LEAVES' => 1, 'MASTER' => 1, 'MEDIUM' => 1, 'MEMORY' => 1, 'MODIFY' => 1, 'NUMBER' => 1, 'OFFSET' => 1, 'PARSER' => 1, 'PLUGIN' => 1, 'RELOAD' => 1, 'REMOVE' => 1, 'REPAIR' => 1, 'RESUME' => 1, 'ROLLUP' => 1, 'SERVER' => 1, 'SIGNED' => 1, 'SIMPLE' => 1, 'SOCKET' => 1, 'SONAME' => 1, 'SOUNDS' => 1, 'SOURCE' => 1, 'STARTS' => 1, 'STATUS' => 1, 'STRING' => 1, 'TABLES' => 1, 'ACCOUNT' => 1, 'ANALYSE' => 1, 'CHANGED' => 1, 'CHANNEL' => 1, 'COLUMNS' => 1, 'COMMENT' => 1, 'COMPACT' => 1, 'CONTEXT' => 1, 'CURRENT' => 1, 'DEFINER' => 1, 'DISABLE' => 1, 'DISCARD' => 1, 'DYNAMIC' => 1, 'ENGINES' => 1, 'EXECUTE' => 1, 'FOLLOWS' => 1, 'GENERAL' => 1, 'HANDLER' => 1, 'INDEXES' => 1, 'INSTALL' => 1, 'INVOKER' => 1, 'LOGFILE' => 1, 'MIGRATE' => 1, 'NO_WAIT' => 1, 'OPTIONS' => 1, 'PARTIAL' => 1, 'PLUGINS' => 1, 'PREPARE' => 1, 'PROFILE' => 1, 'REBUILD' => 1, 'RECOVER' => 1, 'RESTORE' => 1, 'RETURNS' => 1, 'ROUTINE' => 1, 'SESSION' => 1, 'STACKED' => 1, 'STORAGE' => 1, 'SUBJECT' => 1, 'SUSPEND' => 1, 'UNICODE' => 1, 'UNKNOWN' => 1, 'UPGRADE' => 1, 'USE_FRM' => 1, 'WITHOUT' => 1, 'WRAPPER' => 1, 'CASCADED' => 1, 'CHECKSUM' => 1, 'DATAFILE' => 1, 'DUMPFILE' => 1, 'EXCHANGE' => 1, 'EXTENDED' => 1, 'FUNCTION' => 1, 'LANGUAGE' => 1, 'MAX_ROWS' => 1, 'MAX_SIZE' => 1, 'MIN_ROWS' => 1, 'NATIONAL' => 1, 'NVARCHAR' => 1, 'PRECEDES' => 1, 'PRESERVE' => 1, 'PROFILES' => 1, 'REDOFILE' => 1, 'RELAYLOG' => 1, 'ROLLBACK' => 1, 'SCHEDULE' => 1, 'SECURITY' => 1, 'SHUTDOWN' => 1, 'SNAPSHOT' => 1, 'SWITCHES' => 1, 'TRIGGERS' => 1, 'UNDOFILE' => 1, 'WARNINGS' => 1, 'AGGREGATE' => 1, 'ALGORITHM' => 1, 'COMMITTED' => 1, 'DIRECTORY' => 1, 'DUPLICATE' => 1, 'EXPANSION' => 1, 'IO_THREAD' => 1, 'ISOLATION' => 1, 'NODEGROUP' => 1, 'PACK_KEYS' => 1, 'READ_ONLY' => 1, 'REDUNDANT' => 1, 'SAVEPOINT' => 1, 'SQL_CACHE' => 1, 'TEMPORARY' => 1, 'TEMPTABLE' => 1, 'UNDEFINED' => 1, 'UNINSTALL' => 1, 'VARIABLES' => 1, 'COMPLETION' => 1, 'COMPRESSED' => 1, 'CONCURRENT' => 1, 'CONNECTION' => 1, 'CONSISTENT' => 1, 'DEALLOCATE' => 1, 'IDENTIFIED' => 1, 'MASTER_SSL' => 1, 'NDBCLUSTER' => 1, 'PARTITIONS' => 1, 'PERSISTENT' => 1, 'PLUGIN_DIR' => 1, 'PRIVILEGES' => 1, 'REORGANIZE' => 1, 'REPEATABLE' => 1, 'ROW_FORMAT' => 1, 'SQL_THREAD' => 1, 'TABLESPACE' => 1, 'TABLE_NAME' => 1, 'VALIDATION' => 1, 'COLUMN_NAME' => 1, 'COMPRESSION' => 1, 'CURSOR_NAME' => 1, 'DIAGNOSTICS' => 1, 'EXTENT_SIZE' => 1, 'MASTER_HOST' => 1, 'MASTER_PORT' => 1, 'MASTER_USER' => 1, 'MYSQL_ERRNO' => 1, 'NONBLOCKING' => 1, 'PROCESSLIST' => 1, 'REPLICATION' => 1, 'SCHEMA_NAME' => 1, 'SQL_TSI_DAY' => 1, 'TRANSACTION' => 1, 'UNCOMMITTED' => 1, 'CATALOG_NAME' => 1, 'CLASS_ORIGIN' => 1, 'DEFAULT_AUTH' => 1, 'DES_KEY_FILE' => 1, 'INITIAL_SIZE' => 1, 'MASTER_DELAY' => 1, 'MESSAGE_TEXT' => 1, 'PARTITIONING' => 1, 'RELAY_THREAD' => 1, 'SERIALIZABLE' => 1, 'SQL_NO_CACHE' => 1, 'SQL_TSI_HOUR' => 1, 'SQL_TSI_WEEK' => 1, 'SQL_TSI_YEAR' => 1, 'SUBPARTITION' => 1, 'COLUMN_FORMAT' => 1, 'INSERT_METHOD' => 1, 'MASTER_SSL_CA' => 1, 'RELAY_LOG_POS' => 1, 'SQL_TSI_MONTH' => 1, 'SUBPARTITIONS' => 1, 'AUTO_INCREMENT' => 1, 'AVG_ROW_LENGTH' => 1, 'KEY_BLOCK_SIZE' => 1, 'MASTER_LOG_POS' => 1, 'MASTER_SSL_CRL' => 1, 'MASTER_SSL_KEY' => 1, 'RELAY_LOG_FILE' => 1, 'SQL_TSI_MINUTE' => 1, 'SQL_TSI_SECOND' => 1, 'TABLE_CHECKSUM' => 1, 'USER_RESOURCES' => 1, 'AUTOEXTEND_SIZE' => 1, 'CONSTRAINT_NAME' => 1, 'DELAY_KEY_WRITE' => 1, 'FILE_BLOCK_SIZE' => 1, 'MASTER_LOG_FILE' => 1, 'MASTER_PASSWORD' => 1, 'MASTER_SSL_CERT' => 1, 'PARSE_GCOL_EXPR' => 1, 'REPLICATE_DO_DB' => 1, 'SQL_AFTER_GTIDS' => 1, 'SQL_TSI_QUARTER' => 1, 'SUBCLASS_ORIGIN' => 1, 'MASTER_SERVER_ID' => 1, 'REDO_BUFFER_SIZE' => 1, 'SQL_BEFORE_GTIDS' => 1, 'STATS_PERSISTENT' => 1, 'UNDO_BUFFER_SIZE' => 1, 'CONSTRAINT_SCHEMA' => 1, 'GROUP_REPLICATION' => 1, 'IGNORE_SERVER_IDS' => 1, 'MASTER_SSL_CAPATH' => 1, 'MASTER_SSL_CIPHER' => 1, 'RETURNED_SQLSTATE' => 1, 'SQL_BUFFER_RESULT' => 1, 'STATS_AUTO_RECALC' => 1, 'CONSTRAINT_CATALOG' => 1, 'MASTER_RETRY_COUNT' => 1, 'MASTER_SSL_CRLPATH' => 1, 'MAX_STATEMENT_TIME' => 1, 'REPLICATE_DO_TABLE' => 1, 'SQL_AFTER_MTS_GAPS' => 1, 'STATS_SAMPLE_PAGES' => 1, 'REPLICATE_IGNORE_DB' => 1, 'MASTER_AUTO_POSITION' => 1, 'MASTER_CONNECT_RETRY' => 1, 'MAX_QUERIES_PER_HOUR' => 1, 'MAX_UPDATES_PER_HOUR' => 1, 'MAX_USER_CONNECTIONS' => 1, 'REPLICATE_REWRITE_DB' => 1, 'REPLICATE_IGNORE_TABLE' => 1, 'MASTER_HEARTBEAT_PERIOD' => 1, 'REPLICATE_WILD_DO_TABLE' => 1, 'MAX_CONNECTIONS_PER_HOUR' => 1, 'REPLICATE_WILD_IGNORE_TABLE' => 1, 'AS' => 3, 'BY' => 3, 'IS' => 3, 'ON' => 3, 'OR' => 3, 'TO' => 3, 'ADD' => 3, 'ALL' => 3, 'AND' => 3, 'ASC' => 3, 'DEC' => 3, 'DIV' => 3, 'FOR' => 3, 'GET' => 3, 'NOT' => 3, 'OUT' => 3, 'SQL' => 3, 'SSL' => 3, 'USE' => 3, 'XOR' => 3, 'BOTH' => 3, 'CALL' => 3, 'CASE' => 3, 'DESC' => 3, 'DROP' => 3, 'DUAL' => 3, 'EACH' => 3, 'ELSE' => 3, 'EXIT' => 3, 'FROM' => 3, 'INT1' => 3, 'INT2' => 3, 'INT3' => 3, 'INT4' => 3, 'INT8' => 3, 'INTO' => 3, 'JOIN' => 3, 'KEYS' => 3, 'KILL' => 3, 'LIKE' => 3, 'LOAD' => 3, 'LOCK' => 3, 'LONG' => 3, 'LOOP' => 3, 'NULL' => 3, 'READ' => 3, 'SHOW' => 3, 'THEN' => 3, 'TRUE' => 3, 'UNDO' => 3, 'WHEN' => 3, 'WITH' => 3, 'ALTER' => 3, 'CHECK' => 3, 'CROSS' => 3, 'FALSE' => 3, 'FETCH' => 3, 'FORCE' => 3, 'GRANT' => 3, 'GROUP' => 3, 'INNER' => 3, 'INOUT' => 3, 'LEAVE' => 3, 'LIMIT' => 3, 'LINES' => 3, 'ORDER' => 3, 'OUTER' => 3, 'PURGE' => 3, 'RANGE' => 3, 'READS' => 3, 'RLIKE' => 3, 'TABLE' => 3, 'UNION' => 3, 'USAGE' => 3, 'USING' => 3, 'WHERE' => 3, 'WHILE' => 3, 'WRITE' => 3, 'BEFORE' => 3, 'CHANGE' => 3, 'COLUMN' => 3, 'CREATE' => 3, 'CURSOR' => 3, 'DELETE' => 3, 'ELSEIF' => 3, 'FLOAT4' => 3, 'FLOAT8' => 3, 'HAVING' => 3, 'IGNORE' => 3, 'INFILE' => 3, 'LINEAR' => 3, 'OPTION' => 3, 'REGEXP' => 3, 'RENAME' => 3, 'RETURN' => 3, 'REVOKE' => 3, 'SELECT' => 3, 'SIGNAL' => 3, 'STORED' => 3, 'UNLOCK' => 3, 'UPDATE' => 3, 'ANALYZE' => 3, 'BETWEEN' => 3, 'CASCADE' => 3, 'COLLATE' => 3, 'DECLARE' => 3, 'DELAYED' => 3, 'ESCAPED' => 3, 'EXPLAIN' => 3, 'FOREIGN' => 3, 'ITERATE' => 3, 'LEADING' => 3, 'NATURAL' => 3, 'OUTFILE' => 3, 'PRIMARY' => 3, 'RELEASE' => 3, 'REQUIRE' => 3, 'SCHEMAS' => 3, 'TRIGGER' => 3, 'VARYING' => 3, 'VIRTUAL' => 3, 'CONTINUE' => 3, 'DAY_HOUR' => 3, 'DESCRIBE' => 3, 'DISTINCT' => 3, 'ENCLOSED' => 3, 'MAXVALUE' => 3, 'MODIFIES' => 3, 'OPTIMIZE' => 3, 'RESIGNAL' => 3, 'RESTRICT' => 3, 'SPECIFIC' => 3, 'SQLSTATE' => 3, 'STARTING' => 3, 'TRAILING' => 3, 'UNSIGNED' => 3, 'ZEROFILL' => 3, 'CONDITION' => 3, 'DATABASES' => 3, 'GENERATED' => 3, 'MIDDLEINT' => 3, 'PARTITION' => 3, 'PRECISION' => 3, 'PROCEDURE' => 3, 'SENSITIVE' => 3, 'SEPARATOR' => 3, 'ACCESSIBLE' => 3, 'ASENSITIVE' => 3, 'CONSTRAINT' => 3, 'DAY_MINUTE' => 3, 'DAY_SECOND' => 3, 'OPTIONALLY' => 3, 'READ_WRITE' => 3, 'REFERENCES' => 3, 'SQLWARNING' => 3, 'TERMINATED' => 3, 'YEAR_MONTH' => 3, 'DISTINCTROW' => 3, 'HOUR_MINUTE' => 3, 'HOUR_SECOND' => 3, 'INSENSITIVE' => 3, 'MASTER_BIND' => 3, 'LOW_PRIORITY' => 3, 'SQLEXCEPTION' => 3, 'VARCHARACTER' => 3, 'DETERMINISTIC' => 3, 'HIGH_PRIORITY' => 3, 'MINUTE_SECOND' => 3, 'STRAIGHT_JOIN' => 3, 'IO_AFTER_GTIDS' => 3, 'SQL_BIG_RESULT' => 3, 'DAY_MICROSECOND' => 3, 'IO_BEFORE_GTIDS' => 3, 'OPTIMIZER_COSTS' => 3, 'HOUR_MICROSECOND' => 3, 'SQL_SMALL_RESULT' => 3, 'MINUTE_MICROSECOND' => 3, 'NO_WRITE_TO_BINLOG' => 3, 'SECOND_MICROSECOND' => 3, 'SQL_CALC_FOUND_ROWS' => 3, 'MASTER_SSL_VERIFY_SERVER_CERT' => 3, 'GROUP BY' => 7, 'NOT NULL' => 7, 'ORDER BY' => 7, 'SET NULL' => 7, 'AND CHAIN' => 7, 'FULL JOIN' => 7, 'IF EXISTS' => 7, 'LEFT JOIN' => 7, 'LESS THAN' => 7, 'LOAD DATA' => 7, 'NO ACTION' => 7, 'ON DELETE' => 7, 'ON UPDATE' => 7, 'UNION ALL' => 7, 'CROSS JOIN' => 7, 'ESCAPED BY' => 7, 'FOR UPDATE' => 7, 'INNER JOIN' => 7, 'LINEAR KEY' => 7, 'NO RELEASE' => 7, 'OR REPLACE' => 7, 'RIGHT JOIN' => 7, 'ENCLOSED BY' => 7, 'LINEAR HASH' => 7, 'STARTING BY' => 7, 'AND NO CHAIN' => 7, 'FOR EACH ROW' => 7, 'NATURAL JOIN' => 7, 'PARTITION BY' => 7, 'SET PASSWORD' => 7, 'SQL SECURITY' => 7, 'CHARACTER SET' => 7, 'IF NOT EXISTS' => 7, 'TERMINATED BY' => 7, 'DATA DIRECTORY' => 7, 'UNION DISTINCT' => 7, 'DEFAULT CHARSET' => 7, 'DEFAULT COLLATE' => 7, 'FULL OUTER JOIN' => 7, 'INDEX DIRECTORY' => 7, 'LEFT OUTER JOIN' => 7, 'SUBPARTITION BY' => 7, 'GENERATED ALWAYS' => 7, 'RIGHT OUTER JOIN' => 7, 'NATURAL LEFT JOIN' => 7, 'START TRANSACTION' => 7, 'LOCK IN SHARE MODE' => 7, 'NATURAL RIGHT JOIN' => 7, 'SELECT TRANSACTION' => 7, 'DEFAULT CHARACTER SET' => 7, 'NATURAL LEFT OUTER JOIN' => 7, 'NATURAL RIGHT OUTER JOIN' => 7, 'WITH CONSISTENT SNAPSHOT' => 7, 'BIT' => 9, 'XML' => 9, 'ENUM' => 9, 'JSON' => 9, 'TEXT' => 9, 'ARRAY' => 9, 'SERIAL' => 9, 'BOOLEAN' => 9, 'DATETIME' => 9, 'GEOMETRY' => 9, 'MULTISET' => 9, 'MULTILINEPOINT' => 9, 'MULTILINEPOLYGON' => 9, 'INT' => 11, 'SET' => 11, 'BLOB' => 11, 'REAL' => 11, 'FLOAT' => 11, 'BIGINT' => 11, 'DOUBLE' => 11, 'DECIMAL' => 11, 'INTEGER' => 11, 'NUMERIC' => 11, 'TINYINT' => 11, 'VARCHAR' => 11, 'LONGBLOB' => 11, 'LONGTEXT' => 11, 'SMALLINT' => 11, 'TINYBLOB' => 11, 'TINYTEXT' => 11, 'CHARACTER' => 11, 'MEDIUMINT' => 11, 'VARBINARY' => 11, 'MEDIUMBLOB' => 11, 'MEDIUMTEXT' => 11, 'BINARY VARYING' => 15, 'KEY' => 19, 'INDEX' => 19, 'UNIQUE' => 19, 'SPATIAL' => 19, 'FULLTEXT' => 19, 'INDEX KEY' => 23, 'UNIQUE KEY' => 23, 'FOREIGN KEY' => 23, 'PRIMARY KEY' => 23, 'SPATIAL KEY' => 23, 'FULLTEXT KEY' => 23, 'UNIQUE INDEX' => 23, 'SPATIAL INDEX' => 23, 'FULLTEXT INDEX' => 23, 'X' => 33, 'Y' => 33, 'LN' => 33, 'PI' => 33, 'ABS' => 33, 'AVG' => 33, 'BIN' => 33, 'COS' => 33, 'COT' => 33, 'DAY' => 33, 'ELT' => 33, 'EXP' => 33, 'HEX' => 33, 'LOG' => 33, 'MAX' => 33, 'MD5' => 33, 'MID' => 33, 'MIN' => 33, 'NOW' => 33, 'OCT' => 33, 'ORD' => 33, 'POW' => 33, 'SHA' => 33, 'SIN' => 33, 'STD' => 33, 'SUM' => 33, 'TAN' => 33, 'ACOS' => 33, 'AREA' => 33, 'ASIN' => 33, 'ATAN' => 33, 'CAST' => 33, 'CEIL' => 33, 'CONV' => 33, 'HOUR' => 33, 'LOG2' => 33, 'LPAD' => 33, 'RAND' => 33, 'RPAD' => 33, 'SHA1' => 33, 'SHA2' => 33, 'SIGN' => 33, 'SQRT' => 33, 'SRID' => 33, 'ST_X' => 33, 'ST_Y' => 33, 'TRIM' => 33, 'USER' => 33, 'UUID' => 33, 'WEEK' => 33, 'ASCII' => 33, 'ASWKB' => 33, 'ASWKT' => 33, 'ATAN2' => 33, 'COUNT' => 33, 'CRC32' => 33, 'FIELD' => 33, 'FLOOR' => 33, 'INSTR' => 33, 'LCASE' => 33, 'LEAST' => 33, 'LOG10' => 33, 'LOWER' => 33, 'LTRIM' => 33, 'MONTH' => 33, 'POWER' => 33, 'QUOTE' => 33, 'ROUND' => 33, 'RTRIM' => 33, 'SLEEP' => 33, 'SPACE' => 33, 'UCASE' => 33, 'UNHEX' => 33, 'UPPER' => 33, 'ASTEXT' => 33, 'BIT_OR' => 33, 'BUFFER' => 33, 'CONCAT' => 33, 'DECODE' => 33, 'ENCODE' => 33, 'EQUALS' => 33, 'FORMAT' => 33, 'IFNULL' => 33, 'ISNULL' => 33, 'LENGTH' => 33, 'LOCATE' => 33, 'MINUTE' => 33, 'NULLIF' => 33, 'POINTN' => 33, 'SECOND' => 33, 'STDDEV' => 33, 'STRCMP' => 33, 'SUBSTR' => 33, 'WITHIN' => 33, 'ADDDATE' => 33, 'ADDTIME' => 33, 'AGAINST' => 33, 'BIT_AND' => 33, 'BIT_XOR' => 33, 'CEILING' => 33, 'CHARSET' => 33, 'CROSSES' => 33, 'CURDATE' => 33, 'CURTIME' => 33, 'DAYNAME' => 33, 'DEGREES' => 33, 'ENCRYPT' => 33, 'EXTRACT' => 33, 'GLENGTH' => 33, 'ISEMPTY' => 33, 'IS_IPV4' => 33, 'IS_IPV6' => 33, 'QUARTER' => 33, 'RADIANS' => 33, 'REVERSE' => 33, 'SOUNDEX' => 33, 'ST_AREA' => 33, 'ST_SRID' => 33, 'SUBDATE' => 33, 'SUBTIME' => 33, 'SYSDATE' => 33, 'TOUCHES' => 33, 'TO_DAYS' => 33, 'VAR_POP' => 33, 'VERSION' => 33, 'WEEKDAY' => 33, 'ASBINARY' => 33, 'CENTROID' => 33, 'COALESCE' => 33, 'COMPRESS' => 33, 'CONTAINS' => 33, 'DATEDIFF' => 33, 'DATE_ADD' => 33, 'DATE_SUB' => 33, 'DISJOINT' => 33, 'DISTANCE' => 33, 'ENDPOINT' => 33, 'ENVELOPE' => 33, 'GET_LOCK' => 33, 'GREATEST' => 33, 'ISCLOSED' => 33, 'ISSIMPLE' => 33, 'JSON_SET' => 33, 'MAKEDATE' => 33, 'MAKETIME' => 33, 'MAKE_SET' => 33, 'MBREQUAL' => 33, 'OVERLAPS' => 33, 'PASSWORD' => 33, 'POSITION' => 33, 'ST_ASWKB' => 33, 'ST_ASWKT' => 33, 'ST_UNION' => 33, 'TIMEDIFF' => 33, 'TRUNCATE' => 33, 'VARIANCE' => 33, 'VAR_SAMP' => 33, 'YEARWEEK' => 33, 'ANY_VALUE' => 33, 'BENCHMARK' => 33, 'BIT_COUNT' => 33, 'COLLATION' => 33, 'CONCAT_WS' => 33, 'DAYOFWEEK' => 33, 'DAYOFYEAR' => 33, 'DIMENSION' => 33, 'FROM_DAYS' => 33, 'GEOMETRYN' => 33, 'INET_ATON' => 33, 'INET_NTOA' => 33, 'JSON_KEYS' => 33, 'JSON_TYPE' => 33, 'LOAD_FILE' => 33, 'MBRCOVERS' => 33, 'MBREQUALS' => 33, 'MBRWITHIN' => 33, 'MONTHNAME' => 33, 'NUMPOINTS' => 33, 'ROW_COUNT' => 33, 'ST_ASTEXT' => 33, 'ST_BUFFER' => 33, 'ST_EQUALS' => 33, 'ST_LENGTH' => 33, 'ST_POINTN' => 33, 'ST_WITHIN' => 33, 'SUBSTRING' => 33, 'TO_BASE64' => 33, 'UPDATEXML' => 33, 'BIT_LENGTH' => 33, 'CONVERT_TZ' => 33, 'CONVEXHULL' => 33, 'DAYOFMONTH' => 33, 'EXPORT_SET' => 33, 'FOUND_ROWS' => 33, 'GET_FORMAT' => 33, 'INET6_ATON' => 33, 'INET6_NTOA' => 33, 'INTERSECTS' => 33, 'JSON_ARRAY' => 33, 'JSON_DEPTH' => 33, 'JSON_MERGE' => 33, 'JSON_QUOTE' => 33, 'JSON_VALID' => 33, 'MBRTOUCHES' => 33, 'MULTIPOINT' => 33, 'NAME_CONST' => 33, 'PERIOD_ADD' => 33, 'STARTPOINT' => 33, 'STDDEV_POP' => 33, 'ST_CROSSES' => 33, 'ST_GEOHASH' => 33, 'ST_ISEMPTY' => 33, 'ST_ISVALID' => 33, 'ST_TOUCHES' => 33, 'TO_SECONDS' => 33, 'UNCOMPRESS' => 33, 'UUID_SHORT' => 33, 'WEEKOFYEAR' => 33, 'AES_DECRYPT' => 33, 'AES_ENCRYPT' => 33, 'CHAR_LENGTH' => 33, 'DATE_FORMAT' => 33, 'DES_DECRYPT' => 33, 'DES_ENCRYPT' => 33, 'FIND_IN_SET' => 33, 'FROM_BASE64' => 33, 'GEOMFROMWKB' => 33, 'GTID_SUBSET' => 33, 'JSON_INSERT' => 33, 'JSON_LENGTH' => 33, 'JSON_OBJECT' => 33, 'JSON_PRETTY' => 33, 'JSON_REMOVE' => 33, 'JSON_SEARCH' => 33, 'LINEFROMWKB' => 33, 'MBRCONTAINS' => 33, 'MBRDISJOINT' => 33, 'MBROVERLAPS' => 33, 'MICROSECOND' => 33, 'PERIOD_DIFF' => 33, 'POLYFROMWKB' => 33, 'SEC_TO_TIME' => 33, 'STDDEV_SAMP' => 33, 'STR_TO_DATE' => 33, 'ST_ASBINARY' => 33, 'ST_CENTROID' => 33, 'ST_CONTAINS' => 33, 'ST_DISJOINT' => 33, 'ST_DISTANCE' => 33, 'ST_ENDPOINT' => 33, 'ST_ENVELOPE' => 33, 'ST_ISCLOSED' => 33, 'ST_ISSIMPLE' => 33, 'ST_OVERLAPS' => 33, 'ST_SIMPLIFY' => 33, 'ST_VALIDATE' => 33, 'SYSTEM_USER' => 33, 'TIME_FORMAT' => 33, 'TIME_TO_SEC' => 33, 'COERCIBILITY' => 33, 'EXTERIORRING' => 33, 'EXTRACTVALUE' => 33, 'GEOMETRYTYPE' => 33, 'GEOMFROMTEXT' => 33, 'GROUP_CONCAT' => 33, 'IS_FREE_LOCK' => 33, 'IS_USED_LOCK' => 33, 'JSON_EXTRACT' => 33, 'JSON_REPLACE' => 33, 'JSON_UNQUOTE' => 33, 'LINEFROMTEXT' => 33, 'MBRCOVEREDBY' => 33, 'MLINEFROMWKB' => 33, 'MPOLYFROMWKB' => 33, 'MULTIPOLYGON' => 33, 'OCTET_LENGTH' => 33, 'OLD_PASSWORD' => 33, 'POINTFROMWKB' => 33, 'POLYFROMTEXT' => 33, 'RANDOM_BYTES' => 33, 'RELEASE_LOCK' => 33, 'SESSION_USER' => 33, 'ST_ASGEOJSON' => 33, 'ST_DIMENSION' => 33, 'ST_GEOMETRYN' => 33, 'ST_NUMPOINTS' => 33, 'TIMESTAMPADD' => 33, 'CONNECTION_ID' => 33, 'FROM_UNIXTIME' => 33, 'GTID_SUBTRACT' => 33, 'INTERIORRINGN' => 33, 'JSON_CONTAINS' => 33, 'MBRINTERSECTS' => 33, 'MLINEFROMTEXT' => 33, 'MPOINTFROMWKB' => 33, 'MPOLYFROMTEXT' => 33, 'NUMGEOMETRIES' => 33, 'POINTFROMTEXT' => 33, 'ST_CONVEXHULL' => 33, 'ST_DIFFERENCE' => 33, 'ST_INTERSECTS' => 33, 'ST_STARTPOINT' => 33, 'TIMESTAMPDIFF' => 33, 'WEIGHT_STRING' => 33, 'IS_IPV4_COMPAT' => 33, 'IS_IPV4_MAPPED' => 33, 'LAST_INSERT_ID' => 33, 'MPOINTFROMTEXT' => 33, 'POLYGONFROMWKB' => 33, 'ST_GEOMFROMWKB' => 33, 'ST_LINEFROMWKB' => 33, 'ST_POLYFROMWKB' => 33, 'UNIX_TIMESTAMP' => 33, 'GEOMCOLLFROMWKB' => 33, 'MASTER_POS_WAIT' => 33, 'POLYGONFROMTEXT' => 33, 'ST_EXTERIORRING' => 33, 'ST_GEOMETRYTYPE' => 33, 'ST_GEOMFROMTEXT' => 33, 'ST_INTERSECTION' => 33, 'ST_LINEFROMTEXT' => 33, 'ST_MAKEENVELOPE' => 33, 'ST_MLINEFROMWKB' => 33, 'ST_MPOLYFROMWKB' => 33, 'ST_POINTFROMWKB' => 33, 'ST_POLYFROMTEXT' => 33, 'SUBSTRING_INDEX' => 33, 'CHARACTER_LENGTH' => 33, 'GEOMCOLLFROMTEXT' => 33, 'GEOMETRYFROMTEXT' => 33, 'JSON_MERGE_PATCH' => 33, 'NUMINTERIORRINGS' => 33, 'ST_INTERIORRINGN' => 33, 'ST_MLINEFROMTEXT' => 33, 'ST_MPOINTFROMWKB' => 33, 'ST_MPOLYFROMTEXT' => 33, 'ST_NUMGEOMETRIES' => 33, 'ST_POINTFROMTEXT' => 33, 'ST_SYMDIFFERENCE' => 33, 'JSON_ARRAY_APPEND' => 33, 'JSON_ARRAY_INSERT' => 33, 'JSON_STORAGE_FREE' => 33, 'JSON_STORAGE_SIZE' => 33, 'LINESTRINGFROMWKB' => 33, 'MULTIPOINTFROMWKB' => 33, 'RELEASE_ALL_LOCKS' => 33, 'ST_LATFROMGEOHASH' => 33, 'ST_MPOINTFROMTEXT' => 33, 'ST_POLYGONFROMWKB' => 33, 'JSON_CONTAINS_PATH' => 33, 'MULTIPOINTFROMTEXT' => 33, 'ST_BUFFER_STRATEGY' => 33, 'ST_DISTANCE_SPHERE' => 33, 'ST_GEOMCOLLFROMTXT' => 33, 'ST_GEOMCOLLFROMWKB' => 33, 'ST_GEOMFROMGEOJSON' => 33, 'ST_LONGFROMGEOHASH' => 33, 'ST_POLYGONFROMTEXT' => 33, 'JSON_MERGE_PRESERVE' => 33, 'MULTIPOLYGONFROMWKB' => 33, 'ST_GEOMCOLLFROMTEXT' => 33, 'ST_GEOMETRYFROMTEXT' => 33, 'ST_NUMINTERIORRINGS' => 33, 'ST_POINTFROMGEOHASH' => 33, 'UNCOMPRESSED_LENGTH' => 33, 'MULTIPOLYGONFROMTEXT' => 33, 'ST_LINESTRINGFROMWKB' => 33, 'ST_MULTIPOINTFROMWKB' => 33, 'ST_MULTIPOINTFROMTEXT' => 33, 'MULTILINESTRINGFROMWKB' => 33, 'ST_MULTIPOLYGONFROMWKB' => 33, 'MULTILINESTRINGFROMTEXT' => 33, 'ST_MULTIPOLYGONFROMTEXT' => 33, 'GEOMETRYCOLLECTIONFROMWKB' => 33, 'ST_MULTILINESTRINGFROMWKB' => 33, 'GEOMETRYCOLLECTIONFROMTEXT' => 33, 'ST_MULTILINESTRINGFROMTEXT' => 33, 'VALIDATE_PASSWORD_STRENGTH' => 33, 'WAIT_FOR_EXECUTED_GTID_SET' => 33, 'ST_GEOMETRYCOLLECTIONFROMWKB' => 33, 'ST_GEOMETRYCOLLECTIONFROMTEXT' => 33, 'WAIT_UNTIL_SQL_THREAD_AFTER_GTIDS' => 33, 'IF' => 35, 'IN' => 35, 'MOD' => 35, 'LEFT' => 35, 'MATCH' => 35, 'RIGHT' => 35, 'EXISTS' => 35, 'INSERT' => 35, 'REPEAT' => 35, 'SCHEMA' => 35, 'VALUES' => 35, 'CONVERT' => 35, 'DEFAULT' => 35, 'REPLACE' => 35, 'DATABASE' => 35, 'UTC_DATE' => 35, 'UTC_TIME' => 35, 'LOCALTIME' => 35, 'CURRENT_DATE' => 35, 'CURRENT_TIME' => 35, 'CURRENT_USER' => 35, 'UTC_TIMESTAMP' => 35, 'LOCALTIMESTAMP' => 35, 'CURRENT_TIMESTAMP' => 35, 'NOT IN' => 39, 'DATE' => 41, 'TIME' => 41, 'YEAR' => 41, 'POINT' => 41, 'POLYGON' => 41, 'TIMESTAMP' => 41, 'LINESTRING' => 41, 'MULTILINESTRING' => 41, 'GEOMETRYCOLLECTION' => 41, 'CHAR' => 43, 'BINARY' => 43, 'INTERVAL' => 43);
-    }
-    /**
-     * Context for MariaDB 10.2.
-     *
-     * @category   Contexts
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class ContextMariaDb100200 extends \PhpMyAdmin\SqlParser\Context
-    {
-        /**
-         * List of keywords.
-         *
-         * The value associated to each keyword represents its flags.
-         *
-         * @see Token::FLAG_KEYWORD_RESERVED Token::FLAG_KEYWORD_COMPOSED
-         *      Token::FLAG_KEYWORD_DATA_TYPE Token::FLAG_KEYWORD_KEY
-         *      Token::FLAG_KEYWORD_FUNCTION
-         *
-         * @var array
-         */
-        public static $KEYWORDS = array('AT' => 1, 'DO' => 1, 'IO' => 1, 'NO' => 1, 'XA' => 1, 'ANY' => 1, 'CPU' => 1, 'END' => 1, 'IPC' => 1, 'NDB' => 1, 'NEW' => 1, 'ONE' => 1, 'ROW' => 1, 'XID' => 1, 'BOOL' => 1, 'BYTE' => 1, 'CODE' => 1, 'CUBE' => 1, 'DATA' => 1, 'DISK' => 1, 'ENDS' => 1, 'FAST' => 1, 'FILE' => 1, 'FULL' => 1, 'HASH' => 1, 'HELP' => 1, 'HOST' => 1, 'LAST' => 1, 'LESS' => 1, 'LIST' => 1, 'LOGS' => 1, 'MODE' => 1, 'NAME' => 1, 'NEXT' => 1, 'NONE' => 1, 'ONLY' => 1, 'OPEN' => 1, 'PAGE' => 1, 'PORT' => 1, 'PREV' => 1, 'SLOW' => 1, 'SOME' => 1, 'STOP' => 1, 'THAN' => 1, 'TYPE' => 1, 'VIEW' => 1, 'WAIT' => 1, 'WORK' => 1, 'X509' => 1, 'AFTER' => 1, 'BEGIN' => 1, 'BLOCK' => 1, 'BTREE' => 1, 'CACHE' => 1, 'CHAIN' => 1, 'CLOSE' => 1, 'ERROR' => 1, 'EVENT' => 1, 'EVERY' => 1, 'FIRST' => 1, 'FIXED' => 1, 'FLUSH' => 1, 'FOUND' => 1, 'HOSTS' => 1, 'LEVEL' => 1, 'LOCAL' => 1, 'LOCKS' => 1, 'MERGE' => 1, 'MUTEX' => 1, 'NAMES' => 1, 'NCHAR' => 1, 'NEVER' => 1, 'OWNER' => 1, 'PHASE' => 1, 'PROXY' => 1, 'QUERY' => 1, 'QUICK' => 1, 'RELAY' => 1, 'RESET' => 1, 'RTREE' => 1, 'SHARE' => 1, 'SLAVE' => 1, 'START' => 1, 'SUPER' => 1, 'SWAPS' => 1, 'TYPES' => 1, 'UNTIL' => 1, 'VALUE' => 1, 'ACTION' => 1, 'ALWAYS' => 1, 'BACKUP' => 1, 'BINLOG' => 1, 'CIPHER' => 1, 'CLIENT' => 1, 'COMMIT' => 1, 'ENABLE' => 1, 'ENGINE' => 1, 'ERRORS' => 1, 'ESCAPE' => 1, 'EVENTS' => 1, 'EXPIRE' => 1, 'EXPORT' => 1, 'FAULTS' => 1, 'FIELDS' => 1, 'FILTER' => 1, 'GLOBAL' => 1, 'GRANTS' => 1, 'IMPORT' => 1, 'ISSUER' => 1, 'LEAVES' => 1, 'MASTER' => 1, 'MEDIUM' => 1, 'MEMORY' => 1, 'MODIFY' => 1, 'NUMBER' => 1, 'OFFSET' => 1, 'PARSER' => 1, 'PLUGIN' => 1, 'RELOAD' => 1, 'REMOVE' => 1, 'REPAIR' => 1, 'RESUME' => 1, 'ROLLUP' => 1, 'SERVER' => 1, 'SIGNED' => 1, 'SIMPLE' => 1, 'SOCKET' => 1, 'SONAME' => 1, 'SOUNDS' => 1, 'SOURCE' => 1, 'STARTS' => 1, 'STATUS' => 1, 'STRING' => 1, 'TABLES' => 1, 'ACCOUNT' => 1, 'ANALYSE' => 1, 'CHANGED' => 1, 'CHANNEL' => 1, 'COLUMNS' => 1, 'COMMENT' => 1, 'COMPACT' => 1, 'CONTEXT' => 1, 'CURRENT' => 1, 'DEFINER' => 1, 'DISABLE' => 1, 'DISCARD' => 1, 'DYNAMIC' => 1, 'ENGINES' => 1, 'EXECUTE' => 1, 'FOLLOWS' => 1, 'GENERAL' => 1, 'HANDLER' => 1, 'INDEXES' => 1, 'INSTALL' => 1, 'INVOKER' => 1, 'LOGFILE' => 1, 'MIGRATE' => 1, 'NO_WAIT' => 1, 'OPTIONS' => 1, 'PARTIAL' => 1, 'PLUGINS' => 1, 'PREPARE' => 1, 'PROFILE' => 1, 'REBUILD' => 1, 'RECOVER' => 1, 'RESTORE' => 1, 'RETURNS' => 1, 'ROUTINE' => 1, 'SESSION' => 1, 'STACKED' => 1, 'STORAGE' => 1, 'SUBJECT' => 1, 'SUSPEND' => 1, 'UNICODE' => 1, 'UNKNOWN' => 1, 'UPGRADE' => 1, 'USE_FRM' => 1, 'WITHOUT' => 1, 'WRAPPER' => 1, 'CASCADED' => 1, 'CHECKSUM' => 1, 'DATAFILE' => 1, 'DUMPFILE' => 1, 'EXCHANGE' => 1, 'EXTENDED' => 1, 'FUNCTION' => 1, 'LANGUAGE' => 1, 'MAX_ROWS' => 1, 'MAX_SIZE' => 1, 'MIN_ROWS' => 1, 'NATIONAL' => 1, 'NVARCHAR' => 1, 'PRECEDES' => 1, 'PRESERVE' => 1, 'PROFILES' => 1, 'REDOFILE' => 1, 'RELAYLOG' => 1, 'ROLLBACK' => 1, 'SCHEDULE' => 1, 'SECURITY' => 1, 'SHUTDOWN' => 1, 'SNAPSHOT' => 1, 'SWITCHES' => 1, 'TRIGGERS' => 1, 'UNDOFILE' => 1, 'WARNINGS' => 1, 'AGGREGATE' => 1, 'ALGORITHM' => 1, 'COMMITTED' => 1, 'DIRECTORY' => 1, 'DUPLICATE' => 1, 'EXPANSION' => 1, 'IO_THREAD' => 1, 'ISOLATION' => 1, 'NODEGROUP' => 1, 'PACK_KEYS' => 1, 'READ_ONLY' => 1, 'REDUNDANT' => 1, 'SAVEPOINT' => 1, 'SQL_CACHE' => 1, 'TEMPORARY' => 1, 'TEMPTABLE' => 1, 'UNDEFINED' => 1, 'UNINSTALL' => 1, 'VARIABLES' => 1, 'COMPLETION' => 1, 'COMPRESSED' => 1, 'CONCURRENT' => 1, 'CONNECTION' => 1, 'CONSISTENT' => 1, 'DEALLOCATE' => 1, 'IDENTIFIED' => 1, 'MASTER_SSL' => 1, 'NDBCLUSTER' => 1, 'PARTITIONS' => 1, 'PERSISTENT' => 1, 'PLUGIN_DIR' => 1, 'PRIVILEGES' => 1, 'REORGANIZE' => 1, 'REPEATABLE' => 1, 'ROW_FORMAT' => 1, 'SQL_THREAD' => 1, 'TABLESPACE' => 1, 'TABLE_NAME' => 1, 'VALIDATION' => 1, 'COLUMN_NAME' => 1, 'COMPRESSION' => 1, 'CURSOR_NAME' => 1, 'DIAGNOSTICS' => 1, 'EXTENT_SIZE' => 1, 'MASTER_HOST' => 1, 'MASTER_PORT' => 1, 'MASTER_USER' => 1, 'MYSQL_ERRNO' => 1, 'NONBLOCKING' => 1, 'PROCESSLIST' => 1, 'REPLICATION' => 1, 'SCHEMA_NAME' => 1, 'SQL_TSI_DAY' => 1, 'TRANSACTION' => 1, 'UNCOMMITTED' => 1, 'CATALOG_NAME' => 1, 'CLASS_ORIGIN' => 1, 'DEFAULT_AUTH' => 1, 'DES_KEY_FILE' => 1, 'INITIAL_SIZE' => 1, 'MASTER_DELAY' => 1, 'MESSAGE_TEXT' => 1, 'PARTITIONING' => 1, 'RELAY_THREAD' => 1, 'SERIALIZABLE' => 1, 'SQL_NO_CACHE' => 1, 'SQL_TSI_HOUR' => 1, 'SQL_TSI_WEEK' => 1, 'SQL_TSI_YEAR' => 1, 'SUBPARTITION' => 1, 'COLUMN_FORMAT' => 1, 'INSERT_METHOD' => 1, 'MASTER_SSL_CA' => 1, 'RELAY_LOG_POS' => 1, 'SQL_TSI_MONTH' => 1, 'SUBPARTITIONS' => 1, 'AUTO_INCREMENT' => 1, 'AVG_ROW_LENGTH' => 1, 'KEY_BLOCK_SIZE' => 1, 'MASTER_LOG_POS' => 1, 'MASTER_SSL_CRL' => 1, 'MASTER_SSL_KEY' => 1, 'RELAY_LOG_FILE' => 1, 'SQL_TSI_MINUTE' => 1, 'SQL_TSI_SECOND' => 1, 'TABLE_CHECKSUM' => 1, 'USER_RESOURCES' => 1, 'AUTOEXTEND_SIZE' => 1, 'CONSTRAINT_NAME' => 1, 'DELAY_KEY_WRITE' => 1, 'FILE_BLOCK_SIZE' => 1, 'MASTER_LOG_FILE' => 1, 'MASTER_PASSWORD' => 1, 'MASTER_SSL_CERT' => 1, 'PARSE_GCOL_EXPR' => 1, 'REPLICATE_DO_DB' => 1, 'SQL_AFTER_GTIDS' => 1, 'SQL_TSI_QUARTER' => 1, 'SUBCLASS_ORIGIN' => 1, 'MASTER_SERVER_ID' => 1, 'REDO_BUFFER_SIZE' => 1, 'SQL_BEFORE_GTIDS' => 1, 'STATS_PERSISTENT' => 1, 'UNDO_BUFFER_SIZE' => 1, 'CONSTRAINT_SCHEMA' => 1, 'GROUP_REPLICATION' => 1, 'IGNORE_SERVER_IDS' => 1, 'MASTER_SSL_CAPATH' => 1, 'MASTER_SSL_CIPHER' => 1, 'RETURNED_SQLSTATE' => 1, 'SQL_BUFFER_RESULT' => 1, 'STATS_AUTO_RECALC' => 1, 'CONSTRAINT_CATALOG' => 1, 'MASTER_RETRY_COUNT' => 1, 'MASTER_SSL_CRLPATH' => 1, 'MAX_STATEMENT_TIME' => 1, 'REPLICATE_DO_TABLE' => 1, 'SQL_AFTER_MTS_GAPS' => 1, 'STATS_SAMPLE_PAGES' => 1, 'REPLICATE_IGNORE_DB' => 1, 'MASTER_AUTO_POSITION' => 1, 'MASTER_CONNECT_RETRY' => 1, 'MAX_QUERIES_PER_HOUR' => 1, 'MAX_UPDATES_PER_HOUR' => 1, 'MAX_USER_CONNECTIONS' => 1, 'REPLICATE_REWRITE_DB' => 1, 'REPLICATE_IGNORE_TABLE' => 1, 'MASTER_HEARTBEAT_PERIOD' => 1, 'REPLICATE_WILD_DO_TABLE' => 1, 'MAX_CONNECTIONS_PER_HOUR' => 1, 'REPLICATE_WILD_IGNORE_TABLE' => 1, 'AS' => 3, 'BY' => 3, 'IS' => 3, 'ON' => 3, 'OR' => 3, 'TO' => 3, 'ADD' => 3, 'ALL' => 3, 'AND' => 3, 'ASC' => 3, 'DEC' => 3, 'DIV' => 3, 'FOR' => 3, 'GET' => 3, 'NOT' => 3, 'OUT' => 3, 'SQL' => 3, 'SSL' => 3, 'USE' => 3, 'XOR' => 3, 'BOTH' => 3, 'CALL' => 3, 'CASE' => 3, 'DESC' => 3, 'DROP' => 3, 'DUAL' => 3, 'EACH' => 3, 'ELSE' => 3, 'EXIT' => 3, 'FROM' => 3, 'INT1' => 3, 'INT2' => 3, 'INT3' => 3, 'INT4' => 3, 'INT8' => 3, 'INTO' => 3, 'JOIN' => 3, 'KEYS' => 3, 'KILL' => 3, 'LIKE' => 3, 'LOAD' => 3, 'LOCK' => 3, 'LONG' => 3, 'LOOP' => 3, 'NULL' => 3, 'READ' => 3, 'ROWS' => 3, 'SHOW' => 3, 'THEN' => 3, 'TRUE' => 3, 'UNDO' => 3, 'WHEN' => 3, 'WITH' => 3, 'ALTER' => 3, 'CHECK' => 3, 'CROSS' => 3, 'FALSE' => 3, 'FETCH' => 3, 'FORCE' => 3, 'GRANT' => 3, 'GROUP' => 3, 'INNER' => 3, 'INOUT' => 3, 'LEAVE' => 3, 'LIMIT' => 3, 'LINES' => 3, 'ORDER' => 3, 'OUTER' => 3, 'PURGE' => 3, 'RANGE' => 3, 'READS' => 3, 'RLIKE' => 3, 'TABLE' => 3, 'UNION' => 3, 'USAGE' => 3, 'USING' => 3, 'WHERE' => 3, 'WHILE' => 3, 'WRITE' => 3, 'BEFORE' => 3, 'CHANGE' => 3, 'COLUMN' => 3, 'CREATE' => 3, 'CURSOR' => 3, 'DELETE' => 3, 'ELSEIF' => 3, 'FLOAT4' => 3, 'FLOAT8' => 3, 'HAVING' => 3, 'IGNORE' => 3, 'INFILE' => 3, 'LINEAR' => 3, 'OPTION' => 3, 'REGEXP' => 3, 'RENAME' => 3, 'RETURN' => 3, 'REVOKE' => 3, 'SELECT' => 3, 'SIGNAL' => 3, 'STORED' => 3, 'UNLOCK' => 3, 'UPDATE' => 3, 'ANALYZE' => 3, 'BETWEEN' => 3, 'CASCADE' => 3, 'COLLATE' => 3, 'DECLARE' => 3, 'DELAYED' => 3, 'ESCAPED' => 3, 'EXPLAIN' => 3, 'FOREIGN' => 3, 'ITERATE' => 3, 'LEADING' => 3, 'NATURAL' => 3, 'OUTFILE' => 3, 'PRIMARY' => 3, 'RELEASE' => 3, 'REQUIRE' => 3, 'SCHEMAS' => 3, 'TRIGGER' => 3, 'VARYING' => 3, 'VIRTUAL' => 3, 'CONTINUE' => 3, 'DAY_HOUR' => 3, 'DESCRIBE' => 3, 'DISTINCT' => 3, 'ENCLOSED' => 3, 'MAXVALUE' => 3, 'MODIFIES' => 3, 'OPTIMIZE' => 3, 'RESIGNAL' => 3, 'RESTRICT' => 3, 'SPECIFIC' => 3, 'SQLSTATE' => 3, 'STARTING' => 3, 'TRAILING' => 3, 'UNSIGNED' => 3, 'ZEROFILL' => 3, 'CONDITION' => 3, 'DATABASES' => 3, 'GENERATED' => 3, 'MIDDLEINT' => 3, 'PARTITION' => 3, 'PRECISION' => 3, 'PROCEDURE' => 3, 'RECURSIVE' => 3, 'SENSITIVE' => 3, 'SEPARATOR' => 3, 'ACCESSIBLE' => 3, 'ASENSITIVE' => 3, 'CONSTRAINT' => 3, 'DAY_MINUTE' => 3, 'DAY_SECOND' => 3, 'OPTIONALLY' => 3, 'READ_WRITE' => 3, 'REFERENCES' => 3, 'SQLWARNING' => 3, 'TERMINATED' => 3, 'YEAR_MONTH' => 3, 'DISTINCTROW' => 3, 'HOUR_MINUTE' => 3, 'HOUR_SECOND' => 3, 'INSENSITIVE' => 3, 'MASTER_BIND' => 3, 'LOW_PRIORITY' => 3, 'SQLEXCEPTION' => 3, 'VARCHARACTER' => 3, 'DETERMINISTIC' => 3, 'HIGH_PRIORITY' => 3, 'MINUTE_SECOND' => 3, 'STRAIGHT_JOIN' => 3, 'IO_AFTER_GTIDS' => 3, 'SQL_BIG_RESULT' => 3, 'DAY_MICROSECOND' => 3, 'IO_BEFORE_GTIDS' => 3, 'OPTIMIZER_COSTS' => 3, 'HOUR_MICROSECOND' => 3, 'SQL_SMALL_RESULT' => 3, 'MINUTE_MICROSECOND' => 3, 'NO_WRITE_TO_BINLOG' => 3, 'SECOND_MICROSECOND' => 3, 'SQL_CALC_FOUND_ROWS' => 3, 'MASTER_SSL_VERIFY_SERVER_CERT' => 3, 'GROUP BY' => 7, 'NOT NULL' => 7, 'ORDER BY' => 7, 'SET NULL' => 7, 'AND CHAIN' => 7, 'FULL JOIN' => 7, 'IF EXISTS' => 7, 'LEFT JOIN' => 7, 'LESS THAN' => 7, 'LOAD DATA' => 7, 'NO ACTION' => 7, 'ON DELETE' => 7, 'ON UPDATE' => 7, 'UNION ALL' => 7, 'CROSS JOIN' => 7, 'ESCAPED BY' => 7, 'FOR UPDATE' => 7, 'INNER JOIN' => 7, 'LINEAR KEY' => 7, 'NO RELEASE' => 7, 'OR REPLACE' => 7, 'RIGHT JOIN' => 7, 'ENCLOSED BY' => 7, 'LINEAR HASH' => 7, 'STARTING BY' => 7, 'AND NO CHAIN' => 7, 'FOR EACH ROW' => 7, 'NATURAL JOIN' => 7, 'PARTITION BY' => 7, 'SET PASSWORD' => 7, 'SQL SECURITY' => 7, 'CHARACTER SET' => 7, 'IF NOT EXISTS' => 7, 'TERMINATED BY' => 7, 'DATA DIRECTORY' => 7, 'UNION DISTINCT' => 7, 'DEFAULT CHARSET' => 7, 'DEFAULT COLLATE' => 7, 'FULL OUTER JOIN' => 7, 'INDEX DIRECTORY' => 7, 'LEFT OUTER JOIN' => 7, 'SUBPARTITION BY' => 7, 'GENERATED ALWAYS' => 7, 'RIGHT OUTER JOIN' => 7, 'NATURAL LEFT JOIN' => 7, 'START TRANSACTION' => 7, 'LOCK IN SHARE MODE' => 7, 'NATURAL RIGHT JOIN' => 7, 'SELECT TRANSACTION' => 7, 'DEFAULT CHARACTER SET' => 7, 'NATURAL LEFT OUTER JOIN' => 7, 'NATURAL RIGHT OUTER JOIN' => 7, 'WITH CONSISTENT SNAPSHOT' => 7, 'BIT' => 9, 'XML' => 9, 'ENUM' => 9, 'JSON' => 9, 'TEXT' => 9, 'ARRAY' => 9, 'SERIAL' => 9, 'BOOLEAN' => 9, 'DATETIME' => 9, 'GEOMETRY' => 9, 'MULTISET' => 9, 'MULTILINEPOINT' => 9, 'MULTILINEPOLYGON' => 9, 'INT' => 11, 'SET' => 11, 'BLOB' => 11, 'REAL' => 11, 'FLOAT' => 11, 'BIGINT' => 11, 'DOUBLE' => 11, 'DECIMAL' => 11, 'INTEGER' => 11, 'NUMERIC' => 11, 'TINYINT' => 11, 'VARCHAR' => 11, 'LONGBLOB' => 11, 'LONGTEXT' => 11, 'SMALLINT' => 11, 'TINYBLOB' => 11, 'TINYTEXT' => 11, 'CHARACTER' => 11, 'MEDIUMINT' => 11, 'VARBINARY' => 11, 'MEDIUMBLOB' => 11, 'MEDIUMTEXT' => 11, 'BINARY VARYING' => 15, 'KEY' => 19, 'INDEX' => 19, 'UNIQUE' => 19, 'SPATIAL' => 19, 'FULLTEXT' => 19, 'INDEX KEY' => 23, 'UNIQUE KEY' => 23, 'FOREIGN KEY' => 23, 'PRIMARY KEY' => 23, 'SPATIAL KEY' => 23, 'FULLTEXT KEY' => 23, 'UNIQUE INDEX' => 23, 'SPATIAL INDEX' => 23, 'FULLTEXT INDEX' => 23, 'X' => 33, 'Y' => 33, 'LN' => 33, 'PI' => 33, 'ABS' => 33, 'AVG' => 33, 'BIN' => 33, 'COS' => 33, 'COT' => 33, 'DAY' => 33, 'ELT' => 33, 'EXP' => 33, 'HEX' => 33, 'LOG' => 33, 'MAX' => 33, 'MD5' => 33, 'MID' => 33, 'MIN' => 33, 'NOW' => 33, 'OCT' => 33, 'ORD' => 33, 'POW' => 33, 'SHA' => 33, 'SIN' => 33, 'STD' => 33, 'SUM' => 33, 'TAN' => 33, 'ACOS' => 33, 'AREA' => 33, 'ASIN' => 33, 'ATAN' => 33, 'CAST' => 33, 'CEIL' => 33, 'CONV' => 33, 'HOUR' => 33, 'LOG2' => 33, 'LPAD' => 33, 'RAND' => 33, 'RPAD' => 33, 'SHA1' => 33, 'SHA2' => 33, 'SIGN' => 33, 'SQRT' => 33, 'SRID' => 33, 'ST_X' => 33, 'ST_Y' => 33, 'TRIM' => 33, 'USER' => 33, 'UUID' => 33, 'WEEK' => 33, 'ASCII' => 33, 'ASWKB' => 33, 'ASWKT' => 33, 'ATAN2' => 33, 'COUNT' => 33, 'CRC32' => 33, 'FIELD' => 33, 'FLOOR' => 33, 'INSTR' => 33, 'LCASE' => 33, 'LEAST' => 33, 'LOG10' => 33, 'LOWER' => 33, 'LTRIM' => 33, 'MONTH' => 33, 'POWER' => 33, 'QUOTE' => 33, 'ROUND' => 33, 'RTRIM' => 33, 'SLEEP' => 33, 'SPACE' => 33, 'UCASE' => 33, 'UNHEX' => 33, 'UPPER' => 33, 'ASTEXT' => 33, 'BIT_OR' => 33, 'BUFFER' => 33, 'CONCAT' => 33, 'DECODE' => 33, 'ENCODE' => 33, 'EQUALS' => 33, 'FORMAT' => 33, 'IFNULL' => 33, 'ISNULL' => 33, 'LENGTH' => 33, 'LOCATE' => 33, 'MINUTE' => 33, 'NULLIF' => 33, 'POINTN' => 33, 'SECOND' => 33, 'STDDEV' => 33, 'STRCMP' => 33, 'SUBSTR' => 33, 'WITHIN' => 33, 'ADDDATE' => 33, 'ADDTIME' => 33, 'AGAINST' => 33, 'BIT_AND' => 33, 'BIT_XOR' => 33, 'CEILING' => 33, 'CHARSET' => 33, 'CROSSES' => 33, 'CURDATE' => 33, 'CURTIME' => 33, 'DAYNAME' => 33, 'DEGREES' => 33, 'ENCRYPT' => 33, 'EXTRACT' => 33, 'GLENGTH' => 33, 'ISEMPTY' => 33, 'IS_IPV4' => 33, 'IS_IPV6' => 33, 'QUARTER' => 33, 'RADIANS' => 33, 'REVERSE' => 33, 'SOUNDEX' => 33, 'ST_AREA' => 33, 'ST_SRID' => 33, 'SUBDATE' => 33, 'SUBTIME' => 33, 'SYSDATE' => 33, 'TOUCHES' => 33, 'TO_DAYS' => 33, 'VAR_POP' => 33, 'VERSION' => 33, 'WEEKDAY' => 33, 'ASBINARY' => 33, 'CENTROID' => 33, 'COALESCE' => 33, 'COMPRESS' => 33, 'CONTAINS' => 33, 'DATEDIFF' => 33, 'DATE_ADD' => 33, 'DATE_SUB' => 33, 'DISJOINT' => 33, 'DISTANCE' => 33, 'ENDPOINT' => 33, 'ENVELOPE' => 33, 'GET_LOCK' => 33, 'GREATEST' => 33, 'ISCLOSED' => 33, 'ISSIMPLE' => 33, 'JSON_SET' => 33, 'MAKEDATE' => 33, 'MAKETIME' => 33, 'MAKE_SET' => 33, 'MBREQUAL' => 33, 'OVERLAPS' => 33, 'PASSWORD' => 33, 'POSITION' => 33, 'ST_ASWKB' => 33, 'ST_ASWKT' => 33, 'ST_UNION' => 33, 'TIMEDIFF' => 33, 'TRUNCATE' => 33, 'VARIANCE' => 33, 'VAR_SAMP' => 33, 'YEARWEEK' => 33, 'ANY_VALUE' => 33, 'BENCHMARK' => 33, 'BIT_COUNT' => 33, 'COLLATION' => 33, 'CONCAT_WS' => 33, 'DAYOFWEEK' => 33, 'DAYOFYEAR' => 33, 'DIMENSION' => 33, 'FROM_DAYS' => 33, 'GEOMETRYN' => 33, 'INET_ATON' => 33, 'INET_NTOA' => 33, 'JSON_KEYS' => 33, 'JSON_TYPE' => 33, 'LOAD_FILE' => 33, 'MBRCOVERS' => 33, 'MBREQUALS' => 33, 'MBRWITHIN' => 33, 'MONTHNAME' => 33, 'NUMPOINTS' => 33, 'ROW_COUNT' => 33, 'ST_ASTEXT' => 33, 'ST_BUFFER' => 33, 'ST_EQUALS' => 33, 'ST_LENGTH' => 33, 'ST_POINTN' => 33, 'ST_WITHIN' => 33, 'SUBSTRING' => 33, 'TO_BASE64' => 33, 'UPDATEXML' => 33, 'BIT_LENGTH' => 33, 'CONVERT_TZ' => 33, 'CONVEXHULL' => 33, 'DAYOFMONTH' => 33, 'EXPORT_SET' => 33, 'FOUND_ROWS' => 33, 'GET_FORMAT' => 33, 'INET6_ATON' => 33, 'INET6_NTOA' => 33, 'INTERSECTS' => 33, 'JSON_ARRAY' => 33, 'JSON_DEPTH' => 33, 'JSON_MERGE' => 33, 'JSON_QUOTE' => 33, 'JSON_VALID' => 33, 'MBRTOUCHES' => 33, 'MULTIPOINT' => 33, 'NAME_CONST' => 33, 'PERIOD_ADD' => 33, 'STARTPOINT' => 33, 'STDDEV_POP' => 33, 'ST_CROSSES' => 33, 'ST_GEOHASH' => 33, 'ST_ISEMPTY' => 33, 'ST_ISVALID' => 33, 'ST_TOUCHES' => 33, 'TO_SECONDS' => 33, 'UNCOMPRESS' => 33, 'UUID_SHORT' => 33, 'WEEKOFYEAR' => 33, 'AES_DECRYPT' => 33, 'AES_ENCRYPT' => 33, 'CHAR_LENGTH' => 33, 'DATE_FORMAT' => 33, 'DES_DECRYPT' => 33, 'DES_ENCRYPT' => 33, 'FIND_IN_SET' => 33, 'FROM_BASE64' => 33, 'GEOMFROMWKB' => 33, 'GTID_SUBSET' => 33, 'JSON_INSERT' => 33, 'JSON_LENGTH' => 33, 'JSON_OBJECT' => 33, 'JSON_PRETTY' => 33, 'JSON_REMOVE' => 33, 'JSON_SEARCH' => 33, 'LINEFROMWKB' => 33, 'MBRCONTAINS' => 33, 'MBRDISJOINT' => 33, 'MBROVERLAPS' => 33, 'MICROSECOND' => 33, 'PERIOD_DIFF' => 33, 'POLYFROMWKB' => 33, 'SEC_TO_TIME' => 33, 'STDDEV_SAMP' => 33, 'STR_TO_DATE' => 33, 'ST_ASBINARY' => 33, 'ST_CENTROID' => 33, 'ST_CONTAINS' => 33, 'ST_DISJOINT' => 33, 'ST_DISTANCE' => 33, 'ST_ENDPOINT' => 33, 'ST_ENVELOPE' => 33, 'ST_ISCLOSED' => 33, 'ST_ISSIMPLE' => 33, 'ST_OVERLAPS' => 33, 'ST_SIMPLIFY' => 33, 'ST_VALIDATE' => 33, 'SYSTEM_USER' => 33, 'TIME_FORMAT' => 33, 'TIME_TO_SEC' => 33, 'COERCIBILITY' => 33, 'EXTERIORRING' => 33, 'EXTRACTVALUE' => 33, 'GEOMETRYTYPE' => 33, 'GEOMFROMTEXT' => 33, 'GROUP_CONCAT' => 33, 'IS_FREE_LOCK' => 33, 'IS_USED_LOCK' => 33, 'JSON_EXTRACT' => 33, 'JSON_REPLACE' => 33, 'JSON_UNQUOTE' => 33, 'LINEFROMTEXT' => 33, 'MBRCOVEREDBY' => 33, 'MLINEFROMWKB' => 33, 'MPOLYFROMWKB' => 33, 'MULTIPOLYGON' => 33, 'OCTET_LENGTH' => 33, 'OLD_PASSWORD' => 33, 'POINTFROMWKB' => 33, 'POLYFROMTEXT' => 33, 'RANDOM_BYTES' => 33, 'RELEASE_LOCK' => 33, 'SESSION_USER' => 33, 'ST_ASGEOJSON' => 33, 'ST_DIMENSION' => 33, 'ST_GEOMETRYN' => 33, 'ST_NUMPOINTS' => 33, 'TIMESTAMPADD' => 33, 'CONNECTION_ID' => 33, 'FROM_UNIXTIME' => 33, 'GTID_SUBTRACT' => 33, 'INTERIORRINGN' => 33, 'JSON_CONTAINS' => 33, 'MBRINTERSECTS' => 33, 'MLINEFROMTEXT' => 33, 'MPOINTFROMWKB' => 33, 'MPOLYFROMTEXT' => 33, 'NUMGEOMETRIES' => 33, 'POINTFROMTEXT' => 33, 'ST_CONVEXHULL' => 33, 'ST_DIFFERENCE' => 33, 'ST_INTERSECTS' => 33, 'ST_STARTPOINT' => 33, 'TIMESTAMPDIFF' => 33, 'WEIGHT_STRING' => 33, 'IS_IPV4_COMPAT' => 33, 'IS_IPV4_MAPPED' => 33, 'LAST_INSERT_ID' => 33, 'MPOINTFROMTEXT' => 33, 'POLYGONFROMWKB' => 33, 'ST_GEOMFROMWKB' => 33, 'ST_LINEFROMWKB' => 33, 'ST_POLYFROMWKB' => 33, 'UNIX_TIMESTAMP' => 33, 'GEOMCOLLFROMWKB' => 33, 'MASTER_POS_WAIT' => 33, 'POLYGONFROMTEXT' => 33, 'ST_EXTERIORRING' => 33, 'ST_GEOMETRYTYPE' => 33, 'ST_GEOMFROMTEXT' => 33, 'ST_INTERSECTION' => 33, 'ST_LINEFROMTEXT' => 33, 'ST_MAKEENVELOPE' => 33, 'ST_MLINEFROMWKB' => 33, 'ST_MPOLYFROMWKB' => 33, 'ST_POINTFROMWKB' => 33, 'ST_POLYFROMTEXT' => 33, 'SUBSTRING_INDEX' => 33, 'CHARACTER_LENGTH' => 33, 'GEOMCOLLFROMTEXT' => 33, 'GEOMETRYFROMTEXT' => 33, 'JSON_MERGE_PATCH' => 33, 'NUMINTERIORRINGS' => 33, 'ST_INTERIORRINGN' => 33, 'ST_MLINEFROMTEXT' => 33, 'ST_MPOINTFROMWKB' => 33, 'ST_MPOLYFROMTEXT' => 33, 'ST_NUMGEOMETRIES' => 33, 'ST_POINTFROMTEXT' => 33, 'ST_SYMDIFFERENCE' => 33, 'JSON_ARRAY_APPEND' => 33, 'JSON_ARRAY_INSERT' => 33, 'JSON_STORAGE_FREE' => 33, 'JSON_STORAGE_SIZE' => 33, 'LINESTRINGFROMWKB' => 33, 'MULTIPOINTFROMWKB' => 33, 'RELEASE_ALL_LOCKS' => 33, 'ST_LATFROMGEOHASH' => 33, 'ST_MPOINTFROMTEXT' => 33, 'ST_POLYGONFROMWKB' => 33, 'JSON_CONTAINS_PATH' => 33, 'MULTIPOINTFROMTEXT' => 33, 'ST_BUFFER_STRATEGY' => 33, 'ST_DISTANCE_SPHERE' => 33, 'ST_GEOMCOLLFROMTXT' => 33, 'ST_GEOMCOLLFROMWKB' => 33, 'ST_GEOMFROMGEOJSON' => 33, 'ST_LONGFROMGEOHASH' => 33, 'ST_POLYGONFROMTEXT' => 33, 'JSON_MERGE_PRESERVE' => 33, 'MULTIPOLYGONFROMWKB' => 33, 'ST_GEOMCOLLFROMTEXT' => 33, 'ST_GEOMETRYFROMTEXT' => 33, 'ST_NUMINTERIORRINGS' => 33, 'ST_POINTFROMGEOHASH' => 33, 'UNCOMPRESSED_LENGTH' => 33, 'MULTIPOLYGONFROMTEXT' => 33, 'ST_LINESTRINGFROMWKB' => 33, 'ST_MULTIPOINTFROMWKB' => 33, 'ST_MULTIPOINTFROMTEXT' => 33, 'MULTILINESTRINGFROMWKB' => 33, 'ST_MULTIPOLYGONFROMWKB' => 33, 'MULTILINESTRINGFROMTEXT' => 33, 'ST_MULTIPOLYGONFROMTEXT' => 33, 'GEOMETRYCOLLECTIONFROMWKB' => 33, 'ST_MULTILINESTRINGFROMWKB' => 33, 'GEOMETRYCOLLECTIONFROMTEXT' => 33, 'ST_MULTILINESTRINGFROMTEXT' => 33, 'VALIDATE_PASSWORD_STRENGTH' => 33, 'WAIT_FOR_EXECUTED_GTID_SET' => 33, 'ST_GEOMETRYCOLLECTIONFROMWKB' => 33, 'ST_GEOMETRYCOLLECTIONFROMTEXT' => 33, 'WAIT_UNTIL_SQL_THREAD_AFTER_GTIDS' => 33, 'IF' => 35, 'IN' => 35, 'MOD' => 35, 'LEFT' => 35, 'MATCH' => 35, 'RIGHT' => 35, 'EXISTS' => 35, 'INSERT' => 35, 'REPEAT' => 35, 'SCHEMA' => 35, 'VALUES' => 35, 'CONVERT' => 35, 'DEFAULT' => 35, 'REPLACE' => 35, 'DATABASE' => 35, 'UTC_DATE' => 35, 'UTC_TIME' => 35, 'LOCALTIME' => 35, 'CURRENT_DATE' => 35, 'CURRENT_TIME' => 35, 'CURRENT_USER' => 35, 'UTC_TIMESTAMP' => 35, 'LOCALTIMESTAMP' => 35, 'CURRENT_TIMESTAMP' => 35, 'NOT IN' => 39, 'DATE' => 41, 'TIME' => 41, 'YEAR' => 41, 'POINT' => 41, 'POLYGON' => 41, 'TIMESTAMP' => 41, 'LINESTRING' => 41, 'MULTILINESTRING' => 41, 'GEOMETRYCOLLECTION' => 41, 'CHAR' => 43, 'BINARY' => 43, 'INTERVAL' => 43);
-    }
-    /**
-     * Context for MariaDB 10.3.
-     *
-     * @category   Contexts
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class ContextMariaDb100300 extends \PhpMyAdmin\SqlParser\Context
-    {
-        /**
-         * List of keywords.
-         *
-         * The value associated to each keyword represents its flags.
-         *
-         * @see Token::FLAG_KEYWORD_RESERVED Token::FLAG_KEYWORD_COMPOSED
-         *      Token::FLAG_KEYWORD_DATA_TYPE Token::FLAG_KEYWORD_KEY
-         *      Token::FLAG_KEYWORD_FUNCTION
-         *
-         * @var array
-         */
-        public static $KEYWORDS = array('AT' => 1, 'DO' => 1, 'IO' => 1, 'NO' => 1, 'XA' => 1, 'ANY' => 1, 'CPU' => 1, 'END' => 1, 'IPC' => 1, 'NDB' => 1, 'NEW' => 1, 'ONE' => 1, 'ROW' => 1, 'XID' => 1, 'BOOL' => 1, 'BYTE' => 1, 'CODE' => 1, 'CUBE' => 1, 'DATA' => 1, 'DISK' => 1, 'ENDS' => 1, 'FAST' => 1, 'FILE' => 1, 'FULL' => 1, 'HASH' => 1, 'HELP' => 1, 'HOST' => 1, 'LAST' => 1, 'LESS' => 1, 'LIST' => 1, 'LOGS' => 1, 'MODE' => 1, 'NAME' => 1, 'NEXT' => 1, 'NONE' => 1, 'ONLY' => 1, 'OPEN' => 1, 'PAGE' => 1, 'PORT' => 1, 'PREV' => 1, 'SLOW' => 1, 'SOME' => 1, 'STOP' => 1, 'THAN' => 1, 'TYPE' => 1, 'VIEW' => 1, 'WAIT' => 1, 'WORK' => 1, 'X509' => 1, 'AFTER' => 1, 'BEGIN' => 1, 'BLOCK' => 1, 'BTREE' => 1, 'CACHE' => 1, 'CHAIN' => 1, 'CLOSE' => 1, 'ERROR' => 1, 'EVENT' => 1, 'EVERY' => 1, 'FIRST' => 1, 'FIXED' => 1, 'FLUSH' => 1, 'FOUND' => 1, 'HOSTS' => 1, 'LEVEL' => 1, 'LOCAL' => 1, 'LOCKS' => 1, 'MERGE' => 1, 'MUTEX' => 1, 'NAMES' => 1, 'NCHAR' => 1, 'NEVER' => 1, 'OWNER' => 1, 'PHASE' => 1, 'PROXY' => 1, 'QUERY' => 1, 'QUICK' => 1, 'RELAY' => 1, 'RESET' => 1, 'RTREE' => 1, 'SHARE' => 1, 'SLAVE' => 1, 'START' => 1, 'SUPER' => 1, 'SWAPS' => 1, 'TYPES' => 1, 'UNTIL' => 1, 'VALUE' => 1, 'ACTION' => 1, 'ALWAYS' => 1, 'BACKUP' => 1, 'BINLOG' => 1, 'CIPHER' => 1, 'CLIENT' => 1, 'COMMIT' => 1, 'ENABLE' => 1, 'ENGINE' => 1, 'ERRORS' => 1, 'ESCAPE' => 1, 'EVENTS' => 1, 'EXPIRE' => 1, 'EXPORT' => 1, 'FAULTS' => 1, 'FIELDS' => 1, 'FILTER' => 1, 'GLOBAL' => 1, 'GRANTS' => 1, 'IMPORT' => 1, 'ISSUER' => 1, 'LEAVES' => 1, 'MASTER' => 1, 'MEDIUM' => 1, 'MEMORY' => 1, 'MODIFY' => 1, 'NUMBER' => 1, 'OFFSET' => 1, 'PARSER' => 1, 'PLUGIN' => 1, 'RELOAD' => 1, 'REMOVE' => 1, 'REPAIR' => 1, 'RESUME' => 1, 'ROLLUP' => 1, 'SERVER' => 1, 'SIGNED' => 1, 'SIMPLE' => 1, 'SOCKET' => 1, 'SONAME' => 1, 'SOUNDS' => 1, 'SOURCE' => 1, 'STARTS' => 1, 'STATUS' => 1, 'STRING' => 1, 'TABLES' => 1, 'ACCOUNT' => 1, 'ANALYSE' => 1, 'CHANGED' => 1, 'CHANNEL' => 1, 'COLUMNS' => 1, 'COMMENT' => 1, 'COMPACT' => 1, 'CONTEXT' => 1, 'CURRENT' => 1, 'DEFINER' => 1, 'DISABLE' => 1, 'DISCARD' => 1, 'DYNAMIC' => 1, 'ENGINES' => 1, 'EXECUTE' => 1, 'FOLLOWS' => 1, 'GENERAL' => 1, 'HANDLER' => 1, 'INDEXES' => 1, 'INSTALL' => 1, 'INVOKER' => 1, 'LOGFILE' => 1, 'MIGRATE' => 1, 'NO_WAIT' => 1, 'OPTIONS' => 1, 'PARTIAL' => 1, 'PLUGINS' => 1, 'PREPARE' => 1, 'PROFILE' => 1, 'REBUILD' => 1, 'RECOVER' => 1, 'RESTORE' => 1, 'RETURNS' => 1, 'ROUTINE' => 1, 'SESSION' => 1, 'STACKED' => 1, 'STORAGE' => 1, 'SUBJECT' => 1, 'SUSPEND' => 1, 'UNICODE' => 1, 'UNKNOWN' => 1, 'UPGRADE' => 1, 'USE_FRM' => 1, 'WITHOUT' => 1, 'WRAPPER' => 1, 'CASCADED' => 1, 'CHECKSUM' => 1, 'DATAFILE' => 1, 'DUMPFILE' => 1, 'EXCHANGE' => 1, 'EXTENDED' => 1, 'FUNCTION' => 1, 'LANGUAGE' => 1, 'MAX_ROWS' => 1, 'MAX_SIZE' => 1, 'MIN_ROWS' => 1, 'NATIONAL' => 1, 'NVARCHAR' => 1, 'PRECEDES' => 1, 'PRESERVE' => 1, 'PROFILES' => 1, 'REDOFILE' => 1, 'RELAYLOG' => 1, 'ROLLBACK' => 1, 'SCHEDULE' => 1, 'SECURITY' => 1, 'SEQUENCE' => 1, 'SHUTDOWN' => 1, 'SNAPSHOT' => 1, 'SWITCHES' => 1, 'TRIGGERS' => 1, 'UNDOFILE' => 1, 'WARNINGS' => 1, 'AGGREGATE' => 1, 'ALGORITHM' => 1, 'COMMITTED' => 1, 'DIRECTORY' => 1, 'DUPLICATE' => 1, 'EXPANSION' => 1, 'INVISIBLE' => 1, 'IO_THREAD' => 1, 'ISOLATION' => 1, 'NODEGROUP' => 1, 'PACK_KEYS' => 1, 'READ_ONLY' => 1, 'REDUNDANT' => 1, 'SAVEPOINT' => 1, 'SQL_CACHE' => 1, 'TEMPORARY' => 1, 'TEMPTABLE' => 1, 'UNDEFINED' => 1, 'UNINSTALL' => 1, 'VARIABLES' => 1, 'COMPLETION' => 1, 'COMPRESSED' => 1, 'CONCURRENT' => 1, 'CONNECTION' => 1, 'CONSISTENT' => 1, 'DEALLOCATE' => 1, 'IDENTIFIED' => 1, 'MASTER_SSL' => 1, 'NDBCLUSTER' => 1, 'PARTITIONS' => 1, 'PERSISTENT' => 1, 'PLUGIN_DIR' => 1, 'PRIVILEGES' => 1, 'REORGANIZE' => 1, 'REPEATABLE' => 1, 'ROW_FORMAT' => 1, 'SQL_THREAD' => 1, 'TABLESPACE' => 1, 'TABLE_NAME' => 1, 'VALIDATION' => 1, 'COLUMN_NAME' => 1, 'COMPRESSION' => 1, 'CURSOR_NAME' => 1, 'DIAGNOSTICS' => 1, 'EXTENT_SIZE' => 1, 'MASTER_HOST' => 1, 'MASTER_PORT' => 1, 'MASTER_USER' => 1, 'MYSQL_ERRNO' => 1, 'NONBLOCKING' => 1, 'PROCESSLIST' => 1, 'REPLICATION' => 1, 'SCHEMA_NAME' => 1, 'SQL_TSI_DAY' => 1, 'TRANSACTION' => 1, 'UNCOMMITTED' => 1, 'CATALOG_NAME' => 1, 'CLASS_ORIGIN' => 1, 'DEFAULT_AUTH' => 1, 'DES_KEY_FILE' => 1, 'INITIAL_SIZE' => 1, 'MASTER_DELAY' => 1, 'MESSAGE_TEXT' => 1, 'PARTITIONING' => 1, 'RELAY_THREAD' => 1, 'SERIALIZABLE' => 1, 'SQL_NO_CACHE' => 1, 'SQL_TSI_HOUR' => 1, 'SQL_TSI_WEEK' => 1, 'SQL_TSI_YEAR' => 1, 'SUBPARTITION' => 1, 'COLUMN_FORMAT' => 1, 'INSERT_METHOD' => 1, 'MASTER_SSL_CA' => 1, 'RELAY_LOG_POS' => 1, 'SQL_TSI_MONTH' => 1, 'SUBPARTITIONS' => 1, 'AUTO_INCREMENT' => 1, 'AVG_ROW_LENGTH' => 1, 'KEY_BLOCK_SIZE' => 1, 'MASTER_LOG_POS' => 1, 'MASTER_SSL_CRL' => 1, 'MASTER_SSL_KEY' => 1, 'RELAY_LOG_FILE' => 1, 'SQL_TSI_MINUTE' => 1, 'SQL_TSI_SECOND' => 1, 'TABLE_CHECKSUM' => 1, 'USER_RESOURCES' => 1, 'AUTOEXTEND_SIZE' => 1, 'CONSTRAINT_NAME' => 1, 'DELAY_KEY_WRITE' => 1, 'FILE_BLOCK_SIZE' => 1, 'MASTER_LOG_FILE' => 1, 'MASTER_PASSWORD' => 1, 'MASTER_SSL_CERT' => 1, 'PARSE_GCOL_EXPR' => 1, 'REPLICATE_DO_DB' => 1, 'SQL_AFTER_GTIDS' => 1, 'SQL_TSI_QUARTER' => 1, 'SUBCLASS_ORIGIN' => 1, 'MASTER_SERVER_ID' => 1, 'REDO_BUFFER_SIZE' => 1, 'SQL_BEFORE_GTIDS' => 1, 'STATS_PERSISTENT' => 1, 'UNDO_BUFFER_SIZE' => 1, 'CONSTRAINT_SCHEMA' => 1, 'GROUP_REPLICATION' => 1, 'IGNORE_SERVER_IDS' => 1, 'MASTER_SSL_CAPATH' => 1, 'MASTER_SSL_CIPHER' => 1, 'RETURNED_SQLSTATE' => 1, 'SQL_BUFFER_RESULT' => 1, 'STATS_AUTO_RECALC' => 1, 'CONSTRAINT_CATALOG' => 1, 'MASTER_RETRY_COUNT' => 1, 'MASTER_SSL_CRLPATH' => 1, 'MAX_STATEMENT_TIME' => 1, 'REPLICATE_DO_TABLE' => 1, 'SQL_AFTER_MTS_GAPS' => 1, 'STATS_SAMPLE_PAGES' => 1, 'REPLICATE_IGNORE_DB' => 1, 'MASTER_AUTO_POSITION' => 1, 'MASTER_CONNECT_RETRY' => 1, 'MAX_QUERIES_PER_HOUR' => 1, 'MAX_UPDATES_PER_HOUR' => 1, 'MAX_USER_CONNECTIONS' => 1, 'REPLICATE_REWRITE_DB' => 1, 'REPLICATE_IGNORE_TABLE' => 1, 'MASTER_HEARTBEAT_PERIOD' => 1, 'REPLICATE_WILD_DO_TABLE' => 1, 'MAX_CONNECTIONS_PER_HOUR' => 1, 'REPLICATE_WILD_IGNORE_TABLE' => 1, 'AS' => 3, 'BY' => 3, 'IS' => 3, 'ON' => 3, 'OR' => 3, 'TO' => 3, 'ADD' => 3, 'ALL' => 3, 'AND' => 3, 'ASC' => 3, 'DEC' => 3, 'DIV' => 3, 'FOR' => 3, 'GET' => 3, 'NOT' => 3, 'OUT' => 3, 'SQL' => 3, 'SSL' => 3, 'USE' => 3, 'XOR' => 3, 'BOTH' => 3, 'CALL' => 3, 'CASE' => 3, 'DESC' => 3, 'DROP' => 3, 'DUAL' => 3, 'EACH' => 3, 'ELSE' => 3, 'EXIT' => 3, 'FROM' => 3, 'INT1' => 3, 'INT2' => 3, 'INT3' => 3, 'INT4' => 3, 'INT8' => 3, 'INTO' => 3, 'JOIN' => 3, 'KEYS' => 3, 'KILL' => 3, 'LIKE' => 3, 'LOAD' => 3, 'LOCK' => 3, 'LONG' => 3, 'LOOP' => 3, 'NULL' => 3, 'READ' => 3, 'ROWS' => 3, 'SHOW' => 3, 'THEN' => 3, 'TRUE' => 3, 'UNDO' => 3, 'WHEN' => 3, 'WITH' => 3, 'ALTER' => 3, 'CHECK' => 3, 'CROSS' => 3, 'FALSE' => 3, 'FETCH' => 3, 'FORCE' => 3, 'GRANT' => 3, 'GROUP' => 3, 'INNER' => 3, 'INOUT' => 3, 'LEAVE' => 3, 'LIMIT' => 3, 'LINES' => 3, 'ORDER' => 3, 'OUTER' => 3, 'PURGE' => 3, 'RANGE' => 3, 'READS' => 3, 'RLIKE' => 3, 'TABLE' => 3, 'UNION' => 3, 'USAGE' => 3, 'USING' => 3, 'WHERE' => 3, 'WHILE' => 3, 'WRITE' => 3, 'BEFORE' => 3, 'CHANGE' => 3, 'COLUMN' => 3, 'CREATE' => 3, 'CURSOR' => 3, 'DELETE' => 3, 'ELSEIF' => 3, 'EXCEPT' => 3, 'FLOAT4' => 3, 'FLOAT8' => 3, 'HAVING' => 3, 'IGNORE' => 3, 'INFILE' => 3, 'LINEAR' => 3, 'OPTION' => 3, 'REGEXP' => 3, 'RENAME' => 3, 'RETURN' => 3, 'REVOKE' => 3, 'SELECT' => 3, 'SIGNAL' => 3, 'STORED' => 3, 'UNLOCK' => 3, 'UPDATE' => 3, 'ANALYZE' => 3, 'BETWEEN' => 3, 'CASCADE' => 3, 'COLLATE' => 3, 'DECLARE' => 3, 'DELAYED' => 3, 'ESCAPED' => 3, 'EXPLAIN' => 3, 'FOREIGN' => 3, 'ITERATE' => 3, 'LEADING' => 3, 'NATURAL' => 3, 'OUTFILE' => 3, 'PRIMARY' => 3, 'RELEASE' => 3, 'REQUIRE' => 3, 'SCHEMAS' => 3, 'TRIGGER' => 3, 'VARYING' => 3, 'VIRTUAL' => 3, 'CONTINUE' => 3, 'DAY_HOUR' => 3, 'DESCRIBE' => 3, 'DISTINCT' => 3, 'ENCLOSED' => 3, 'MAXVALUE' => 3, 'MODIFIES' => 3, 'OPTIMIZE' => 3, 'RESIGNAL' => 3, 'RESTRICT' => 3, 'SPECIFIC' => 3, 'SQLSTATE' => 3, 'STARTING' => 3, 'TRAILING' => 3, 'UNSIGNED' => 3, 'ZEROFILL' => 3, 'CONDITION' => 3, 'DATABASES' => 3, 'GENERATED' => 3, 'INTERSECT' => 3, 'MIDDLEINT' => 3, 'PARTITION' => 3, 'PRECISION' => 3, 'PROCEDURE' => 3, 'RECURSIVE' => 3, 'SENSITIVE' => 3, 'SEPARATOR' => 3, 'ACCESSIBLE' => 3, 'ASENSITIVE' => 3, 'CONSTRAINT' => 3, 'DAY_MINUTE' => 3, 'DAY_SECOND' => 3, 'OPTIONALLY' => 3, 'READ_WRITE' => 3, 'REFERENCES' => 3, 'SQLWARNING' => 3, 'TERMINATED' => 3, 'YEAR_MONTH' => 3, 'DISTINCTROW' => 3, 'HOUR_MINUTE' => 3, 'HOUR_SECOND' => 3, 'INSENSITIVE' => 3, 'MASTER_BIND' => 3, 'LOW_PRIORITY' => 3, 'SQLEXCEPTION' => 3, 'VARCHARACTER' => 3, 'DETERMINISTIC' => 3, 'HIGH_PRIORITY' => 3, 'MINUTE_SECOND' => 3, 'STRAIGHT_JOIN' => 3, 'IO_AFTER_GTIDS' => 3, 'SQL_BIG_RESULT' => 3, 'DAY_MICROSECOND' => 3, 'IO_BEFORE_GTIDS' => 3, 'OPTIMIZER_COSTS' => 3, 'HOUR_MICROSECOND' => 3, 'SQL_SMALL_RESULT' => 3, 'MINUTE_MICROSECOND' => 3, 'NO_WRITE_TO_BINLOG' => 3, 'SECOND_MICROSECOND' => 3, 'SQL_CALC_FOUND_ROWS' => 3, 'MASTER_SSL_VERIFY_SERVER_CERT' => 3, 'GROUP BY' => 7, 'NOT NULL' => 7, 'ORDER BY' => 7, 'SET NULL' => 7, 'AND CHAIN' => 7, 'FULL JOIN' => 7, 'IF EXISTS' => 7, 'LEFT JOIN' => 7, 'LESS THAN' => 7, 'LOAD DATA' => 7, 'NO ACTION' => 7, 'ON DELETE' => 7, 'ON UPDATE' => 7, 'UNION ALL' => 7, 'CROSS JOIN' => 7, 'ESCAPED BY' => 7, 'FOR UPDATE' => 7, 'INNER JOIN' => 7, 'LINEAR KEY' => 7, 'NO RELEASE' => 7, 'OR REPLACE' => 7, 'RIGHT JOIN' => 7, 'ENCLOSED BY' => 7, 'LINEAR HASH' => 7, 'STARTING BY' => 7, 'AND NO CHAIN' => 7, 'FOR EACH ROW' => 7, 'NATURAL JOIN' => 7, 'PARTITION BY' => 7, 'SET PASSWORD' => 7, 'SQL SECURITY' => 7, 'CHARACTER SET' => 7, 'IF NOT EXISTS' => 7, 'TERMINATED BY' => 7, 'DATA DIRECTORY' => 7, 'UNION DISTINCT' => 7, 'DEFAULT CHARSET' => 7, 'DEFAULT COLLATE' => 7, 'FULL OUTER JOIN' => 7, 'INDEX DIRECTORY' => 7, 'LEFT OUTER JOIN' => 7, 'SUBPARTITION BY' => 7, 'GENERATED ALWAYS' => 7, 'RIGHT OUTER JOIN' => 7, 'NATURAL LEFT JOIN' => 7, 'START TRANSACTION' => 7, 'LOCK IN SHARE MODE' => 7, 'NATURAL RIGHT JOIN' => 7, 'SELECT TRANSACTION' => 7, 'DEFAULT CHARACTER SET' => 7, 'NATURAL LEFT OUTER JOIN' => 7, 'NATURAL RIGHT OUTER JOIN' => 7, 'WITH CONSISTENT SNAPSHOT' => 7, 'BIT' => 9, 'XML' => 9, 'ENUM' => 9, 'JSON' => 9, 'TEXT' => 9, 'ARRAY' => 9, 'SERIAL' => 9, 'BOOLEAN' => 9, 'DATETIME' => 9, 'GEOMETRY' => 9, 'MULTISET' => 9, 'MULTILINEPOINT' => 9, 'MULTILINEPOLYGON' => 9, 'INT' => 11, 'SET' => 11, 'BLOB' => 11, 'REAL' => 11, 'FLOAT' => 11, 'BIGINT' => 11, 'DOUBLE' => 11, 'DECIMAL' => 11, 'INTEGER' => 11, 'NUMERIC' => 11, 'TINYINT' => 11, 'VARCHAR' => 11, 'LONGBLOB' => 11, 'LONGTEXT' => 11, 'SMALLINT' => 11, 'TINYBLOB' => 11, 'TINYTEXT' => 11, 'CHARACTER' => 11, 'MEDIUMINT' => 11, 'VARBINARY' => 11, 'MEDIUMBLOB' => 11, 'MEDIUMTEXT' => 11, 'BINARY VARYING' => 15, 'KEY' => 19, 'INDEX' => 19, 'UNIQUE' => 19, 'SPATIAL' => 19, 'FULLTEXT' => 19, 'INDEX KEY' => 23, 'UNIQUE KEY' => 23, 'FOREIGN KEY' => 23, 'PRIMARY KEY' => 23, 'SPATIAL KEY' => 23, 'FULLTEXT KEY' => 23, 'UNIQUE INDEX' => 23, 'SPATIAL INDEX' => 23, 'FULLTEXT INDEX' => 23, 'X' => 33, 'Y' => 33, 'LN' => 33, 'PI' => 33, 'ABS' => 33, 'AVG' => 33, 'BIN' => 33, 'COS' => 33, 'COT' => 33, 'DAY' => 33, 'ELT' => 33, 'EXP' => 33, 'HEX' => 33, 'LOG' => 33, 'MAX' => 33, 'MD5' => 33, 'MID' => 33, 'MIN' => 33, 'NOW' => 33, 'OCT' => 33, 'ORD' => 33, 'POW' => 33, 'SHA' => 33, 'SIN' => 33, 'STD' => 33, 'SUM' => 33, 'TAN' => 33, 'ACOS' => 33, 'AREA' => 33, 'ASIN' => 33, 'ATAN' => 33, 'CAST' => 33, 'CEIL' => 33, 'CONV' => 33, 'HOUR' => 33, 'LOG2' => 33, 'LPAD' => 33, 'RAND' => 33, 'RPAD' => 33, 'SHA1' => 33, 'SHA2' => 33, 'SIGN' => 33, 'SQRT' => 33, 'SRID' => 33, 'ST_X' => 33, 'ST_Y' => 33, 'TRIM' => 33, 'USER' => 33, 'UUID' => 33, 'WEEK' => 33, 'ASCII' => 33, 'ASWKB' => 33, 'ASWKT' => 33, 'ATAN2' => 33, 'COUNT' => 33, 'CRC32' => 33, 'FIELD' => 33, 'FLOOR' => 33, 'INSTR' => 33, 'LCASE' => 33, 'LEAST' => 33, 'LOG10' => 33, 'LOWER' => 33, 'LTRIM' => 33, 'MONTH' => 33, 'POWER' => 33, 'QUOTE' => 33, 'ROUND' => 33, 'RTRIM' => 33, 'SLEEP' => 33, 'SPACE' => 33, 'UCASE' => 33, 'UNHEX' => 33, 'UPPER' => 33, 'ASTEXT' => 33, 'BIT_OR' => 33, 'BUFFER' => 33, 'CONCAT' => 33, 'DECODE' => 33, 'ENCODE' => 33, 'EQUALS' => 33, 'FORMAT' => 33, 'IFNULL' => 33, 'ISNULL' => 33, 'LENGTH' => 33, 'LOCATE' => 33, 'MINUTE' => 33, 'NULLIF' => 33, 'POINTN' => 33, 'SECOND' => 33, 'STDDEV' => 33, 'STRCMP' => 33, 'SUBSTR' => 33, 'WITHIN' => 33, 'ADDDATE' => 33, 'ADDTIME' => 33, 'AGAINST' => 33, 'BIT_AND' => 33, 'BIT_XOR' => 33, 'CEILING' => 33, 'CHARSET' => 33, 'CROSSES' => 33, 'CURDATE' => 33, 'CURTIME' => 33, 'DAYNAME' => 33, 'DEGREES' => 33, 'ENCRYPT' => 33, 'EXTRACT' => 33, 'GLENGTH' => 33, 'ISEMPTY' => 33, 'IS_IPV4' => 33, 'IS_IPV6' => 33, 'QUARTER' => 33, 'RADIANS' => 33, 'REVERSE' => 33, 'SOUNDEX' => 33, 'ST_AREA' => 33, 'ST_SRID' => 33, 'SUBDATE' => 33, 'SUBTIME' => 33, 'SYSDATE' => 33, 'TOUCHES' => 33, 'TO_DAYS' => 33, 'VAR_POP' => 33, 'VERSION' => 33, 'WEEKDAY' => 33, 'ASBINARY' => 33, 'CENTROID' => 33, 'COALESCE' => 33, 'COMPRESS' => 33, 'CONTAINS' => 33, 'DATEDIFF' => 33, 'DATE_ADD' => 33, 'DATE_SUB' => 33, 'DISJOINT' => 33, 'DISTANCE' => 33, 'ENDPOINT' => 33, 'ENVELOPE' => 33, 'GET_LOCK' => 33, 'GREATEST' => 33, 'ISCLOSED' => 33, 'ISSIMPLE' => 33, 'JSON_SET' => 33, 'MAKEDATE' => 33, 'MAKETIME' => 33, 'MAKE_SET' => 33, 'MBREQUAL' => 33, 'OVERLAPS' => 33, 'PASSWORD' => 33, 'POSITION' => 33, 'ST_ASWKB' => 33, 'ST_ASWKT' => 33, 'ST_UNION' => 33, 'TIMEDIFF' => 33, 'TRUNCATE' => 33, 'VARIANCE' => 33, 'VAR_SAMP' => 33, 'YEARWEEK' => 33, 'ANY_VALUE' => 33, 'BENCHMARK' => 33, 'BIT_COUNT' => 33, 'COLLATION' => 33, 'CONCAT_WS' => 33, 'DAYOFWEEK' => 33, 'DAYOFYEAR' => 33, 'DIMENSION' => 33, 'FROM_DAYS' => 33, 'GEOMETRYN' => 33, 'INET_ATON' => 33, 'INET_NTOA' => 33, 'JSON_KEYS' => 33, 'JSON_TYPE' => 33, 'LOAD_FILE' => 33, 'MBRCOVERS' => 33, 'MBREQUALS' => 33, 'MBRWITHIN' => 33, 'MONTHNAME' => 33, 'NUMPOINTS' => 33, 'ROW_COUNT' => 33, 'ST_ASTEXT' => 33, 'ST_BUFFER' => 33, 'ST_EQUALS' => 33, 'ST_LENGTH' => 33, 'ST_POINTN' => 33, 'ST_WITHIN' => 33, 'SUBSTRING' => 33, 'TO_BASE64' => 33, 'UPDATEXML' => 33, 'BIT_LENGTH' => 33, 'CONVERT_TZ' => 33, 'CONVEXHULL' => 33, 'DAYOFMONTH' => 33, 'EXPORT_SET' => 33, 'FOUND_ROWS' => 33, 'GET_FORMAT' => 33, 'INET6_ATON' => 33, 'INET6_NTOA' => 33, 'INTERSECTS' => 33, 'JSON_ARRAY' => 33, 'JSON_DEPTH' => 33, 'JSON_MERGE' => 33, 'JSON_QUOTE' => 33, 'JSON_VALID' => 33, 'MBRTOUCHES' => 33, 'MULTIPOINT' => 33, 'NAME_CONST' => 33, 'PERIOD_ADD' => 33, 'STARTPOINT' => 33, 'STDDEV_POP' => 33, 'ST_CROSSES' => 33, 'ST_GEOHASH' => 33, 'ST_ISEMPTY' => 33, 'ST_ISVALID' => 33, 'ST_TOUCHES' => 33, 'TO_SECONDS' => 33, 'UNCOMPRESS' => 33, 'UUID_SHORT' => 33, 'WEEKOFYEAR' => 33, 'AES_DECRYPT' => 33, 'AES_ENCRYPT' => 33, 'CHAR_LENGTH' => 33, 'DATE_FORMAT' => 33, 'DES_DECRYPT' => 33, 'DES_ENCRYPT' => 33, 'FIND_IN_SET' => 33, 'FROM_BASE64' => 33, 'GEOMFROMWKB' => 33, 'GTID_SUBSET' => 33, 'JSON_INSERT' => 33, 'JSON_LENGTH' => 33, 'JSON_OBJECT' => 33, 'JSON_PRETTY' => 33, 'JSON_REMOVE' => 33, 'JSON_SEARCH' => 33, 'LINEFROMWKB' => 33, 'MBRCONTAINS' => 33, 'MBRDISJOINT' => 33, 'MBROVERLAPS' => 33, 'MICROSECOND' => 33, 'PERIOD_DIFF' => 33, 'POLYFROMWKB' => 33, 'SEC_TO_TIME' => 33, 'STDDEV_SAMP' => 33, 'STR_TO_DATE' => 33, 'ST_ASBINARY' => 33, 'ST_CENTROID' => 33, 'ST_CONTAINS' => 33, 'ST_DISJOINT' => 33, 'ST_DISTANCE' => 33, 'ST_ENDPOINT' => 33, 'ST_ENVELOPE' => 33, 'ST_ISCLOSED' => 33, 'ST_ISSIMPLE' => 33, 'ST_OVERLAPS' => 33, 'ST_SIMPLIFY' => 33, 'ST_VALIDATE' => 33, 'SYSTEM_USER' => 33, 'TIME_FORMAT' => 33, 'TIME_TO_SEC' => 33, 'COERCIBILITY' => 33, 'EXTERIORRING' => 33, 'EXTRACTVALUE' => 33, 'GEOMETRYTYPE' => 33, 'GEOMFROMTEXT' => 33, 'GROUP_CONCAT' => 33, 'IS_FREE_LOCK' => 33, 'IS_USED_LOCK' => 33, 'JSON_EXTRACT' => 33, 'JSON_REPLACE' => 33, 'JSON_UNQUOTE' => 33, 'LINEFROMTEXT' => 33, 'MBRCOVEREDBY' => 33, 'MLINEFROMWKB' => 33, 'MPOLYFROMWKB' => 33, 'MULTIPOLYGON' => 33, 'OCTET_LENGTH' => 33, 'OLD_PASSWORD' => 33, 'POINTFROMWKB' => 33, 'POLYFROMTEXT' => 33, 'RANDOM_BYTES' => 33, 'RELEASE_LOCK' => 33, 'SESSION_USER' => 33, 'ST_ASGEOJSON' => 33, 'ST_DIMENSION' => 33, 'ST_GEOMETRYN' => 33, 'ST_NUMPOINTS' => 33, 'TIMESTAMPADD' => 33, 'CONNECTION_ID' => 33, 'FROM_UNIXTIME' => 33, 'GTID_SUBTRACT' => 33, 'INTERIORRINGN' => 33, 'JSON_CONTAINS' => 33, 'MBRINTERSECTS' => 33, 'MLINEFROMTEXT' => 33, 'MPOINTFROMWKB' => 33, 'MPOLYFROMTEXT' => 33, 'NUMGEOMETRIES' => 33, 'POINTFROMTEXT' => 33, 'ST_CONVEXHULL' => 33, 'ST_DIFFERENCE' => 33, 'ST_INTERSECTS' => 33, 'ST_STARTPOINT' => 33, 'TIMESTAMPDIFF' => 33, 'WEIGHT_STRING' => 33, 'IS_IPV4_COMPAT' => 33, 'IS_IPV4_MAPPED' => 33, 'LAST_INSERT_ID' => 33, 'MPOINTFROMTEXT' => 33, 'POLYGONFROMWKB' => 33, 'ST_GEOMFROMWKB' => 33, 'ST_LINEFROMWKB' => 33, 'ST_POLYFROMWKB' => 33, 'UNIX_TIMESTAMP' => 33, 'GEOMCOLLFROMWKB' => 33, 'MASTER_POS_WAIT' => 33, 'POLYGONFROMTEXT' => 33, 'ST_EXTERIORRING' => 33, 'ST_GEOMETRYTYPE' => 33, 'ST_GEOMFROMTEXT' => 33, 'ST_INTERSECTION' => 33, 'ST_LINEFROMTEXT' => 33, 'ST_MAKEENVELOPE' => 33, 'ST_MLINEFROMWKB' => 33, 'ST_MPOLYFROMWKB' => 33, 'ST_POINTFROMWKB' => 33, 'ST_POLYFROMTEXT' => 33, 'SUBSTRING_INDEX' => 33, 'CHARACTER_LENGTH' => 33, 'GEOMCOLLFROMTEXT' => 33, 'GEOMETRYFROMTEXT' => 33, 'JSON_MERGE_PATCH' => 33, 'NUMINTERIORRINGS' => 33, 'ST_INTERIORRINGN' => 33, 'ST_MLINEFROMTEXT' => 33, 'ST_MPOINTFROMWKB' => 33, 'ST_MPOLYFROMTEXT' => 33, 'ST_NUMGEOMETRIES' => 33, 'ST_POINTFROMTEXT' => 33, 'ST_SYMDIFFERENCE' => 33, 'JSON_ARRAY_APPEND' => 33, 'JSON_ARRAY_INSERT' => 33, 'JSON_STORAGE_FREE' => 33, 'JSON_STORAGE_SIZE' => 33, 'LINESTRINGFROMWKB' => 33, 'MULTIPOINTFROMWKB' => 33, 'RELEASE_ALL_LOCKS' => 33, 'ST_LATFROMGEOHASH' => 33, 'ST_MPOINTFROMTEXT' => 33, 'ST_POLYGONFROMWKB' => 33, 'JSON_CONTAINS_PATH' => 33, 'MULTIPOINTFROMTEXT' => 33, 'ST_BUFFER_STRATEGY' => 33, 'ST_DISTANCE_SPHERE' => 33, 'ST_GEOMCOLLFROMTXT' => 33, 'ST_GEOMCOLLFROMWKB' => 33, 'ST_GEOMFROMGEOJSON' => 33, 'ST_LONGFROMGEOHASH' => 33, 'ST_POLYGONFROMTEXT' => 33, 'JSON_MERGE_PRESERVE' => 33, 'MULTIPOLYGONFROMWKB' => 33, 'ST_GEOMCOLLFROMTEXT' => 33, 'ST_GEOMETRYFROMTEXT' => 33, 'ST_NUMINTERIORRINGS' => 33, 'ST_POINTFROMGEOHASH' => 33, 'UNCOMPRESSED_LENGTH' => 33, 'MULTIPOLYGONFROMTEXT' => 33, 'ST_LINESTRINGFROMWKB' => 33, 'ST_MULTIPOINTFROMWKB' => 33, 'ST_MULTIPOINTFROMTEXT' => 33, 'MULTILINESTRINGFROMWKB' => 33, 'ST_MULTIPOLYGONFROMWKB' => 33, 'MULTILINESTRINGFROMTEXT' => 33, 'ST_MULTIPOLYGONFROMTEXT' => 33, 'GEOMETRYCOLLECTIONFROMWKB' => 33, 'ST_MULTILINESTRINGFROMWKB' => 33, 'GEOMETRYCOLLECTIONFROMTEXT' => 33, 'ST_MULTILINESTRINGFROMTEXT' => 33, 'VALIDATE_PASSWORD_STRENGTH' => 33, 'WAIT_FOR_EXECUTED_GTID_SET' => 33, 'ST_GEOMETRYCOLLECTIONFROMWKB' => 33, 'ST_GEOMETRYCOLLECTIONFROMTEXT' => 33, 'WAIT_UNTIL_SQL_THREAD_AFTER_GTIDS' => 33, 'IF' => 35, 'IN' => 35, 'MOD' => 35, 'LEFT' => 35, 'MATCH' => 35, 'RIGHT' => 35, 'EXISTS' => 35, 'INSERT' => 35, 'REPEAT' => 35, 'SCHEMA' => 35, 'VALUES' => 35, 'CONVERT' => 35, 'DEFAULT' => 35, 'REPLACE' => 35, 'DATABASE' => 35, 'UTC_DATE' => 35, 'UTC_TIME' => 35, 'LOCALTIME' => 35, 'CURRENT_DATE' => 35, 'CURRENT_TIME' => 35, 'CURRENT_USER' => 35, 'UTC_TIMESTAMP' => 35, 'LOCALTIMESTAMP' => 35, 'CURRENT_TIMESTAMP' => 35, 'NOT IN' => 39, 'DATE' => 41, 'TIME' => 41, 'YEAR' => 41, 'POINT' => 41, 'POLYGON' => 41, 'TIMESTAMP' => 41, 'LINESTRING' => 41, 'MULTILINESTRING' => 41, 'GEOMETRYCOLLECTION' => 41, 'CHAR' => 43, 'BINARY' => 43, 'INTERVAL' => 43);
-    }
-    /**
-     * Context for MySQL 5.0.
-     *
-     * @category   Contexts
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class ContextMySql50000 extends \PhpMyAdmin\SqlParser\Context
-    {
-        /**
-         * List of keywords.
-         *
-         * The value associated to each keyword represents its flags.
-         *
-         * @see Token::FLAG_KEYWORD_RESERVED Token::FLAG_KEYWORD_COMPOSED
-         *      Token::FLAG_KEYWORD_DATA_TYPE Token::FLAG_KEYWORD_KEY
-         *      Token::FLAG_KEYWORD_FUNCTION
-         *
-         * @var array
-         */
-        public static $KEYWORDS = array('DO' => 1, 'IO' => 1, 'NO' => 1, 'XA' => 1, 'ANY' => 1, 'BDB' => 1, 'CPU' => 1, 'END' => 1, 'IPC' => 1, 'NDB' => 1, 'NEW' => 1, 'ONE' => 1, 'ROW' => 1, 'BOOL' => 1, 'BYTE' => 1, 'CODE' => 1, 'CUBE' => 1, 'DATA' => 1, 'FAST' => 1, 'FILE' => 1, 'FULL' => 1, 'HASH' => 1, 'HELP' => 1, 'LAST' => 1, 'LOGS' => 1, 'MODE' => 1, 'NAME' => 1, 'NEXT' => 1, 'NONE' => 1, 'OPEN' => 1, 'PAGE' => 1, 'PREV' => 1, 'ROWS' => 1, 'SOME' => 1, 'STOP' => 1, 'TYPE' => 1, 'VIEW' => 1, 'WORK' => 1, 'X509' => 1, 'AFTER' => 1, 'BEGIN' => 1, 'BLOCK' => 1, 'BTREE' => 1, 'CACHE' => 1, 'CHAIN' => 1, 'CLOSE' => 1, 'FIRST' => 1, 'FIXED' => 1, 'FLUSH' => 1, 'FOUND' => 1, 'HOSTS' => 1, 'LEVEL' => 1, 'LOCAL' => 1, 'LOCKS' => 1, 'MERGE' => 1, 'MUTEX' => 1, 'NAMES' => 1, 'NCHAR' => 1, 'PHASE' => 1, 'QUERY' => 1, 'QUICK' => 1, 'RAID0' => 1, 'RESET' => 1, 'RTREE' => 1, 'SHARE' => 1, 'SLAVE' => 1, 'START' => 1, 'SUPER' => 1, 'SWAPS' => 1, 'TYPES' => 1, 'UNTIL' => 1, 'VALUE' => 1, 'ACTION' => 1, 'BACKUP' => 1, 'BINLOG' => 1, 'CIPHER' => 1, 'CLIENT' => 1, 'COMMIT' => 1, 'ENABLE' => 1, 'ENGINE' => 1, 'ERRORS' => 1, 'ESCAPE' => 1, 'EVENTS' => 1, 'FAULTS' => 1, 'FIELDS' => 1, 'GLOBAL' => 1, 'GRANTS' => 1, 'IMPORT' => 1, 'INNODB' => 1, 'ISSUER' => 1, 'LEAVES' => 1, 'MASTER' => 1, 'MEDIUM' => 1, 'MEMORY' => 1, 'MODIFY' => 1, 'OFFSET' => 1, 'RELOAD' => 1, 'REPAIR' => 1, 'RESUME' => 1, 'ROLLUP' => 1, 'SIGNED' => 1, 'SIMPLE' => 1, 'SOUNDS' => 1, 'SOURCE' => 1, 'STATUS' => 1, 'STRING' => 1, 'TABLES' => 1, 'CHANGED' => 1, 'COLUMNS' => 1, 'COMMENT' => 1, 'COMPACT' => 1, 'CONTEXT' => 1, 'DEFINER' => 1, 'DISABLE' => 1, 'DISCARD' => 1, 'DYNAMIC' => 1, 'ENGINES' => 1, 'EXECUTE' => 1, 'HANDLER' => 1, 'INDEXES' => 1, 'INVOKER' => 1, 'MIGRATE' => 1, 'PARTIAL' => 1, 'PREPARE' => 1, 'PROFILE' => 1, 'RECOVER' => 1, 'RESTORE' => 1, 'RETURNS' => 1, 'ROUTINE' => 1, 'SESSION' => 1, 'STORAGE' => 1, 'STRIPED' => 1, 'SUBJECT' => 1, 'SUSPEND' => 1, 'UNICODE' => 1, 'UNKNOWN' => 1, 'UPGRADE' => 1, 'USE_FRM' => 1, 'VIRTUAL' => 1, 'CASCADED' => 1, 'CHECKSUM' => 1, 'DUMPFILE' => 1, 'EXTENDED' => 1, 'FUNCTION' => 1, 'INNOBASE' => 1, 'LANGUAGE' => 1, 'MAX_ROWS' => 1, 'MIN_ROWS' => 1, 'NATIONAL' => 1, 'NVARCHAR' => 1, 'ONE_SHOT' => 1, 'PROFILES' => 1, 'ROLLBACK' => 1, 'SECURITY' => 1, 'SHUTDOWN' => 1, 'SNAPSHOT' => 1, 'SWITCHES' => 1, 'TRIGGERS' => 1, 'WARNINGS' => 1, 'AGGREGATE' => 1, 'ALGORITHM' => 1, 'COMMITTED' => 1, 'DIRECTORY' => 1, 'DUPLICATE' => 1, 'EXPANSION' => 1, 'IO_THREAD' => 1, 'ISOLATION' => 1, 'PACK_KEYS' => 1, 'RAID_TYPE' => 1, 'REDUNDANT' => 1, 'SAVEPOINT' => 1, 'SQL_CACHE' => 1, 'TEMPORARY' => 1, 'TEMPTABLE' => 1, 'UNDEFINED' => 1, 'VARIABLES' => 1, 'BERKELEYDB' => 1, 'COMPRESSED' => 1, 'CONCURRENT' => 1, 'CONNECTION' => 1, 'CONSISTENT' => 1, 'DEALLOCATE' => 1, 'IDENTIFIED' => 1, 'MASTER_SSL' => 1, 'NDBCLUSTER' => 1, 'PARTITIONS' => 1, 'PERSISTENT' => 1, 'PRIVILEGES' => 1, 'REPEATABLE' => 1, 'ROW_FORMAT' => 1, 'SQL_THREAD' => 1, 'TABLESPACE' => 1, 'FRAC_SECOND' => 1, 'MASTER_HOST' => 1, 'MASTER_PORT' => 1, 'MASTER_USER' => 1, 'PROCESSLIST' => 1, 'RAID_CHUNKS' => 1, 'REPLICATION' => 1, 'SQL_TSI_DAY' => 1, 'TRANSACTION' => 1, 'UNCOMMITTED' => 1, 'DES_KEY_FILE' => 1, 'RELAY_THREAD' => 1, 'SERIALIZABLE' => 1, 'SQL_NO_CACHE' => 1, 'SQL_TSI_HOUR' => 1, 'SQL_TSI_WEEK' => 1, 'SQL_TSI_YEAR' => 1, 'INSERT_METHOD' => 1, 'MASTER_SSL_CA' => 1, 'RELAY_LOG_POS' => 1, 'SQL_TSI_MONTH' => 1, 'SUBPARTITIONS' => 1, 'AUTO_INCREMENT' => 1, 'AVG_ROW_LENGTH' => 1, 'MASTER_LOG_POS' => 1, 'MASTER_SSL_KEY' => 1, 'RAID_CHUNKSIZE' => 1, 'RELAY_LOG_FILE' => 1, 'SQL_TSI_MINUTE' => 1, 'SQL_TSI_SECOND' => 1, 'USER_RESOURCES' => 1, 'DELAY_KEY_WRITE' => 1, 'MASTER_LOG_FILE' => 1, 'MASTER_PASSWORD' => 1, 'MASTER_SSL_CERT' => 1, 'SQL_TSI_QUARTER' => 1, 'MASTER_SERVER_ID' => 1, 'MASTER_SSL_CAPATH' => 1, 'MASTER_SSL_CIPHER' => 1, 'SQL_BUFFER_RESULT' => 1, 'SQL_TSI_FRAC_SECOND' => 1, 'MASTER_CONNECT_RETRY' => 1, 'MAX_QUERIES_PER_HOUR' => 1, 'MAX_UPDATES_PER_HOUR' => 1, 'MAX_USER_CONNECTIONS' => 1, 'MAX_CONNECTIONS_PER_HOUR' => 1, 'AS' => 3, 'BY' => 3, 'IS' => 3, 'ON' => 3, 'OR' => 3, 'TO' => 3, 'ADD' => 3, 'ALL' => 3, 'AND' => 3, 'ASC' => 3, 'DEC' => 3, 'DIV' => 3, 'FOR' => 3, 'NOT' => 3, 'OUT' => 3, 'SQL' => 3, 'SSL' => 3, 'USE' => 3, 'XOR' => 3, 'BOTH' => 3, 'CALL' => 3, 'CASE' => 3, 'DESC' => 3, 'DROP' => 3, 'DUAL' => 3, 'EACH' => 3, 'ELSE' => 3, 'EXIT' => 3, 'FROM' => 3, 'INT1' => 3, 'INT2' => 3, 'INT3' => 3, 'INT4' => 3, 'INT8' => 3, 'INTO' => 3, 'JOIN' => 3, 'KEYS' => 3, 'KILL' => 3, 'LIKE' => 3, 'LOAD' => 3, 'LOCK' => 3, 'LONG' => 3, 'LOOP' => 3, 'NULL' => 3, 'READ' => 3, 'SHOW' => 3, 'THEN' => 3, 'TRUE' => 3, 'UNDO' => 3, 'WHEN' => 3, 'WITH' => 3, 'ALTER' => 3, 'CHECK' => 3, 'CROSS' => 3, 'FALSE' => 3, 'FETCH' => 3, 'FORCE' => 3, 'GRANT' => 3, 'GROUP' => 3, 'INNER' => 3, 'INOUT' => 3, 'LEAVE' => 3, 'LIMIT' => 3, 'LINES' => 3, 'ORDER' => 3, 'OUTER' => 3, 'PURGE' => 3, 'READS' => 3, 'RLIKE' => 3, 'TABLE' => 3, 'UNION' => 3, 'USAGE' => 3, 'USING' => 3, 'WHERE' => 3, 'WHILE' => 3, 'WRITE' => 3, 'BEFORE' => 3, 'CHANGE' => 3, 'COLUMN' => 3, 'CREATE' => 3, 'CURSOR' => 3, 'DELETE' => 3, 'ELSEIF' => 3, 'FLOAT4' => 3, 'FLOAT8' => 3, 'HAVING' => 3, 'IGNORE' => 3, 'INFILE' => 3, 'OPTION' => 3, 'REGEXP' => 3, 'RENAME' => 3, 'RETURN' => 3, 'REVOKE' => 3, 'SELECT' => 3, 'SONAME' => 3, 'UNLOCK' => 3, 'UPDATE' => 3, 'ANALYZE' => 3, 'BETWEEN' => 3, 'CASCADE' => 3, 'COLLATE' => 3, 'DECLARE' => 3, 'DELAYED' => 3, 'ESCAPED' => 3, 'EXPLAIN' => 3, 'FOREIGN' => 3, 'ITERATE' => 3, 'LEADING' => 3, 'NATURAL' => 3, 'OUTFILE' => 3, 'PRIMARY' => 3, 'RELEASE' => 3, 'REQUIRE' => 3, 'SCHEMAS' => 3, 'TRIGGER' => 3, 'VARYING' => 3, 'CONTINUE' => 3, 'DAY_HOUR' => 3, 'DESCRIBE' => 3, 'DISTINCT' => 3, 'ENCLOSED' => 3, 'MODIFIES' => 3, 'OPTIMIZE' => 3, 'RESTRICT' => 3, 'SPECIFIC' => 3, 'SQLSTATE' => 3, 'STARTING' => 3, 'TRAILING' => 3, 'UNSIGNED' => 3, 'ZEROFILL' => 3, 'CONDITION' => 3, 'DATABASES' => 3, 'MIDDLEINT' => 3, 'PRECISION' => 3, 'PROCEDURE' => 3, 'SENSITIVE' => 3, 'SEPARATOR' => 3, 'ASENSITIVE' => 3, 'CONSTRAINT' => 3, 'DAY_MINUTE' => 3, 'DAY_SECOND' => 3, 'OPTIONALLY' => 3, 'REFERENCES' => 3, 'SQLWARNING' => 3, 'TERMINATED' => 3, 'YEAR_MONTH' => 3, 'DISTINCTROW' => 3, 'HOUR_MINUTE' => 3, 'HOUR_SECOND' => 3, 'INSENSITIVE' => 3, 'LOW_PRIORITY' => 3, 'SQLEXCEPTION' => 3, 'VARCHARACTER' => 3, 'DETERMINISTIC' => 3, 'HIGH_PRIORITY' => 3, 'MINUTE_SECOND' => 3, 'STRAIGHT_JOIN' => 3, 'SQL_BIG_RESULT' => 3, 'DAY_MICROSECOND' => 3, 'HOUR_MICROSECOND' => 3, 'SQL_SMALL_RESULT' => 3, 'MINUTE_MICROSECOND' => 3, 'NO_WRITE_TO_BINLOG' => 3, 'SECOND_MICROSECOND' => 3, 'SQL_CALC_FOUND_ROWS' => 3, 'GROUP BY' => 7, 'NOT NULL' => 7, 'ORDER BY' => 7, 'SET NULL' => 7, 'AND CHAIN' => 7, 'FULL JOIN' => 7, 'IF EXISTS' => 7, 'LEFT JOIN' => 7, 'LESS THAN' => 7, 'LOAD DATA' => 7, 'NO ACTION' => 7, 'ON DELETE' => 7, 'ON UPDATE' => 7, 'UNION ALL' => 7, 'CROSS JOIN' => 7, 'ESCAPED BY' => 7, 'FOR UPDATE' => 7, 'INNER JOIN' => 7, 'LINEAR KEY' => 7, 'NO RELEASE' => 7, 'OR REPLACE' => 7, 'RIGHT JOIN' => 7, 'ENCLOSED BY' => 7, 'LINEAR HASH' => 7, 'STARTING BY' => 7, 'AND NO CHAIN' => 7, 'FOR EACH ROW' => 7, 'NATURAL JOIN' => 7, 'PARTITION BY' => 7, 'SET PASSWORD' => 7, 'SQL SECURITY' => 7, 'CHARACTER SET' => 7, 'IF NOT EXISTS' => 7, 'TERMINATED BY' => 7, 'DATA DIRECTORY' => 7, 'UNION DISTINCT' => 7, 'DEFAULT CHARSET' => 7, 'DEFAULT COLLATE' => 7, 'FULL OUTER JOIN' => 7, 'INDEX DIRECTORY' => 7, 'LEFT OUTER JOIN' => 7, 'SUBPARTITION BY' => 7, 'GENERATED ALWAYS' => 7, 'RIGHT OUTER JOIN' => 7, 'NATURAL LEFT JOIN' => 7, 'START TRANSACTION' => 7, 'LOCK IN SHARE MODE' => 7, 'NATURAL RIGHT JOIN' => 7, 'SELECT TRANSACTION' => 7, 'DEFAULT CHARACTER SET' => 7, 'NATURAL LEFT OUTER JOIN' => 7, 'NATURAL RIGHT OUTER JOIN' => 7, 'WITH CONSISTENT SNAPSHOT' => 7, 'BIT' => 9, 'XML' => 9, 'ENUM' => 9, 'JSON' => 9, 'TEXT' => 9, 'ARRAY' => 9, 'SERIAL' => 9, 'BOOLEAN' => 9, 'DATETIME' => 9, 'GEOMETRY' => 9, 'MULTISET' => 9, 'MULTILINEPOINT' => 9, 'MULTILINEPOLYGON' => 9, 'INT' => 11, 'SET' => 11, 'BLOB' => 11, 'REAL' => 11, 'FLOAT' => 11, 'BIGINT' => 11, 'DOUBLE' => 11, 'DECIMAL' => 11, 'INTEGER' => 11, 'NUMERIC' => 11, 'TINYINT' => 11, 'VARCHAR' => 11, 'LONGBLOB' => 11, 'LONGTEXT' => 11, 'SMALLINT' => 11, 'TINYBLOB' => 11, 'TINYTEXT' => 11, 'CHARACTER' => 11, 'MEDIUMINT' => 11, 'VARBINARY' => 11, 'MEDIUMBLOB' => 11, 'MEDIUMTEXT' => 11, 'BINARY VARYING' => 15, 'KEY' => 19, 'INDEX' => 19, 'UNIQUE' => 19, 'SPATIAL' => 19, 'FULLTEXT' => 19, 'INDEX KEY' => 23, 'UNIQUE KEY' => 23, 'FOREIGN KEY' => 23, 'PRIMARY KEY' => 23, 'SPATIAL KEY' => 23, 'FULLTEXT KEY' => 23, 'UNIQUE INDEX' => 23, 'SPATIAL INDEX' => 23, 'FULLTEXT INDEX' => 23, 'X' => 33, 'Y' => 33, 'LN' => 33, 'PI' => 33, 'ABS' => 33, 'AVG' => 33, 'BIN' => 33, 'COS' => 33, 'COT' => 33, 'DAY' => 33, 'ELT' => 33, 'EXP' => 33, 'HEX' => 33, 'LOG' => 33, 'MAX' => 33, 'MD5' => 33, 'MID' => 33, 'MIN' => 33, 'NOW' => 33, 'OCT' => 33, 'ORD' => 33, 'POW' => 33, 'SIN' => 33, 'STD' => 33, 'SUM' => 33, 'TAN' => 33, 'ACOS' => 33, 'AREA' => 33, 'ASIN' => 33, 'ATAN' => 33, 'CAST' => 33, 'CEIL' => 33, 'CONV' => 33, 'HOUR' => 33, 'LOG2' => 33, 'LPAD' => 33, 'RAND' => 33, 'RPAD' => 33, 'SHA1' => 33, 'SIGN' => 33, 'SQRT' => 33, 'SRID' => 33, 'TRIM' => 33, 'USER' => 33, 'UUID' => 33, 'WEEK' => 33, 'ASCII' => 33, 'ATAN2' => 33, 'COUNT' => 33, 'CRC32' => 33, 'FIELD' => 33, 'FLOOR' => 33, 'INSTR' => 33, 'LCASE' => 33, 'LEAST' => 33, 'LOG10' => 33, 'LOWER' => 33, 'LTRIM' => 33, 'MONTH' => 33, 'POWER' => 33, 'QUOTE' => 33, 'ROUND' => 33, 'RTRIM' => 33, 'SLEEP' => 33, 'SPACE' => 33, 'UCASE' => 33, 'UNHEX' => 33, 'UPPER' => 33, 'ASTEXT' => 33, 'BIT_OR' => 33, 'CONCAT' => 33, 'DECODE' => 33, 'ENCODE' => 33, 'EQUALS' => 33, 'FORMAT' => 33, 'IFNULL' => 33, 'ISNULL' => 33, 'LENGTH' => 33, 'LOCATE' => 33, 'MINUTE' => 33, 'NULLIF' => 33, 'POINTN' => 33, 'SECOND' => 33, 'STDDEV' => 33, 'STRCMP' => 33, 'SUBSTR' => 33, 'WITHIN' => 33, 'ADDDATE' => 33, 'ADDTIME' => 33, 'AGAINST' => 33, 'BIT_AND' => 33, 'BIT_XOR' => 33, 'CEILING' => 33, 'CHARSET' => 33, 'CROSSES' => 33, 'CURDATE' => 33, 'CURTIME' => 33, 'DAYNAME' => 33, 'DEGREES' => 33, 'ENCRYPT' => 33, 'EXTRACT' => 33, 'GLENGTH' => 33, 'ISEMPTY' => 33, 'QUARTER' => 33, 'RADIANS' => 33, 'REVERSE' => 33, 'SOUNDEX' => 33, 'SUBDATE' => 33, 'SUBTIME' => 33, 'SYSDATE' => 33, 'TOUCHES' => 33, 'TO_DAYS' => 33, 'VAR_POP' => 33, 'VERSION' => 33, 'WEEKDAY' => 33, 'ASBINARY' => 33, 'CENTROID' => 33, 'COALESCE' => 33, 'COMPRESS' => 33, 'CONTAINS' => 33, 'DATEDIFF' => 33, 'DATE_ADD' => 33, 'DATE_SUB' => 33, 'DISJOINT' => 33, 'ENDPOINT' => 33, 'ENVELOPE' => 33, 'GET_LOCK' => 33, 'GREATEST' => 33, 'ISCLOSED' => 33, 'ISSIMPLE' => 33, 'MAKEDATE' => 33, 'MAKETIME' => 33, 'MAKE_SET' => 33, 'MBREQUAL' => 33, 'OVERLAPS' => 33, 'PASSWORD' => 33, 'POSITION' => 33, 'TIMEDIFF' => 33, 'TRUNCATE' => 33, 'VARIANCE' => 33, 'VAR_SAMP' => 33, 'YEARWEEK' => 33, 'BENCHMARK' => 33, 'BIT_COUNT' => 33, 'COLLATION' => 33, 'CONCAT_WS' => 33, 'DAYOFWEEK' => 33, 'DAYOFYEAR' => 33, 'DIMENSION' => 33, 'FROM_DAYS' => 33, 'GEOMETRYN' => 33, 'INET_ATON' => 33, 'INET_NTOA' => 33, 'LOAD_FILE' => 33, 'MBRWITHIN' => 33, 'MONTHNAME' => 33, 'NUMPOINTS' => 33, 'ROW_COUNT' => 33, 'SUBSTRING' => 33, 'BIT_LENGTH' => 33, 'CONVERT_TZ' => 33, 'DAYOFMONTH' => 33, 'EXPORT_SET' => 33, 'FOUND_ROWS' => 33, 'GET_FORMAT' => 33, 'INTERSECTS' => 33, 'MBRTOUCHES' => 33, 'MULTIPOINT' => 33, 'NAME_CONST' => 33, 'PERIOD_ADD' => 33, 'STARTPOINT' => 33, 'STDDEV_POP' => 33, 'UNCOMPRESS' => 33, 'WEEKOFYEAR' => 33, 'AES_DECRYPT' => 33, 'AES_ENCRYPT' => 33, 'CHAR_LENGTH' => 33, 'DATE_FORMAT' => 33, 'DES_DECRYPT' => 33, 'DES_ENCRYPT' => 33, 'FIND_IN_SET' => 33, 'GEOMFROMWKB' => 33, 'LINEFROMWKB' => 33, 'MBRCONTAINS' => 33, 'MBRDISJOINT' => 33, 'MBROVERLAPS' => 33, 'MICROSECOND' => 33, 'PERIOD_DIFF' => 33, 'POLYFROMWKB' => 33, 'SEC_TO_TIME' => 33, 'STDDEV_SAMP' => 33, 'STR_TO_DATE' => 33, 'SYSTEM_USER' => 33, 'TIME_FORMAT' => 33, 'TIME_TO_SEC' => 33, 'COERCIBILITY' => 33, 'EXTERIORRING' => 33, 'GEOMETRYTYPE' => 33, 'GEOMFROMTEXT' => 33, 'GROUP_CONCAT' => 33, 'IS_FREE_LOCK' => 33, 'IS_USED_LOCK' => 33, 'LINEFROMTEXT' => 33, 'MLINEFROMWKB' => 33, 'MPOLYFROMWKB' => 33, 'MULTIPOLYGON' => 33, 'OCTET_LENGTH' => 33, 'OLD_PASSWORD' => 33, 'POINTFROMWKB' => 33, 'POLYFROMTEXT' => 33, 'RELEASE_LOCK' => 33, 'SESSION_USER' => 33, 'TIMESTAMPADD' => 33, 'CONNECTION_ID' => 33, 'FROM_UNIXTIME' => 33, 'INTERIORRINGN' => 33, 'MBRINTERSECTS' => 33, 'MLINEFROMTEXT' => 33, 'MPOINTFROMWKB' => 33, 'MPOLYFROMTEXT' => 33, 'NUMGEOMETRIES' => 33, 'POINTFROMTEXT' => 33, 'TIMESTAMPDIFF' => 33, 'LAST_INSERT_ID' => 33, 'MPOINTFROMTEXT' => 33, 'UNIX_TIMESTAMP' => 33, 'GEOMCOLLFROMWKB' => 33, 'MASTER_POS_WAIT' => 33, 'SUBSTRING_INDEX' => 33, 'CHARACTER_LENGTH' => 33, 'GEOMCOLLFROMTEXT' => 33, 'NUMINTERIORRINGS' => 33, 'UNCOMPRESSED_LENGTH' => 33, 'IF' => 35, 'IN' => 35, 'MOD' => 35, 'LEFT' => 35, 'MATCH' => 35, 'RIGHT' => 35, 'EXISTS' => 35, 'INSERT' => 35, 'REPEAT' => 35, 'SCHEMA' => 35, 'VALUES' => 35, 'CONVERT' => 35, 'DEFAULT' => 35, 'REPLACE' => 35, 'DATABASE' => 35, 'UTC_DATE' => 35, 'UTC_TIME' => 35, 'LOCALTIME' => 35, 'CURRENT_DATE' => 35, 'CURRENT_TIME' => 35, 'CURRENT_USER' => 35, 'UTC_TIMESTAMP' => 35, 'LOCALTIMESTAMP' => 35, 'CURRENT_TIMESTAMP' => 35, 'NOT IN' => 39, 'DATE' => 41, 'TIME' => 41, 'YEAR' => 41, 'POINT' => 41, 'POLYGON' => 41, 'TIMESTAMP' => 41, 'LINESTRING' => 41, 'MULTILINESTRING' => 41, 'GEOMETRYCOLLECTION' => 41, 'CHAR' => 43, 'BINARY' => 43, 'INTERVAL' => 43);
-    }
-    /**
-     * Context for MySQL 5.1.
-     *
-     * @category   Contexts
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class ContextMySql50100 extends \PhpMyAdmin\SqlParser\Context
-    {
-        /**
-         * List of keywords.
-         *
-         * The value associated to each keyword represents its flags.
-         *
-         * @see Token::FLAG_KEYWORD_RESERVED Token::FLAG_KEYWORD_COMPOSED
-         *      Token::FLAG_KEYWORD_DATA_TYPE Token::FLAG_KEYWORD_KEY
-         *      Token::FLAG_KEYWORD_FUNCTION
-         *
-         * @var array
-         */
-        public static $KEYWORDS = array('AT' => 1, 'DO' => 1, 'IO' => 1, 'NO' => 1, 'XA' => 1, 'ANY' => 1, 'BDB' => 1, 'CPU' => 1, 'END' => 1, 'IPC' => 1, 'NDB' => 1, 'NEW' => 1, 'ONE' => 1, 'ROW' => 1, 'BOOL' => 1, 'BYTE' => 1, 'CODE' => 1, 'CUBE' => 1, 'DATA' => 1, 'DISK' => 1, 'ENDS' => 1, 'FAST' => 1, 'FILE' => 1, 'FULL' => 1, 'GOTO' => 1, 'HASH' => 1, 'HELP' => 1, 'HOST' => 1, 'LAST' => 1, 'LESS' => 1, 'LIST' => 1, 'LOGS' => 1, 'MODE' => 1, 'NAME' => 1, 'NEXT' => 1, 'NONE' => 1, 'OPEN' => 1, 'PAGE' => 1, 'PORT' => 1, 'PREV' => 1, 'ROWS' => 1, 'SOME' => 1, 'STOP' => 1, 'THAN' => 1, 'TYPE' => 1, 'VIEW' => 1, 'WAIT' => 1, 'WORK' => 1, 'X509' => 1, 'AFTER' => 1, 'BEGIN' => 1, 'BLOCK' => 1, 'BTREE' => 1, 'CACHE' => 1, 'CHAIN' => 1, 'CLOSE' => 1, 'EVENT' => 1, 'EVERY' => 1, 'FIRST' => 1, 'FIXED' => 1, 'FLUSH' => 1, 'FOUND' => 1, 'HOSTS' => 1, 'LABEL' => 1, 'LEVEL' => 1, 'LOCAL' => 1, 'LOCKS' => 1, 'MERGE' => 1, 'MUTEX' => 1, 'NAMES' => 1, 'NCHAR' => 1, 'OWNER' => 1, 'PHASE' => 1, 'QUERY' => 1, 'QUICK' => 1, 'RAID0' => 1, 'RESET' => 1, 'RTREE' => 1, 'SHARE' => 1, 'SLAVE' => 1, 'START' => 1, 'SUPER' => 1, 'SWAPS' => 1, 'TYPES' => 1, 'UNTIL' => 1, 'VALUE' => 1, 'ACTION' => 1, 'BACKUP' => 1, 'BINLOG' => 1, 'CIPHER' => 1, 'CLIENT' => 1, 'COMMIT' => 1, 'ENABLE' => 1, 'ENGINE' => 1, 'ERRORS' => 1, 'ESCAPE' => 1, 'EVENTS' => 1, 'FAULTS' => 1, 'FIELDS' => 1, 'GLOBAL' => 1, 'GRANTS' => 1, 'IMPORT' => 1, 'INNODB' => 1, 'ISSUER' => 1, 'LEAVES' => 1, 'MASTER' => 1, 'MEDIUM' => 1, 'MEMORY' => 1, 'MODIFY' => 1, 'OFFSET' => 1, 'PARSER' => 1, 'PLUGIN' => 1, 'RELOAD' => 1, 'REMOVE' => 1, 'REPAIR' => 1, 'RESUME' => 1, 'ROLLUP' => 1, 'SERVER' => 1, 'SIGNED' => 1, 'SIMPLE' => 1, 'SOCKET' => 1, 'SONAME' => 1, 'SOUNDS' => 1, 'SOURCE' => 1, 'STARTS' => 1, 'STATUS' => 1, 'STRING' => 1, 'TABLES' => 1, 'AUTHORS' => 1, 'CHANGED' => 1, 'COLUMNS' => 1, 'COMMENT' => 1, 'COMPACT' => 1, 'CONTEXT' => 1, 'DEFINER' => 1, 'DISABLE' => 1, 'DISCARD' => 1, 'DYNAMIC' => 1, 'ENGINES' => 1, 'EXECUTE' => 1, 'HANDLER' => 1, 'INDEXES' => 1, 'INSTALL' => 1, 'INVOKER' => 1, 'LOGFILE' => 1, 'MIGRATE' => 1, 'NO_WAIT' => 1, 'OPTIONS' => 1, 'PARTIAL' => 1, 'PLUGINS' => 1, 'PREPARE' => 1, 'PROFILE' => 1, 'REBUILD' => 1, 'RECOVER' => 1, 'RESTORE' => 1, 'RETURNS' => 1, 'ROUTINE' => 1, 'SESSION' => 1, 'STORAGE' => 1, 'STRIPED' => 1, 'SUBJECT' => 1, 'SUSPEND' => 1, 'UNICODE' => 1, 'UNKNOWN' => 1, 'UPGRADE' => 1, 'USE_FRM' => 1, 'VIRTUAL' => 1, 'WRAPPER' => 1, 'CASCADED' => 1, 'CHECKSUM' => 1, 'DATAFILE' => 1, 'DUMPFILE' => 1, 'EXTENDED' => 1, 'FUNCTION' => 1, 'INNOBASE' => 1, 'LANGUAGE' => 1, 'MAXVALUE' => 1, 'MAX_ROWS' => 1, 'MAX_SIZE' => 1, 'MIN_ROWS' => 1, 'NATIONAL' => 1, 'NVARCHAR' => 1, 'ONE_SHOT' => 1, 'PRESERVE' => 1, 'PROFILES' => 1, 'REDOFILE' => 1, 'ROLLBACK' => 1, 'SCHEDULE' => 1, 'SECURITY' => 1, 'SHUTDOWN' => 1, 'SNAPSHOT' => 1, 'SWITCHES' => 1, 'TRIGGERS' => 1, 'UNDOFILE' => 1, 'WARNINGS' => 1, 'AGGREGATE' => 1, 'ALGORITHM' => 1, 'COMMITTED' => 1, 'DIRECTORY' => 1, 'DUPLICATE' => 1, 'EXPANSION' => 1, 'IO_THREAD' => 1, 'ISOLATION' => 1, 'NODEGROUP' => 1, 'PACK_KEYS' => 1, 'PARTITION' => 1, 'RAID_TYPE' => 1, 'READ_ONLY' => 1, 'REDUNDANT' => 1, 'SAVEPOINT' => 1, 'SCHEDULER' => 1, 'SQL_CACHE' => 1, 'TEMPORARY' => 1, 'TEMPTABLE' => 1, 'UNDEFINED' => 1, 'UNINSTALL' => 1, 'VARIABLES' => 1, 'BERKELEYDB' => 1, 'COMPLETION' => 1, 'COMPRESSED' => 1, 'CONCURRENT' => 1, 'CONNECTION' => 1, 'CONSISTENT' => 1, 'DEALLOCATE' => 1, 'IDENTIFIED' => 1, 'MASTER_SSL' => 1, 'NDBCLUSTER' => 1, 'PARTITIONS' => 1, 'PERSISTENT' => 1, 'PRIVILEGES' => 1, 'REORGANISE' => 1, 'REORGANIZE' => 1, 'REPEATABLE' => 1, 'ROW_FORMAT' => 1, 'SQL_THREAD' => 1, 'TABLESPACE' => 1, 'EXTENT_SIZE' => 1, 'FRAC_SECOND' => 1, 'MASTER_HOST' => 1, 'MASTER_PORT' => 1, 'MASTER_USER' => 1, 'PROCESSLIST' => 1, 'RAID_CHUNKS' => 1, 'REPLICATION' => 1, 'SQL_TSI_DAY' => 1, 'TRANSACTION' => 1, 'UNCOMMITTED' => 1, 'CONTRIBUTORS' => 1, 'DES_KEY_FILE' => 1, 'INITIAL_SIZE' => 1, 'PARTITIONING' => 1, 'RELAY_THREAD' => 1, 'SERIALIZABLE' => 1, 'SQL_NO_CACHE' => 1, 'SQL_TSI_HOUR' => 1, 'SQL_TSI_WEEK' => 1, 'SQL_TSI_YEAR' => 1, 'SUBPARTITION' => 1, 'INSERT_METHOD' => 1, 'MASTER_SSL_CA' => 1, 'PAGE_CHECKSUM' => 1, 'RELAY_LOG_POS' => 1, 'SQL_TSI_MONTH' => 1, 'SUBPARTITIONS' => 1, 'TRANSACTIONAL' => 1, 'AUTO_INCREMENT' => 1, 'AVG_ROW_LENGTH' => 1, 'KEY_BLOCK_SIZE' => 1, 'MASTER_LOG_POS' => 1, 'MASTER_SSL_KEY' => 1, 'RAID_CHUNKSIZE' => 1, 'RELAY_LOG_FILE' => 1, 'SQL_TSI_MINUTE' => 1, 'SQL_TSI_SECOND' => 1, 'TABLE_CHECKSUM' => 1, 'USER_RESOURCES' => 1, 'AUTOEXTEND_SIZE' => 1, 'DELAY_KEY_WRITE' => 1, 'MASTER_LOG_FILE' => 1, 'MASTER_PASSWORD' => 1, 'MASTER_SSL_CERT' => 1, 'SQL_TSI_QUARTER' => 1, 'MASTER_SERVER_ID' => 1, 'REDO_BUFFER_SIZE' => 1, 'UNDO_BUFFER_SIZE' => 1, 'MASTER_SSL_CAPATH' => 1, 'MASTER_SSL_CIPHER' => 1, 'SQL_BUFFER_RESULT' => 1, 'SQL_TSI_FRAC_SECOND' => 1, 'MASTER_CONNECT_RETRY' => 1, 'MAX_QUERIES_PER_HOUR' => 1, 'MAX_UPDATES_PER_HOUR' => 1, 'MAX_USER_CONNECTIONS' => 1, 'MAX_CONNECTIONS_PER_HOUR' => 1, 'AS' => 3, 'BY' => 3, 'IS' => 3, 'ON' => 3, 'OR' => 3, 'TO' => 3, 'ADD' => 3, 'ALL' => 3, 'AND' => 3, 'ASC' => 3, 'DEC' => 3, 'DIV' => 3, 'FOR' => 3, 'NOT' => 3, 'OUT' => 3, 'SQL' => 3, 'SSL' => 3, 'USE' => 3, 'XOR' => 3, 'BOTH' => 3, 'CALL' => 3, 'CASE' => 3, 'DESC' => 3, 'DROP' => 3, 'DUAL' => 3, 'EACH' => 3, 'ELSE' => 3, 'EXIT' => 3, 'FROM' => 3, 'INT1' => 3, 'INT2' => 3, 'INT3' => 3, 'INT4' => 3, 'INT8' => 3, 'INTO' => 3, 'JOIN' => 3, 'KEYS' => 3, 'KILL' => 3, 'LIKE' => 3, 'LOAD' => 3, 'LOCK' => 3, 'LONG' => 3, 'LOOP' => 3, 'NULL' => 3, 'READ' => 3, 'SHOW' => 3, 'THEN' => 3, 'TRUE' => 3, 'UNDO' => 3, 'WHEN' => 3, 'WITH' => 3, 'ALTER' => 3, 'CHECK' => 3, 'CROSS' => 3, 'FALSE' => 3, 'FETCH' => 3, 'FORCE' => 3, 'GRANT' => 3, 'GROUP' => 3, 'INNER' => 3, 'INOUT' => 3, 'LEAVE' => 3, 'LIMIT' => 3, 'LINES' => 3, 'ORDER' => 3, 'OUTER' => 3, 'PURGE' => 3, 'RANGE' => 3, 'READS' => 3, 'RLIKE' => 3, 'TABLE' => 3, 'UNION' => 3, 'USAGE' => 3, 'USING' => 3, 'WHERE' => 3, 'WHILE' => 3, 'WRITE' => 3, 'BEFORE' => 3, 'CHANGE' => 3, 'COLUMN' => 3, 'CREATE' => 3, 'CURSOR' => 3, 'DELETE' => 3, 'ELSEIF' => 3, 'FLOAT4' => 3, 'FLOAT8' => 3, 'HAVING' => 3, 'IGNORE' => 3, 'INFILE' => 3, 'LINEAR' => 3, 'OPTION' => 3, 'REGEXP' => 3, 'RENAME' => 3, 'RETURN' => 3, 'REVOKE' => 3, 'SELECT' => 3, 'UNLOCK' => 3, 'UPDATE' => 3, 'ANALYZE' => 3, 'BETWEEN' => 3, 'CASCADE' => 3, 'COLLATE' => 3, 'DECLARE' => 3, 'DELAYED' => 3, 'ESCAPED' => 3, 'EXPLAIN' => 3, 'FOREIGN' => 3, 'ITERATE' => 3, 'LEADING' => 3, 'NATURAL' => 3, 'OUTFILE' => 3, 'PRIMARY' => 3, 'RELEASE' => 3, 'REQUIRE' => 3, 'SCHEMAS' => 3, 'TRIGGER' => 3, 'VARYING' => 3, 'CONTINUE' => 3, 'DAY_HOUR' => 3, 'DESCRIBE' => 3, 'DISTINCT' => 3, 'ENCLOSED' => 3, 'MODIFIES' => 3, 'OPTIMIZE' => 3, 'RESTRICT' => 3, 'SPECIFIC' => 3, 'SQLSTATE' => 3, 'STARTING' => 3, 'TRAILING' => 3, 'UNSIGNED' => 3, 'ZEROFILL' => 3, 'CONDITION' => 3, 'DATABASES' => 3, 'MIDDLEINT' => 3, 'PRECISION' => 3, 'PROCEDURE' => 3, 'SENSITIVE' => 3, 'SEPARATOR' => 3, 'ACCESSIBLE' => 3, 'ASENSITIVE' => 3, 'CONSTRAINT' => 3, 'DAY_MINUTE' => 3, 'DAY_SECOND' => 3, 'OPTIONALLY' => 3, 'READ_WRITE' => 3, 'REFERENCES' => 3, 'SQLWARNING' => 3, 'TERMINATED' => 3, 'YEAR_MONTH' => 3, 'DISTINCTROW' => 3, 'HOUR_MINUTE' => 3, 'HOUR_SECOND' => 3, 'INSENSITIVE' => 3, 'LOW_PRIORITY' => 3, 'SQLEXCEPTION' => 3, 'VARCHARACTER' => 3, 'DETERMINISTIC' => 3, 'HIGH_PRIORITY' => 3, 'MINUTE_SECOND' => 3, 'STRAIGHT_JOIN' => 3, 'SQL_BIG_RESULT' => 3, 'DAY_MICROSECOND' => 3, 'HOUR_MICROSECOND' => 3, 'SQL_SMALL_RESULT' => 3, 'MINUTE_MICROSECOND' => 3, 'NO_WRITE_TO_BINLOG' => 3, 'SECOND_MICROSECOND' => 3, 'SQL_CALC_FOUND_ROWS' => 3, 'MASTER_SSL_VERIFY_SERVER_CERT' => 3, 'GROUP BY' => 7, 'NOT NULL' => 7, 'ORDER BY' => 7, 'SET NULL' => 7, 'AND CHAIN' => 7, 'FULL JOIN' => 7, 'IF EXISTS' => 7, 'LEFT JOIN' => 7, 'LESS THAN' => 7, 'LOAD DATA' => 7, 'NO ACTION' => 7, 'ON DELETE' => 7, 'ON UPDATE' => 7, 'UNION ALL' => 7, 'CROSS JOIN' => 7, 'ESCAPED BY' => 7, 'FOR UPDATE' => 7, 'INNER JOIN' => 7, 'LINEAR KEY' => 7, 'NO RELEASE' => 7, 'OR REPLACE' => 7, 'RIGHT JOIN' => 7, 'ENCLOSED BY' => 7, 'LINEAR HASH' => 7, 'STARTING BY' => 7, 'AND NO CHAIN' => 7, 'FOR EACH ROW' => 7, 'NATURAL JOIN' => 7, 'PARTITION BY' => 7, 'SET PASSWORD' => 7, 'SQL SECURITY' => 7, 'CHARACTER SET' => 7, 'IF NOT EXISTS' => 7, 'TERMINATED BY' => 7, 'DATA DIRECTORY' => 7, 'UNION DISTINCT' => 7, 'DEFAULT CHARSET' => 7, 'DEFAULT COLLATE' => 7, 'FULL OUTER JOIN' => 7, 'INDEX DIRECTORY' => 7, 'LEFT OUTER JOIN' => 7, 'SUBPARTITION BY' => 7, 'GENERATED ALWAYS' => 7, 'RIGHT OUTER JOIN' => 7, 'NATURAL LEFT JOIN' => 7, 'START TRANSACTION' => 7, 'LOCK IN SHARE MODE' => 7, 'NATURAL RIGHT JOIN' => 7, 'SELECT TRANSACTION' => 7, 'DEFAULT CHARACTER SET' => 7, 'NATURAL LEFT OUTER JOIN' => 7, 'NATURAL RIGHT OUTER JOIN' => 7, 'WITH CONSISTENT SNAPSHOT' => 7, 'BIT' => 9, 'XML' => 9, 'ENUM' => 9, 'JSON' => 9, 'TEXT' => 9, 'ARRAY' => 9, 'SERIAL' => 9, 'BOOLEAN' => 9, 'DATETIME' => 9, 'GEOMETRY' => 9, 'MULTISET' => 9, 'MULTILINEPOINT' => 9, 'MULTILINEPOLYGON' => 9, 'INT' => 11, 'SET' => 11, 'BLOB' => 11, 'REAL' => 11, 'FLOAT' => 11, 'BIGINT' => 11, 'DOUBLE' => 11, 'DECIMAL' => 11, 'INTEGER' => 11, 'NUMERIC' => 11, 'TINYINT' => 11, 'VARCHAR' => 11, 'LONGBLOB' => 11, 'LONGTEXT' => 11, 'SMALLINT' => 11, 'TINYBLOB' => 11, 'TINYTEXT' => 11, 'CHARACTER' => 11, 'MEDIUMINT' => 11, 'VARBINARY' => 11, 'MEDIUMBLOB' => 11, 'MEDIUMTEXT' => 11, 'BINARY VARYING' => 15, 'KEY' => 19, 'INDEX' => 19, 'UNIQUE' => 19, 'SPATIAL' => 19, 'FULLTEXT' => 19, 'INDEX KEY' => 23, 'UNIQUE KEY' => 23, 'FOREIGN KEY' => 23, 'PRIMARY KEY' => 23, 'SPATIAL KEY' => 23, 'FULLTEXT KEY' => 23, 'UNIQUE INDEX' => 23, 'SPATIAL INDEX' => 23, 'FULLTEXT INDEX' => 23, 'X' => 33, 'Y' => 33, 'LN' => 33, 'PI' => 33, 'ABS' => 33, 'AVG' => 33, 'BIN' => 33, 'COS' => 33, 'COT' => 33, 'DAY' => 33, 'ELT' => 33, 'EXP' => 33, 'HEX' => 33, 'LOG' => 33, 'MAX' => 33, 'MD5' => 33, 'MID' => 33, 'MIN' => 33, 'NOW' => 33, 'OCT' => 33, 'ORD' => 33, 'POW' => 33, 'SHA' => 33, 'SIN' => 33, 'STD' => 33, 'SUM' => 33, 'TAN' => 33, 'ACOS' => 33, 'AREA' => 33, 'ASIN' => 33, 'ATAN' => 33, 'CAST' => 33, 'CEIL' => 33, 'CONV' => 33, 'HOUR' => 33, 'LOG2' => 33, 'LPAD' => 33, 'RAND' => 33, 'RPAD' => 33, 'SHA1' => 33, 'SIGN' => 33, 'SQRT' => 33, 'SRID' => 33, 'TRIM' => 33, 'USER' => 33, 'UUID' => 33, 'WEEK' => 33, 'ASCII' => 33, 'ASWKB' => 33, 'ASWKT' => 33, 'ATAN2' => 33, 'COUNT' => 33, 'CRC32' => 33, 'DECOD' => 33, 'FIELD' => 33, 'FLOOR' => 33, 'INSTR' => 33, 'LCASE' => 33, 'LEAST' => 33, 'LOG10' => 33, 'LOWER' => 33, 'LTRIM' => 33, 'MONTH' => 33, 'POWER' => 33, 'QUOTE' => 33, 'ROUND' => 33, 'RTRIM' => 33, 'SLEEP' => 33, 'SPACE' => 33, 'UCASE' => 33, 'UNHEX' => 33, 'UPPER' => 33, 'ASTEXT' => 33, 'BIT_OR' => 33, 'CONCAT' => 33, 'ENCODE' => 33, 'EQUALS' => 33, 'FORMAT' => 33, 'IFNULL' => 33, 'ISNULL' => 33, 'LENGTH' => 33, 'LOCATE' => 33, 'MINUTE' => 33, 'NULLIF' => 33, 'POINTN' => 33, 'SECOND' => 33, 'STDDEV' => 33, 'STRCMP' => 33, 'SUBSTR' => 33, 'WITHIN' => 33, 'ADDDATE' => 33, 'ADDTIME' => 33, 'AGAINST' => 33, 'BIT_AND' => 33, 'BIT_XOR' => 33, 'CEILING' => 33, 'CHARSET' => 33, 'CROSSES' => 33, 'CURDATE' => 33, 'CURTIME' => 33, 'DAYNAME' => 33, 'DEGREES' => 33, 'ENCRYPT' => 33, 'EXTRACT' => 33, 'GLENGTH' => 33, 'ISEMPTY' => 33, 'QUARTER' => 33, 'RADIANS' => 33, 'REVERSE' => 33, 'SOUNDEX' => 33, 'SUBDATE' => 33, 'SUBTIME' => 33, 'SYSDATE' => 33, 'TOUCHES' => 33, 'TO_DAYS' => 33, 'VAR_POP' => 33, 'VERSION' => 33, 'WEEKDAY' => 33, 'ASBINARY' => 33, 'CENTROID' => 33, 'COALESCE' => 33, 'COMPRESS' => 33, 'CONTAINS' => 33, 'DATEDIFF' => 33, 'DATE_ADD' => 33, 'DATE_SUB' => 33, 'DISJOINT' => 33, 'ENDPOINT' => 33, 'ENVELOPE' => 33, 'GET_LOCK' => 33, 'GREATEST' => 33, 'ISCLOSED' => 33, 'ISSIMPLE' => 33, 'MAKEDATE' => 33, 'MAKETIME' => 33, 'MAKE_SET' => 33, 'MBREQUAL' => 33, 'OVERLAPS' => 33, 'PASSWORD' => 33, 'POSITION' => 33, 'TIMEDIFF' => 33, 'TRUNCATE' => 33, 'VARIANCE' => 33, 'VAR_SAMP' => 33, 'YEARWEEK' => 33, 'BENCHMARK' => 33, 'BIT_COUNT' => 33, 'COLLATION' => 33, 'CONCAT_WS' => 33, 'DAYOFWEEK' => 33, 'DAYOFYEAR' => 33, 'DIMENSION' => 33, 'FROM_DAYS' => 33, 'GEOMETRYN' => 33, 'INET_ATON' => 33, 'INET_NTOA' => 33, 'LOAD_FILE' => 33, 'MBRWITHIN' => 33, 'MONTHNAME' => 33, 'NUMPOINTS' => 33, 'ROW_COUNT' => 33, 'SUBSTRING' => 33, 'UPDATEXML' => 33, 'BIT_LENGTH' => 33, 'CONVERT_TZ' => 33, 'DAYOFMONTH' => 33, 'EXPORT_SET' => 33, 'FOUND_ROWS' => 33, 'GET_FORMAT' => 33, 'INTERSECTS' => 33, 'MBRTOUCHES' => 33, 'MULTIPOINT' => 33, 'NAME_CONST' => 33, 'PERIOD_ADD' => 33, 'STARTPOINT' => 33, 'STDDEV_POP' => 33, 'UNCOMPRESS' => 33, 'UUID_SHORT' => 33, 'WEEKOFYEAR' => 33, 'AES_DECRYPT' => 33, 'AES_ENCRYPT' => 33, 'CHAR_LENGTH' => 33, 'DATE_FORMAT' => 33, 'DES_DECRYPT' => 33, 'DES_ENCRYPT' => 33, 'FIND_IN_SET' => 33, 'GEOMFROMWKB' => 33, 'LINEFROMWKB' => 33, 'MBRCONTAINS' => 33, 'MBRDISJOINT' => 33, 'MBROVERLAPS' => 33, 'MICROSECOND' => 33, 'PERIOD_DIFF' => 33, 'POLYFROMWKB' => 33, 'SEC_TO_TIME' => 33, 'STDDEV_SAMP' => 33, 'STR_TO_DATE' => 33, 'SYSTEM_USER' => 33, 'TIME_FORMAT' => 33, 'TIME_TO_SEC' => 33, 'COERCIBILITY' => 33, 'EXTERIORRING' => 33, 'EXTRACTVALUE' => 33, 'GEOMETRYTYPE' => 33, 'GEOMFROMTEXT' => 33, 'GROUP_CONCAT' => 33, 'IS_FREE_LOCK' => 33, 'IS_USED_LOCK' => 33, 'LINEFROMTEXT' => 33, 'MLINEFROMWKB' => 33, 'MPOLYFROMWKB' => 33, 'MULTIPOLYGON' => 33, 'OCTET_LENGTH' => 33, 'OLD_PASSWORD' => 33, 'POINTFROMWKB' => 33, 'POLYFROMTEXT' => 33, 'RELEASE_LOCK' => 33, 'SESSION_USER' => 33, 'TIMESTAMPADD' => 33, 'CONNECTION_ID' => 33, 'FROM_UNIXTIME' => 33, 'INTERIORRINGN' => 33, 'MBRINTERSECTS' => 33, 'MLINEFROMTEXT' => 33, 'MPOINTFROMWKB' => 33, 'MPOLYFROMTEXT' => 33, 'NUMGEOMETRIES' => 33, 'POINTFROMTEXT' => 33, 'TIMESTAMPDIFF' => 33, 'LAST_INSERT_ID' => 33, 'MPOINTFROMTEXT' => 33, 'POLYGONFROMWKB' => 33, 'UNIX_TIMESTAMP' => 33, 'GEOMCOLLFROMWKB' => 33, 'MASTER_POS_WAIT' => 33, 'POLYGONFROMTEXT' => 33, 'SUBSTRING_INDEX' => 33, 'CHARACTER_LENGTH' => 33, 'GEOMCOLLFROMTEXT' => 33, 'GEOMETRYFROMTEXT' => 33, 'NUMINTERIORRINGS' => 33, 'LINESTRINGFROMWKB' => 33, 'MULTIPOINTFROMWKB' => 33, 'MULTIPOINTFROMTEXT' => 33, 'MULTIPOLYGONFROMWKB' => 33, 'UNCOMPRESSED_LENGTH' => 33, 'MULTIPOLYGONFROMTEXT' => 33, 'MULTILINESTRINGFROMWKB' => 33, 'MULTILINESTRINGFROMTEXT' => 33, 'GEOMETRYCOLLECTIONFROMWKB' => 33, 'GEOMETRYCOLLECTIONFROMTEXT' => 33, 'IF' => 35, 'IN' => 35, 'MOD' => 35, 'LEFT' => 35, 'MATCH' => 35, 'RIGHT' => 35, 'EXISTS' => 35, 'INSERT' => 35, 'REPEAT' => 35, 'SCHEMA' => 35, 'VALUES' => 35, 'CONVERT' => 35, 'DEFAULT' => 35, 'REPLACE' => 35, 'DATABASE' => 35, 'UTC_DATE' => 35, 'UTC_TIME' => 35, 'LOCALTIME' => 35, 'CURRENT_DATE' => 35, 'CURRENT_TIME' => 35, 'CURRENT_USER' => 35, 'UTC_TIMESTAMP' => 35, 'LOCALTIMESTAMP' => 35, 'CURRENT_TIMESTAMP' => 35, 'NOT IN' => 39, 'DATE' => 41, 'TIME' => 41, 'YEAR' => 41, 'POINT' => 41, 'POLYGON' => 41, 'TIMESTAMP' => 41, 'LINESTRING' => 41, 'MULTILINESTRING' => 41, 'GEOMETRYCOLLECTION' => 41, 'CHAR' => 43, 'BINARY' => 43, 'INTERVAL' => 43);
-    }
-    /**
-     * Context for MySQL 5.5.
-     *
-     * @category   Contexts
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class ContextMySql50500 extends \PhpMyAdmin\SqlParser\Context
-    {
-        /**
-         * List of keywords.
-         *
-         * The value associated to each keyword represents its flags.
-         *
-         * @see Token::FLAG_KEYWORD_RESERVED Token::FLAG_KEYWORD_COMPOSED
-         *      Token::FLAG_KEYWORD_DATA_TYPE Token::FLAG_KEYWORD_KEY
-         *      Token::FLAG_KEYWORD_FUNCTION
-         *
-         * @var array
-         */
-        public static $KEYWORDS = array('AT' => 1, 'DO' => 1, 'IO' => 1, 'NO' => 1, 'XA' => 1, 'ANY' => 1, 'CPU' => 1, 'END' => 1, 'IPC' => 1, 'NDB' => 1, 'NEW' => 1, 'ONE' => 1, 'ROW' => 1, 'BOOL' => 1, 'BYTE' => 1, 'CODE' => 1, 'CUBE' => 1, 'DATA' => 1, 'DISK' => 1, 'ENDS' => 1, 'FAST' => 1, 'FILE' => 1, 'FULL' => 1, 'HASH' => 1, 'HELP' => 1, 'HOST' => 1, 'LAST' => 1, 'LESS' => 1, 'LIST' => 1, 'LOGS' => 1, 'MODE' => 1, 'NAME' => 1, 'NEXT' => 1, 'NONE' => 1, 'OPEN' => 1, 'PAGE' => 1, 'PORT' => 1, 'PREV' => 1, 'ROWS' => 1, 'SLOW' => 1, 'SOME' => 1, 'STOP' => 1, 'THAN' => 1, 'TYPE' => 1, 'VIEW' => 1, 'WAIT' => 1, 'WORK' => 1, 'X509' => 1, 'AFTER' => 1, 'BEGIN' => 1, 'BLOCK' => 1, 'BTREE' => 1, 'CACHE' => 1, 'CHAIN' => 1, 'CLOSE' => 1, 'ERROR' => 1, 'EVENT' => 1, 'EVERY' => 1, 'FIRST' => 1, 'FIXED' => 1, 'FLUSH' => 1, 'FOUND' => 1, 'HOSTS' => 1, 'LEVEL' => 1, 'LOCAL' => 1, 'LOCKS' => 1, 'MERGE' => 1, 'MUTEX' => 1, 'NAMES' => 1, 'NCHAR' => 1, 'OWNER' => 1, 'PHASE' => 1, 'PROXY' => 1, 'QUERY' => 1, 'QUICK' => 1, 'RELAY' => 1, 'RESET' => 1, 'RTREE' => 1, 'SHARE' => 1, 'SLAVE' => 1, 'START' => 1, 'SUPER' => 1, 'SWAPS' => 1, 'TYPES' => 1, 'UNTIL' => 1, 'VALUE' => 1, 'ACTION' => 1, 'BACKUP' => 1, 'BINLOG' => 1, 'CIPHER' => 1, 'CLIENT' => 1, 'COMMIT' => 1, 'ENABLE' => 1, 'ENGINE' => 1, 'ERRORS' => 1, 'ESCAPE' => 1, 'EVENTS' => 1, 'FAULTS' => 1, 'FIELDS' => 1, 'GLOBAL' => 1, 'GRANTS' => 1, 'IMPORT' => 1, 'INNODB' => 1, 'ISSUER' => 1, 'LEAVES' => 1, 'MASTER' => 1, 'MEDIUM' => 1, 'MEMORY' => 1, 'MODIFY' => 1, 'OFFSET' => 1, 'PARSER' => 1, 'PLUGIN' => 1, 'RELOAD' => 1, 'REMOVE' => 1, 'REPAIR' => 1, 'RESUME' => 1, 'ROLLUP' => 1, 'SERVER' => 1, 'SIGNED' => 1, 'SIMPLE' => 1, 'SOCKET' => 1, 'SONAME' => 1, 'SOUNDS' => 1, 'SOURCE' => 1, 'STARTS' => 1, 'STATUS' => 1, 'STRING' => 1, 'TABLES' => 1, 'AUTHORS' => 1, 'CHANGED' => 1, 'COLUMNS' => 1, 'COMMENT' => 1, 'COMPACT' => 1, 'CONTEXT' => 1, 'DEFINER' => 1, 'DISABLE' => 1, 'DISCARD' => 1, 'DYNAMIC' => 1, 'ENGINES' => 1, 'EXECUTE' => 1, 'GENERAL' => 1, 'HANDLER' => 1, 'INDEXES' => 1, 'INSTALL' => 1, 'INVOKER' => 1, 'LOGFILE' => 1, 'MIGRATE' => 1, 'NO_WAIT' => 1, 'OPTIONS' => 1, 'PARTIAL' => 1, 'PLUGINS' => 1, 'PREPARE' => 1, 'PROFILE' => 1, 'REBUILD' => 1, 'RECOVER' => 1, 'RESTORE' => 1, 'RETURNS' => 1, 'ROUTINE' => 1, 'SESSION' => 1, 'STORAGE' => 1, 'SUBJECT' => 1, 'SUSPEND' => 1, 'UNICODE' => 1, 'UNKNOWN' => 1, 'UPGRADE' => 1, 'USE_FRM' => 1, 'VIRTUAL' => 1, 'WRAPPER' => 1, 'CASCADED' => 1, 'CHECKSUM' => 1, 'DATAFILE' => 1, 'DUMPFILE' => 1, 'EXTENDED' => 1, 'FUNCTION' => 1, 'INNOBASE' => 1, 'LANGUAGE' => 1, 'MAX_ROWS' => 1, 'MAX_SIZE' => 1, 'MIN_ROWS' => 1, 'NATIONAL' => 1, 'NVARCHAR' => 1, 'ONE_SHOT' => 1, 'PRESERVE' => 1, 'PROFILES' => 1, 'REDOFILE' => 1, 'RELAYLOG' => 1, 'ROLLBACK' => 1, 'SCHEDULE' => 1, 'SECURITY' => 1, 'SHUTDOWN' => 1, 'SNAPSHOT' => 1, 'SWITCHES' => 1, 'TRIGGERS' => 1, 'UNDOFILE' => 1, 'WARNINGS' => 1, 'AGGREGATE' => 1, 'ALGORITHM' => 1, 'COMMITTED' => 1, 'DIRECTORY' => 1, 'DUPLICATE' => 1, 'EXPANSION' => 1, 'IO_THREAD' => 1, 'ISOLATION' => 1, 'NODEGROUP' => 1, 'PACK_KEYS' => 1, 'PARTITION' => 1, 'READ_ONLY' => 1, 'REDUNDANT' => 1, 'SAVEPOINT' => 1, 'SQL_CACHE' => 1, 'TEMPORARY' => 1, 'TEMPTABLE' => 1, 'UNDEFINED' => 1, 'UNINSTALL' => 1, 'VARIABLES' => 1, 'COMPLETION' => 1, 'COMPRESSED' => 1, 'CONCURRENT' => 1, 'CONNECTION' => 1, 'CONSISTENT' => 1, 'DEALLOCATE' => 1, 'IDENTIFIED' => 1, 'MASTER_SSL' => 1, 'NDBCLUSTER' => 1, 'PARTITIONS' => 1, 'PERSISTENT' => 1, 'PRIVILEGES' => 1, 'REORGANIZE' => 1, 'REPEATABLE' => 1, 'ROW_FORMAT' => 1, 'SQL_THREAD' => 1, 'TABLESPACE' => 1, 'TABLE_NAME' => 1, 'COLUMN_NAME' => 1, 'CURSOR_NAME' => 1, 'EXTENT_SIZE' => 1, 'FRAC_SECOND' => 1, 'MASTER_HOST' => 1, 'MASTER_PORT' => 1, 'MASTER_USER' => 1, 'MYSQL_ERRNO' => 1, 'PROCESSLIST' => 1, 'REPLICATION' => 1, 'SCHEMA_NAME' => 1, 'SQL_TSI_DAY' => 1, 'TRANSACTION' => 1, 'UNCOMMITTED' => 1, 'CATALOG_NAME' => 1, 'CLASS_ORIGIN' => 1, 'CONTRIBUTORS' => 1, 'DES_KEY_FILE' => 1, 'INITIAL_SIZE' => 1, 'MESSAGE_TEXT' => 1, 'PARTITIONING' => 1, 'RELAY_THREAD' => 1, 'SERIALIZABLE' => 1, 'SQL_NO_CACHE' => 1, 'SQL_TSI_HOUR' => 1, 'SQL_TSI_WEEK' => 1, 'SQL_TSI_YEAR' => 1, 'SUBPARTITION' => 1, 'INSERT_METHOD' => 1, 'MASTER_SSL_CA' => 1, 'RELAY_LOG_POS' => 1, 'SQL_TSI_MONTH' => 1, 'SUBPARTITIONS' => 1, 'AUTO_INCREMENT' => 1, 'AVG_ROW_LENGTH' => 1, 'KEY_BLOCK_SIZE' => 1, 'MASTER_LOG_POS' => 1, 'MASTER_SSL_KEY' => 1, 'RELAY_LOG_FILE' => 1, 'SQL_TSI_MINUTE' => 1, 'SQL_TSI_SECOND' => 1, 'TABLE_CHECKSUM' => 1, 'USER_RESOURCES' => 1, 'AUTOEXTEND_SIZE' => 1, 'CONSTRAINT_NAME' => 1, 'DELAY_KEY_WRITE' => 1, 'MASTER_LOG_FILE' => 1, 'MASTER_PASSWORD' => 1, 'MASTER_SSL_CERT' => 1, 'SQL_TSI_QUARTER' => 1, 'SUBCLASS_ORIGIN' => 1, 'MASTER_SERVER_ID' => 1, 'REDO_BUFFER_SIZE' => 1, 'UNDO_BUFFER_SIZE' => 1, 'CONSTRAINT_SCHEMA' => 1, 'IGNORE_SERVER_IDS' => 1, 'MASTER_SSL_CAPATH' => 1, 'MASTER_SSL_CIPHER' => 1, 'SQL_BUFFER_RESULT' => 1, 'CONSTRAINT_CATALOG' => 1, 'SQL_TSI_FRAC_SECOND' => 1, 'MASTER_CONNECT_RETRY' => 1, 'MAX_QUERIES_PER_HOUR' => 1, 'MAX_UPDATES_PER_HOUR' => 1, 'MAX_USER_CONNECTIONS' => 1, 'MASTER_HEARTBEAT_PERIOD' => 1, 'MAX_CONNECTIONS_PER_HOUR' => 1, 'AS' => 3, 'BY' => 3, 'IS' => 3, 'ON' => 3, 'OR' => 3, 'TO' => 3, 'ADD' => 3, 'ALL' => 3, 'AND' => 3, 'ASC' => 3, 'DEC' => 3, 'DIV' => 3, 'FOR' => 3, 'NOT' => 3, 'OUT' => 3, 'SQL' => 3, 'SSL' => 3, 'USE' => 3, 'XOR' => 3, 'BOTH' => 3, 'CALL' => 3, 'CASE' => 3, 'DESC' => 3, 'DROP' => 3, 'DUAL' => 3, 'EACH' => 3, 'ELSE' => 3, 'EXIT' => 3, 'FROM' => 3, 'INT1' => 3, 'INT2' => 3, 'INT3' => 3, 'INT4' => 3, 'INT8' => 3, 'INTO' => 3, 'JOIN' => 3, 'KEYS' => 3, 'KILL' => 3, 'LIKE' => 3, 'LOAD' => 3, 'LOCK' => 3, 'LONG' => 3, 'LOOP' => 3, 'NULL' => 3, 'READ' => 3, 'SHOW' => 3, 'THEN' => 3, 'TRUE' => 3, 'UNDO' => 3, 'WHEN' => 3, 'WITH' => 3, 'ALTER' => 3, 'CHECK' => 3, 'CROSS' => 3, 'FALSE' => 3, 'FETCH' => 3, 'FORCE' => 3, 'GRANT' => 3, 'GROUP' => 3, 'INNER' => 3, 'INOUT' => 3, 'LEAVE' => 3, 'LIMIT' => 3, 'LINES' => 3, 'ORDER' => 3, 'OUTER' => 3, 'PURGE' => 3, 'RANGE' => 3, 'READS' => 3, 'RLIKE' => 3, 'TABLE' => 3, 'UNION' => 3, 'USAGE' => 3, 'USING' => 3, 'WHERE' => 3, 'WHILE' => 3, 'WRITE' => 3, 'BEFORE' => 3, 'CHANGE' => 3, 'COLUMN' => 3, 'CREATE' => 3, 'CURSOR' => 3, 'DELETE' => 3, 'ELSEIF' => 3, 'FLOAT4' => 3, 'FLOAT8' => 3, 'HAVING' => 3, 'IGNORE' => 3, 'INFILE' => 3, 'LINEAR' => 3, 'OPTION' => 3, 'REGEXP' => 3, 'RENAME' => 3, 'RETURN' => 3, 'REVOKE' => 3, 'SELECT' => 3, 'SIGNAL' => 3, 'UNLOCK' => 3, 'UPDATE' => 3, 'ANALYZE' => 3, 'BETWEEN' => 3, 'CASCADE' => 3, 'COLLATE' => 3, 'DECLARE' => 3, 'DELAYED' => 3, 'ESCAPED' => 3, 'EXPLAIN' => 3, 'FOREIGN' => 3, 'ITERATE' => 3, 'LEADING' => 3, 'NATURAL' => 3, 'OUTFILE' => 3, 'PRIMARY' => 3, 'RELEASE' => 3, 'REQUIRE' => 3, 'SCHEMAS' => 3, 'TRIGGER' => 3, 'VARYING' => 3, 'CONTINUE' => 3, 'DAY_HOUR' => 3, 'DESCRIBE' => 3, 'DISTINCT' => 3, 'ENCLOSED' => 3, 'MAXVALUE' => 3, 'MODIFIES' => 3, 'OPTIMIZE' => 3, 'RESIGNAL' => 3, 'RESTRICT' => 3, 'SPECIFIC' => 3, 'SQLSTATE' => 3, 'STARTING' => 3, 'TRAILING' => 3, 'UNSIGNED' => 3, 'ZEROFILL' => 3, 'CONDITION' => 3, 'DATABASES' => 3, 'MIDDLEINT' => 3, 'PRECISION' => 3, 'PROCEDURE' => 3, 'SENSITIVE' => 3, 'SEPARATOR' => 3, 'ACCESSIBLE' => 3, 'ASENSITIVE' => 3, 'CONSTRAINT' => 3, 'DAY_MINUTE' => 3, 'DAY_SECOND' => 3, 'OPTIONALLY' => 3, 'READ_WRITE' => 3, 'REFERENCES' => 3, 'SQLWARNING' => 3, 'TERMINATED' => 3, 'YEAR_MONTH' => 3, 'DISTINCTROW' => 3, 'HOUR_MINUTE' => 3, 'HOUR_SECOND' => 3, 'INSENSITIVE' => 3, 'LOW_PRIORITY' => 3, 'SQLEXCEPTION' => 3, 'VARCHARACTER' => 3, 'DETERMINISTIC' => 3, 'HIGH_PRIORITY' => 3, 'MINUTE_SECOND' => 3, 'STRAIGHT_JOIN' => 3, 'SQL_BIG_RESULT' => 3, 'DAY_MICROSECOND' => 3, 'HOUR_MICROSECOND' => 3, 'SQL_SMALL_RESULT' => 3, 'MINUTE_MICROSECOND' => 3, 'NO_WRITE_TO_BINLOG' => 3, 'SECOND_MICROSECOND' => 3, 'SQL_CALC_FOUND_ROWS' => 3, 'MASTER_SSL_VERIFY_SERVER_CERT' => 3, 'GROUP BY' => 7, 'NOT NULL' => 7, 'ORDER BY' => 7, 'SET NULL' => 7, 'AND CHAIN' => 7, 'FULL JOIN' => 7, 'IF EXISTS' => 7, 'LEFT JOIN' => 7, 'LESS THAN' => 7, 'LOAD DATA' => 7, 'NO ACTION' => 7, 'ON DELETE' => 7, 'ON UPDATE' => 7, 'UNION ALL' => 7, 'CROSS JOIN' => 7, 'ESCAPED BY' => 7, 'FOR UPDATE' => 7, 'INNER JOIN' => 7, 'LINEAR KEY' => 7, 'NO RELEASE' => 7, 'OR REPLACE' => 7, 'RIGHT JOIN' => 7, 'ENCLOSED BY' => 7, 'LINEAR HASH' => 7, 'STARTING BY' => 7, 'AND NO CHAIN' => 7, 'FOR EACH ROW' => 7, 'NATURAL JOIN' => 7, 'PARTITION BY' => 7, 'SET PASSWORD' => 7, 'SQL SECURITY' => 7, 'CHARACTER SET' => 7, 'IF NOT EXISTS' => 7, 'TERMINATED BY' => 7, 'DATA DIRECTORY' => 7, 'UNION DISTINCT' => 7, 'DEFAULT CHARSET' => 7, 'DEFAULT COLLATE' => 7, 'FULL OUTER JOIN' => 7, 'INDEX DIRECTORY' => 7, 'LEFT OUTER JOIN' => 7, 'SUBPARTITION BY' => 7, 'GENERATED ALWAYS' => 7, 'RIGHT OUTER JOIN' => 7, 'NATURAL LEFT JOIN' => 7, 'START TRANSACTION' => 7, 'LOCK IN SHARE MODE' => 7, 'NATURAL RIGHT JOIN' => 7, 'SELECT TRANSACTION' => 7, 'DEFAULT CHARACTER SET' => 7, 'NATURAL LEFT OUTER JOIN' => 7, 'NATURAL RIGHT OUTER JOIN' => 7, 'WITH CONSISTENT SNAPSHOT' => 7, 'BIT' => 9, 'XML' => 9, 'ENUM' => 9, 'JSON' => 9, 'TEXT' => 9, 'ARRAY' => 9, 'SERIAL' => 9, 'BOOLEAN' => 9, 'DATETIME' => 9, 'GEOMETRY' => 9, 'MULTISET' => 9, 'MULTILINEPOINT' => 9, 'MULTILINEPOLYGON' => 9, 'INT' => 11, 'SET' => 11, 'BLOB' => 11, 'REAL' => 11, 'FLOAT' => 11, 'BIGINT' => 11, 'DOUBLE' => 11, 'DECIMAL' => 11, 'INTEGER' => 11, 'NUMERIC' => 11, 'TINYINT' => 11, 'VARCHAR' => 11, 'LONGBLOB' => 11, 'LONGTEXT' => 11, 'SMALLINT' => 11, 'TINYBLOB' => 11, 'TINYTEXT' => 11, 'CHARACTER' => 11, 'MEDIUMINT' => 11, 'VARBINARY' => 11, 'MEDIUMBLOB' => 11, 'MEDIUMTEXT' => 11, 'BINARY VARYING' => 15, 'KEY' => 19, 'INDEX' => 19, 'UNIQUE' => 19, 'SPATIAL' => 19, 'FULLTEXT' => 19, 'INDEX KEY' => 23, 'UNIQUE KEY' => 23, 'FOREIGN KEY' => 23, 'PRIMARY KEY' => 23, 'SPATIAL KEY' => 23, 'FULLTEXT KEY' => 23, 'UNIQUE INDEX' => 23, 'SPATIAL INDEX' => 23, 'FULLTEXT INDEX' => 23, 'X' => 33, 'Y' => 33, 'LN' => 33, 'PI' => 33, 'ABS' => 33, 'AVG' => 33, 'BIN' => 33, 'COS' => 33, 'COT' => 33, 'DAY' => 33, 'ELT' => 33, 'EXP' => 33, 'HEX' => 33, 'LOG' => 33, 'MAX' => 33, 'MD5' => 33, 'MID' => 33, 'MIN' => 33, 'NOW' => 33, 'OCT' => 33, 'ORD' => 33, 'POW' => 33, 'SHA' => 33, 'SIN' => 33, 'STD' => 33, 'SUM' => 33, 'TAN' => 33, 'ACOS' => 33, 'AREA' => 33, 'ASIN' => 33, 'ATAN' => 33, 'CAST' => 33, 'CEIL' => 33, 'CONV' => 33, 'HOUR' => 33, 'LOG2' => 33, 'LPAD' => 33, 'RAND' => 33, 'RPAD' => 33, 'SHA1' => 33, 'SHA2' => 33, 'SIGN' => 33, 'SQRT' => 33, 'SRID' => 33, 'TRIM' => 33, 'USER' => 33, 'UUID' => 33, 'WEEK' => 33, 'ASCII' => 33, 'ASWKB' => 33, 'ASWKT' => 33, 'ATAN2' => 33, 'COUNT' => 33, 'CRC32' => 33, 'FIELD' => 33, 'FLOOR' => 33, 'INSTR' => 33, 'LCASE' => 33, 'LEAST' => 33, 'LOG10' => 33, 'LOWER' => 33, 'LTRIM' => 33, 'MONTH' => 33, 'POWER' => 33, 'QUOTE' => 33, 'ROUND' => 33, 'RTRIM' => 33, 'SLEEP' => 33, 'SPACE' => 33, 'UCASE' => 33, 'UNHEX' => 33, 'UPPER' => 33, 'ASTEXT' => 33, 'BIT_OR' => 33, 'CONCAT' => 33, 'DECODE' => 33, 'ENCODE' => 33, 'EQUALS' => 33, 'FORMAT' => 33, 'IFNULL' => 33, 'ISNULL' => 33, 'LENGTH' => 33, 'LOCATE' => 33, 'MINUTE' => 33, 'NULLIF' => 33, 'POINTN' => 33, 'SECOND' => 33, 'STDDEV' => 33, 'STRCMP' => 33, 'SUBSTR' => 33, 'WITHIN' => 33, 'ADDDATE' => 33, 'ADDTIME' => 33, 'AGAINST' => 33, 'BIT_AND' => 33, 'BIT_XOR' => 33, 'CEILING' => 33, 'CHARSET' => 33, 'CROSSES' => 33, 'CURDATE' => 33, 'CURTIME' => 33, 'DAYNAME' => 33, 'DEGREES' => 33, 'ENCRYPT' => 33, 'EXTRACT' => 33, 'GLENGTH' => 33, 'ISEMPTY' => 33, 'QUARTER' => 33, 'RADIANS' => 33, 'REVERSE' => 33, 'SOUNDEX' => 33, 'SUBDATE' => 33, 'SUBTIME' => 33, 'SYSDATE' => 33, 'TOUCHES' => 33, 'TO_DAYS' => 33, 'VAR_POP' => 33, 'VERSION' => 33, 'WEEKDAY' => 33, 'ASBINARY' => 33, 'CENTROID' => 33, 'COALESCE' => 33, 'COMPRESS' => 33, 'CONTAINS' => 33, 'DATEDIFF' => 33, 'DATE_ADD' => 33, 'DATE_SUB' => 33, 'DISJOINT' => 33, 'ENDPOINT' => 33, 'ENVELOPE' => 33, 'GET_LOCK' => 33, 'GREATEST' => 33, 'ISCLOSED' => 33, 'ISSIMPLE' => 33, 'MAKEDATE' => 33, 'MAKETIME' => 33, 'MAKE_SET' => 33, 'MBREQUAL' => 33, 'OVERLAPS' => 33, 'PASSWORD' => 33, 'POSITION' => 33, 'TIMEDIFF' => 33, 'TRUNCATE' => 33, 'VARIANCE' => 33, 'VAR_SAMP' => 33, 'YEARWEEK' => 33, 'BENCHMARK' => 33, 'BIT_COUNT' => 33, 'COLLATION' => 33, 'CONCAT_WS' => 33, 'DAYOFWEEK' => 33, 'DAYOFYEAR' => 33, 'DIMENSION' => 33, 'FROM_DAYS' => 33, 'GEOMETRYN' => 33, 'INET_ATON' => 33, 'INET_NTOA' => 33, 'LOAD_FILE' => 33, 'MBRWITHIN' => 33, 'MONTHNAME' => 33, 'NUMPOINTS' => 33, 'ROW_COUNT' => 33, 'SUBSTRING' => 33, 'UPDATEXML' => 33, 'BIT_LENGTH' => 33, 'CONVERT_TZ' => 33, 'DAYOFMONTH' => 33, 'EXPORT_SET' => 33, 'FOUND_ROWS' => 33, 'GET_FORMAT' => 33, 'INTERSECTS' => 33, 'MBRTOUCHES' => 33, 'MULTIPOINT' => 33, 'NAME_CONST' => 33, 'PERIOD_ADD' => 33, 'STARTPOINT' => 33, 'STDDEV_POP' => 33, 'TO_SECONDS' => 33, 'UNCOMPRESS' => 33, 'UUID_SHORT' => 33, 'WEEKOFYEAR' => 33, 'AES_DECRYPT' => 33, 'AES_ENCRYPT' => 33, 'CHAR_LENGTH' => 33, 'DATE_FORMAT' => 33, 'DES_DECRYPT' => 33, 'DES_ENCRYPT' => 33, 'FIND_IN_SET' => 33, 'GEOMFROMWKB' => 33, 'LINEFROMWKB' => 33, 'MBRCONTAINS' => 33, 'MBRDISJOINT' => 33, 'MBROVERLAPS' => 33, 'MICROSECOND' => 33, 'PERIOD_DIFF' => 33, 'POLYFROMWKB' => 33, 'SEC_TO_TIME' => 33, 'STDDEV_SAMP' => 33, 'STR_TO_DATE' => 33, 'SYSTEM_USER' => 33, 'TIME_FORMAT' => 33, 'TIME_TO_SEC' => 33, 'COERCIBILITY' => 33, 'EXTERIORRING' => 33, 'EXTRACTVALUE' => 33, 'GEOMETRYTYPE' => 33, 'GEOMFROMTEXT' => 33, 'GROUP_CONCAT' => 33, 'IS_FREE_LOCK' => 33, 'IS_USED_LOCK' => 33, 'LINEFROMTEXT' => 33, 'MLINEFROMWKB' => 33, 'MPOLYFROMWKB' => 33, 'MULTIPOLYGON' => 33, 'OCTET_LENGTH' => 33, 'OLD_PASSWORD' => 33, 'POINTFROMWKB' => 33, 'POLYFROMTEXT' => 33, 'RELEASE_LOCK' => 33, 'SESSION_USER' => 33, 'TIMESTAMPADD' => 33, 'CONNECTION_ID' => 33, 'FROM_UNIXTIME' => 33, 'INTERIORRINGN' => 33, 'MBRINTERSECTS' => 33, 'MLINEFROMTEXT' => 33, 'MPOINTFROMWKB' => 33, 'MPOLYFROMTEXT' => 33, 'NUMGEOMETRIES' => 33, 'POINTFROMTEXT' => 33, 'TIMESTAMPDIFF' => 33, 'LAST_INSERT_ID' => 33, 'MPOINTFROMTEXT' => 33, 'POLYGONFROMWKB' => 33, 'UNIX_TIMESTAMP' => 33, 'GEOMCOLLFROMWKB' => 33, 'MASTER_POS_WAIT' => 33, 'POLYGONFROMTEXT' => 33, 'SUBSTRING_INDEX' => 33, 'CHARACTER_LENGTH' => 33, 'GEOMCOLLFROMTEXT' => 33, 'GEOMETRYFROMTEXT' => 33, 'NUMINTERIORRINGS' => 33, 'LINESTRINGFROMWKB' => 33, 'MULTIPOINTFROMWKB' => 33, 'MULTIPOINTFROMTEXT' => 33, 'MULTIPOLYGONFROMWKB' => 33, 'UNCOMPRESSED_LENGTH' => 33, 'MULTIPOLYGONFROMTEXT' => 33, 'MULTILINESTRINGFROMWKB' => 33, 'MULTILINESTRINGFROMTEXT' => 33, 'GEOMETRYCOLLECTIONFROMWKB' => 33, 'GEOMETRYCOLLECTIONFROMTEXT' => 33, 'IF' => 35, 'IN' => 35, 'MOD' => 35, 'LEFT' => 35, 'MATCH' => 35, 'RIGHT' => 35, 'EXISTS' => 35, 'INSERT' => 35, 'REPEAT' => 35, 'SCHEMA' => 35, 'VALUES' => 35, 'CONVERT' => 35, 'DEFAULT' => 35, 'REPLACE' => 35, 'DATABASE' => 35, 'UTC_DATE' => 35, 'UTC_TIME' => 35, 'LOCALTIME' => 35, 'CURRENT_DATE' => 35, 'CURRENT_TIME' => 35, 'CURRENT_USER' => 35, 'UTC_TIMESTAMP' => 35, 'LOCALTIMESTAMP' => 35, 'CURRENT_TIMESTAMP' => 35, 'NOT IN' => 39, 'DATE' => 41, 'TIME' => 41, 'YEAR' => 41, 'POINT' => 41, 'POLYGON' => 41, 'TIMESTAMP' => 41, 'LINESTRING' => 41, 'MULTILINESTRING' => 41, 'GEOMETRYCOLLECTION' => 41, 'CHAR' => 43, 'BINARY' => 43, 'INTERVAL' => 43);
-    }
-    /**
-     * Context for MySQL 5.6.
-     *
-     * @category   Contexts
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class ContextMySql50600 extends \PhpMyAdmin\SqlParser\Context
-    {
-        /**
-         * List of keywords.
-         *
-         * The value associated to each keyword represents its flags.
-         *
-         * @see Token::FLAG_KEYWORD_RESERVED Token::FLAG_KEYWORD_COMPOSED
-         *      Token::FLAG_KEYWORD_DATA_TYPE Token::FLAG_KEYWORD_KEY
-         *      Token::FLAG_KEYWORD_FUNCTION
-         *
-         * @var array
-         */
-        public static $KEYWORDS = array('AT' => 1, 'DO' => 1, 'IO' => 1, 'NO' => 1, 'XA' => 1, 'ANY' => 1, 'CPU' => 1, 'END' => 1, 'IPC' => 1, 'NDB' => 1, 'NEW' => 1, 'ONE' => 1, 'ROW' => 1, 'BOOL' => 1, 'BYTE' => 1, 'CODE' => 1, 'CUBE' => 1, 'DATA' => 1, 'DISK' => 1, 'ENDS' => 1, 'FAST' => 1, 'FILE' => 1, 'FULL' => 1, 'HASH' => 1, 'HELP' => 1, 'HOST' => 1, 'LAST' => 1, 'LESS' => 1, 'LIST' => 1, 'LOGS' => 1, 'MODE' => 1, 'NAME' => 1, 'NEXT' => 1, 'NONE' => 1, 'ONLY' => 1, 'OPEN' => 1, 'PAGE' => 1, 'PORT' => 1, 'PREV' => 1, 'ROWS' => 1, 'SLOW' => 1, 'SOME' => 1, 'STOP' => 1, 'THAN' => 1, 'TYPE' => 1, 'VIEW' => 1, 'WAIT' => 1, 'WORK' => 1, 'X509' => 1, 'AFTER' => 1, 'BEGIN' => 1, 'BLOCK' => 1, 'BTREE' => 1, 'CACHE' => 1, 'CHAIN' => 1, 'CLOSE' => 1, 'ERROR' => 1, 'EVENT' => 1, 'EVERY' => 1, 'FIRST' => 1, 'FIXED' => 1, 'FLUSH' => 1, 'FOUND' => 1, 'HOSTS' => 1, 'LEVEL' => 1, 'LOCAL' => 1, 'LOCKS' => 1, 'MERGE' => 1, 'MUTEX' => 1, 'NAMES' => 1, 'NCHAR' => 1, 'OWNER' => 1, 'PHASE' => 1, 'PROXY' => 1, 'QUERY' => 1, 'QUICK' => 1, 'RELAY' => 1, 'RESET' => 1, 'RTREE' => 1, 'SHARE' => 1, 'SLAVE' => 1, 'START' => 1, 'SUPER' => 1, 'SWAPS' => 1, 'TYPES' => 1, 'UNTIL' => 1, 'VALUE' => 1, 'ACTION' => 1, 'BACKUP' => 1, 'BINLOG' => 1, 'CIPHER' => 1, 'CLIENT' => 1, 'COMMIT' => 1, 'ENABLE' => 1, 'ENGINE' => 1, 'ERRORS' => 1, 'ESCAPE' => 1, 'EVENTS' => 1, 'EXPIRE' => 1, 'EXPORT' => 1, 'FAULTS' => 1, 'FIELDS' => 1, 'GLOBAL' => 1, 'GRANTS' => 1, 'IMPORT' => 1, 'ISSUER' => 1, 'LEAVES' => 1, 'MASTER' => 1, 'MEDIUM' => 1, 'MEMORY' => 1, 'MODIFY' => 1, 'NUMBER' => 1, 'OFFSET' => 1, 'PARSER' => 1, 'PLUGIN' => 1, 'RELOAD' => 1, 'REMOVE' => 1, 'REPAIR' => 1, 'RESUME' => 1, 'ROLLUP' => 1, 'SERVER' => 1, 'SIGNED' => 1, 'SIMPLE' => 1, 'SOCKET' => 1, 'SONAME' => 1, 'SOUNDS' => 1, 'SOURCE' => 1, 'STARTS' => 1, 'STATUS' => 1, 'STRING' => 1, 'TABLES' => 1, 'ANALYSE' => 1, 'AUTHORS' => 1, 'CHANGED' => 1, 'COLUMNS' => 1, 'COMMENT' => 1, 'COMPACT' => 1, 'CONTEXT' => 1, 'CURRENT' => 1, 'DEFINER' => 1, 'DISABLE' => 1, 'DISCARD' => 1, 'DYNAMIC' => 1, 'ENGINES' => 1, 'EXECUTE' => 1, 'GENERAL' => 1, 'HANDLER' => 1, 'INDEXES' => 1, 'INSTALL' => 1, 'INVOKER' => 1, 'LOGFILE' => 1, 'MIGRATE' => 1, 'NO_WAIT' => 1, 'OPTIONS' => 1, 'PARTIAL' => 1, 'PLUGINS' => 1, 'PREPARE' => 1, 'PROFILE' => 1, 'REBUILD' => 1, 'RECOVER' => 1, 'RESTORE' => 1, 'RETURNS' => 1, 'ROUTINE' => 1, 'SESSION' => 1, 'STORAGE' => 1, 'SUBJECT' => 1, 'SUSPEND' => 1, 'UNICODE' => 1, 'UNKNOWN' => 1, 'UPGRADE' => 1, 'USE_FRM' => 1, 'VIRTUAL' => 1, 'WRAPPER' => 1, 'CASCADED' => 1, 'CHECKSUM' => 1, 'DATAFILE' => 1, 'DUMPFILE' => 1, 'EXCHANGE' => 1, 'EXTENDED' => 1, 'FUNCTION' => 1, 'LANGUAGE' => 1, 'MAX_ROWS' => 1, 'MAX_SIZE' => 1, 'MIN_ROWS' => 1, 'NATIONAL' => 1, 'NVARCHAR' => 1, 'ONE_SHOT' => 1, 'PRESERVE' => 1, 'PROFILES' => 1, 'REDOFILE' => 1, 'RELAYLOG' => 1, 'ROLLBACK' => 1, 'SCHEDULE' => 1, 'SECURITY' => 1, 'SHUTDOWN' => 1, 'SNAPSHOT' => 1, 'SWITCHES' => 1, 'TRIGGERS' => 1, 'UNDOFILE' => 1, 'WARNINGS' => 1, 'AGGREGATE' => 1, 'ALGORITHM' => 1, 'COMMITTED' => 1, 'DIRECTORY' => 1, 'DUPLICATE' => 1, 'EXPANSION' => 1, 'IO_THREAD' => 1, 'ISOLATION' => 1, 'NODEGROUP' => 1, 'PACK_KEYS' => 1, 'READ_ONLY' => 1, 'REDUNDANT' => 1, 'SAVEPOINT' => 1, 'SQL_CACHE' => 1, 'TEMPORARY' => 1, 'TEMPTABLE' => 1, 'UNDEFINED' => 1, 'UNINSTALL' => 1, 'VARIABLES' => 1, 'COMPLETION' => 1, 'COMPRESSED' => 1, 'CONCURRENT' => 1, 'CONNECTION' => 1, 'CONSISTENT' => 1, 'DEALLOCATE' => 1, 'IDENTIFIED' => 1, 'MASTER_SSL' => 1, 'NDBCLUSTER' => 1, 'PARTITIONS' => 1, 'PERSISTENT' => 1, 'PLUGIN_DIR' => 1, 'PRIVILEGES' => 1, 'REORGANIZE' => 1, 'REPEATABLE' => 1, 'ROW_FORMAT' => 1, 'SQL_THREAD' => 1, 'TABLESPACE' => 1, 'TABLE_NAME' => 1, 'COLUMN_NAME' => 1, 'CURSOR_NAME' => 1, 'DIAGNOSTICS' => 1, 'EXTENT_SIZE' => 1, 'MASTER_HOST' => 1, 'MASTER_PORT' => 1, 'MASTER_USER' => 1, 'MYSQL_ERRNO' => 1, 'PROCESSLIST' => 1, 'REPLICATION' => 1, 'SCHEMA_NAME' => 1, 'SQL_TSI_DAY' => 1, 'TRANSACTION' => 1, 'UNCOMMITTED' => 1, 'CATALOG_NAME' => 1, 'CLASS_ORIGIN' => 1, 'CONTRIBUTORS' => 1, 'DEFAULT_AUTH' => 1, 'DES_KEY_FILE' => 1, 'INITIAL_SIZE' => 1, 'MASTER_DELAY' => 1, 'MESSAGE_TEXT' => 1, 'PARTITIONING' => 1, 'RELAY_THREAD' => 1, 'SERIALIZABLE' => 1, 'SQL_NO_CACHE' => 1, 'SQL_TSI_HOUR' => 1, 'SQL_TSI_WEEK' => 1, 'SQL_TSI_YEAR' => 1, 'SUBPARTITION' => 1, 'COLUMN_FORMAT' => 1, 'INSERT_METHOD' => 1, 'MASTER_SSL_CA' => 1, 'RELAY_LOG_POS' => 1, 'SQL_TSI_MONTH' => 1, 'SUBPARTITIONS' => 1, 'AUTO_INCREMENT' => 1, 'AVG_ROW_LENGTH' => 1, 'KEY_BLOCK_SIZE' => 1, 'MASTER_LOG_POS' => 1, 'MASTER_SSL_CRL' => 1, 'MASTER_SSL_KEY' => 1, 'RELAY_LOG_FILE' => 1, 'SQL_TSI_MINUTE' => 1, 'SQL_TSI_SECOND' => 1, 'TABLE_CHECKSUM' => 1, 'USER_RESOURCES' => 1, 'AUTOEXTEND_SIZE' => 1, 'CONSTRAINT_NAME' => 1, 'DELAY_KEY_WRITE' => 1, 'MASTER_LOG_FILE' => 1, 'MASTER_PASSWORD' => 1, 'MASTER_SSL_CERT' => 1, 'SQL_AFTER_GTIDS' => 1, 'SQL_TSI_QUARTER' => 1, 'SUBCLASS_ORIGIN' => 1, 'MASTER_SERVER_ID' => 1, 'REDO_BUFFER_SIZE' => 1, 'SQL_BEFORE_GTIDS' => 1, 'STATS_PERSISTENT' => 1, 'UNDO_BUFFER_SIZE' => 1, 'CONSTRAINT_SCHEMA' => 1, 'IGNORE_SERVER_IDS' => 1, 'MASTER_SSL_CAPATH' => 1, 'MASTER_SSL_CIPHER' => 1, 'RETURNED_SQLSTATE' => 1, 'SQL_BUFFER_RESULT' => 1, 'STATS_AUTO_RECALC' => 1, 'CONSTRAINT_CATALOG' => 1, 'MASTER_RETRY_COUNT' => 1, 'MASTER_SSL_CRLPATH' => 1, 'SQL_AFTER_MTS_GAPS' => 1, 'STATS_SAMPLE_PAGES' => 1, 'MASTER_AUTO_POSITION' => 1, 'MASTER_CONNECT_RETRY' => 1, 'MAX_QUERIES_PER_HOUR' => 1, 'MAX_UPDATES_PER_HOUR' => 1, 'MAX_USER_CONNECTIONS' => 1, 'MASTER_HEARTBEAT_PERIOD' => 1, 'MAX_CONNECTIONS_PER_HOUR' => 1, 'AS' => 3, 'BY' => 3, 'IS' => 3, 'ON' => 3, 'OR' => 3, 'TO' => 3, 'ADD' => 3, 'ALL' => 3, 'AND' => 3, 'ASC' => 3, 'DEC' => 3, 'DIV' => 3, 'FOR' => 3, 'GET' => 3, 'NOT' => 3, 'OUT' => 3, 'SQL' => 3, 'SSL' => 3, 'USE' => 3, 'XOR' => 3, 'BOTH' => 3, 'CALL' => 3, 'CASE' => 3, 'DESC' => 3, 'DROP' => 3, 'DUAL' => 3, 'EACH' => 3, 'ELSE' => 3, 'EXIT' => 3, 'FROM' => 3, 'INT1' => 3, 'INT2' => 3, 'INT3' => 3, 'INT4' => 3, 'INT8' => 3, 'INTO' => 3, 'JOIN' => 3, 'KEYS' => 3, 'KILL' => 3, 'LIKE' => 3, 'LOAD' => 3, 'LOCK' => 3, 'LONG' => 3, 'LOOP' => 3, 'NULL' => 3, 'READ' => 3, 'SHOW' => 3, 'THEN' => 3, 'TRUE' => 3, 'UNDO' => 3, 'WHEN' => 3, 'WITH' => 3, 'ALTER' => 3, 'CHECK' => 3, 'CROSS' => 3, 'FALSE' => 3, 'FETCH' => 3, 'FORCE' => 3, 'GRANT' => 3, 'GROUP' => 3, 'INNER' => 3, 'INOUT' => 3, 'LEAVE' => 3, 'LIMIT' => 3, 'LINES' => 3, 'ORDER' => 3, 'OUTER' => 3, 'PURGE' => 3, 'RANGE' => 3, 'READS' => 3, 'RLIKE' => 3, 'TABLE' => 3, 'UNION' => 3, 'USAGE' => 3, 'USING' => 3, 'WHERE' => 3, 'WHILE' => 3, 'WRITE' => 3, 'BEFORE' => 3, 'CHANGE' => 3, 'COLUMN' => 3, 'CREATE' => 3, 'CURSOR' => 3, 'DELETE' => 3, 'ELSEIF' => 3, 'FLOAT4' => 3, 'FLOAT8' => 3, 'HAVING' => 3, 'IGNORE' => 3, 'INFILE' => 3, 'LINEAR' => 3, 'OPTION' => 3, 'REGEXP' => 3, 'RENAME' => 3, 'RETURN' => 3, 'REVOKE' => 3, 'SELECT' => 3, 'SIGNAL' => 3, 'UNLOCK' => 3, 'UPDATE' => 3, 'ANALYZE' => 3, 'BETWEEN' => 3, 'CASCADE' => 3, 'COLLATE' => 3, 'DECLARE' => 3, 'DELAYED' => 3, 'ESCAPED' => 3, 'EXPLAIN' => 3, 'FOREIGN' => 3, 'ITERATE' => 3, 'LEADING' => 3, 'NATURAL' => 3, 'OUTFILE' => 3, 'PRIMARY' => 3, 'RELEASE' => 3, 'REQUIRE' => 3, 'SCHEMAS' => 3, 'TRIGGER' => 3, 'VARYING' => 3, 'CONTINUE' => 3, 'DAY_HOUR' => 3, 'DESCRIBE' => 3, 'DISTINCT' => 3, 'ENCLOSED' => 3, 'MAXVALUE' => 3, 'MODIFIES' => 3, 'OPTIMIZE' => 3, 'RESIGNAL' => 3, 'RESTRICT' => 3, 'SPECIFIC' => 3, 'SQLSTATE' => 3, 'STARTING' => 3, 'TRAILING' => 3, 'UNSIGNED' => 3, 'ZEROFILL' => 3, 'CONDITION' => 3, 'DATABASES' => 3, 'MIDDLEINT' => 3, 'PARTITION' => 3, 'PRECISION' => 3, 'PROCEDURE' => 3, 'SENSITIVE' => 3, 'SEPARATOR' => 3, 'ACCESSIBLE' => 3, 'ASENSITIVE' => 3, 'CONSTRAINT' => 3, 'DAY_MINUTE' => 3, 'DAY_SECOND' => 3, 'OPTIONALLY' => 3, 'READ_WRITE' => 3, 'REFERENCES' => 3, 'SQLWARNING' => 3, 'TERMINATED' => 3, 'YEAR_MONTH' => 3, 'DISTINCTROW' => 3, 'HOUR_MINUTE' => 3, 'HOUR_SECOND' => 3, 'INSENSITIVE' => 3, 'MASTER_BIND' => 3, 'LOW_PRIORITY' => 3, 'SQLEXCEPTION' => 3, 'VARCHARACTER' => 3, 'DETERMINISTIC' => 3, 'HIGH_PRIORITY' => 3, 'MINUTE_SECOND' => 3, 'STRAIGHT_JOIN' => 3, 'IO_AFTER_GTIDS' => 3, 'SQL_BIG_RESULT' => 3, 'DAY_MICROSECOND' => 3, 'IO_BEFORE_GTIDS' => 3, 'HOUR_MICROSECOND' => 3, 'SQL_SMALL_RESULT' => 3, 'MINUTE_MICROSECOND' => 3, 'NO_WRITE_TO_BINLOG' => 3, 'SECOND_MICROSECOND' => 3, 'SQL_CALC_FOUND_ROWS' => 3, 'MASTER_SSL_VERIFY_SERVER_CERT' => 3, 'GROUP BY' => 7, 'NOT NULL' => 7, 'ORDER BY' => 7, 'SET NULL' => 7, 'AND CHAIN' => 7, 'FULL JOIN' => 7, 'IF EXISTS' => 7, 'LEFT JOIN' => 7, 'LESS THAN' => 7, 'LOAD DATA' => 7, 'NO ACTION' => 7, 'ON DELETE' => 7, 'ON UPDATE' => 7, 'UNION ALL' => 7, 'CROSS JOIN' => 7, 'ESCAPED BY' => 7, 'FOR UPDATE' => 7, 'INNER JOIN' => 7, 'LINEAR KEY' => 7, 'NO RELEASE' => 7, 'OR REPLACE' => 7, 'RIGHT JOIN' => 7, 'ENCLOSED BY' => 7, 'LINEAR HASH' => 7, 'STARTING BY' => 7, 'AND NO CHAIN' => 7, 'FOR EACH ROW' => 7, 'NATURAL JOIN' => 7, 'PARTITION BY' => 7, 'SET PASSWORD' => 7, 'SQL SECURITY' => 7, 'CHARACTER SET' => 7, 'IF NOT EXISTS' => 7, 'TERMINATED BY' => 7, 'DATA DIRECTORY' => 7, 'UNION DISTINCT' => 7, 'DEFAULT CHARSET' => 7, 'DEFAULT COLLATE' => 7, 'FULL OUTER JOIN' => 7, 'INDEX DIRECTORY' => 7, 'LEFT OUTER JOIN' => 7, 'SUBPARTITION BY' => 7, 'GENERATED ALWAYS' => 7, 'RIGHT OUTER JOIN' => 7, 'NATURAL LEFT JOIN' => 7, 'START TRANSACTION' => 7, 'LOCK IN SHARE MODE' => 7, 'NATURAL RIGHT JOIN' => 7, 'SELECT TRANSACTION' => 7, 'DEFAULT CHARACTER SET' => 7, 'NATURAL LEFT OUTER JOIN' => 7, 'NATURAL RIGHT OUTER JOIN' => 7, 'WITH CONSISTENT SNAPSHOT' => 7, 'BIT' => 9, 'XML' => 9, 'ENUM' => 9, 'JSON' => 9, 'TEXT' => 9, 'ARRAY' => 9, 'SERIAL' => 9, 'BOOLEAN' => 9, 'DATETIME' => 9, 'GEOMETRY' => 9, 'MULTISET' => 9, 'MULTILINEPOINT' => 9, 'MULTILINEPOLYGON' => 9, 'INT' => 11, 'SET' => 11, 'BLOB' => 11, 'REAL' => 11, 'FLOAT' => 11, 'BIGINT' => 11, 'DOUBLE' => 11, 'DECIMAL' => 11, 'INTEGER' => 11, 'NUMERIC' => 11, 'TINYINT' => 11, 'VARCHAR' => 11, 'LONGBLOB' => 11, 'LONGTEXT' => 11, 'SMALLINT' => 11, 'TINYBLOB' => 11, 'TINYTEXT' => 11, 'CHARACTER' => 11, 'MEDIUMINT' => 11, 'VARBINARY' => 11, 'MEDIUMBLOB' => 11, 'MEDIUMTEXT' => 11, 'BINARY VARYING' => 15, 'KEY' => 19, 'INDEX' => 19, 'UNIQUE' => 19, 'SPATIAL' => 19, 'FULLTEXT' => 19, 'INDEX KEY' => 23, 'UNIQUE KEY' => 23, 'FOREIGN KEY' => 23, 'PRIMARY KEY' => 23, 'SPATIAL KEY' => 23, 'FULLTEXT KEY' => 23, 'UNIQUE INDEX' => 23, 'SPATIAL INDEX' => 23, 'FULLTEXT INDEX' => 23, 'X' => 33, 'Y' => 33, 'LN' => 33, 'PI' => 33, 'ABS' => 33, 'AVG' => 33, 'BIN' => 33, 'COS' => 33, 'COT' => 33, 'DAY' => 33, 'ELT' => 33, 'EXP' => 33, 'HEX' => 33, 'LOG' => 33, 'MAX' => 33, 'MD5' => 33, 'MID' => 33, 'MIN' => 33, 'NOW' => 33, 'OCT' => 33, 'ORD' => 33, 'POW' => 33, 'SHA' => 33, 'SIN' => 33, 'STD' => 33, 'SUM' => 33, 'TAN' => 33, 'ACOS' => 33, 'AREA' => 33, 'ASIN' => 33, 'ATAN' => 33, 'CAST' => 33, 'CEIL' => 33, 'CONV' => 33, 'HOUR' => 33, 'LOG2' => 33, 'LPAD' => 33, 'RAND' => 33, 'RPAD' => 33, 'SHA1' => 33, 'SHA2' => 33, 'SIGN' => 33, 'SQRT' => 33, 'SRID' => 33, 'ST_X' => 33, 'ST_Y' => 33, 'TRIM' => 33, 'USER' => 33, 'UUID' => 33, 'WEEK' => 33, 'ASCII' => 33, 'ASWKB' => 33, 'ASWKT' => 33, 'ATAN2' => 33, 'COUNT' => 33, 'CRC32' => 33, 'FIELD' => 33, 'FLOOR' => 33, 'INSTR' => 33, 'LCASE' => 33, 'LEAST' => 33, 'LOG10' => 33, 'LOWER' => 33, 'LTRIM' => 33, 'MONTH' => 33, 'POWER' => 33, 'QUOTE' => 33, 'ROUND' => 33, 'RTRIM' => 33, 'SLEEP' => 33, 'SPACE' => 33, 'UCASE' => 33, 'UNHEX' => 33, 'UPPER' => 33, 'ASTEXT' => 33, 'BIT_OR' => 33, 'BUFFER' => 33, 'CONCAT' => 33, 'DECODE' => 33, 'ENCODE' => 33, 'EQUALS' => 33, 'FORMAT' => 33, 'IFNULL' => 33, 'ISNULL' => 33, 'LENGTH' => 33, 'LOCATE' => 33, 'MINUTE' => 33, 'NULLIF' => 33, 'POINTN' => 33, 'SECOND' => 33, 'STDDEV' => 33, 'STRCMP' => 33, 'SUBSTR' => 33, 'WITHIN' => 33, 'ADDDATE' => 33, 'ADDTIME' => 33, 'AGAINST' => 33, 'BIT_AND' => 33, 'BIT_XOR' => 33, 'CEILING' => 33, 'CHARSET' => 33, 'CROSSES' => 33, 'CURDATE' => 33, 'CURTIME' => 33, 'DAYNAME' => 33, 'DEGREES' => 33, 'ENCRYPT' => 33, 'EXTRACT' => 33, 'GLENGTH' => 33, 'ISEMPTY' => 33, 'IS_IPV4' => 33, 'IS_IPV6' => 33, 'QUARTER' => 33, 'RADIANS' => 33, 'REVERSE' => 33, 'SOUNDEX' => 33, 'ST_AREA' => 33, 'ST_SRID' => 33, 'SUBDATE' => 33, 'SUBTIME' => 33, 'SYSDATE' => 33, 'TOUCHES' => 33, 'TO_DAYS' => 33, 'VAR_POP' => 33, 'VERSION' => 33, 'WEEKDAY' => 33, 'ASBINARY' => 33, 'CENTROID' => 33, 'COALESCE' => 33, 'COMPRESS' => 33, 'CONTAINS' => 33, 'DATEDIFF' => 33, 'DATE_ADD' => 33, 'DATE_SUB' => 33, 'DISJOINT' => 33, 'ENDPOINT' => 33, 'ENVELOPE' => 33, 'GET_LOCK' => 33, 'GREATEST' => 33, 'ISCLOSED' => 33, 'ISSIMPLE' => 33, 'MAKEDATE' => 33, 'MAKETIME' => 33, 'MAKE_SET' => 33, 'MBREQUAL' => 33, 'OVERLAPS' => 33, 'PASSWORD' => 33, 'POSITION' => 33, 'ST_ASWKB' => 33, 'ST_ASWKT' => 33, 'ST_UNION' => 33, 'TIMEDIFF' => 33, 'TRUNCATE' => 33, 'VARIANCE' => 33, 'VAR_SAMP' => 33, 'YEARWEEK' => 33, 'BENCHMARK' => 33, 'BIT_COUNT' => 33, 'COLLATION' => 33, 'CONCAT_WS' => 33, 'DAYOFWEEK' => 33, 'DAYOFYEAR' => 33, 'DIMENSION' => 33, 'FROM_DAYS' => 33, 'GEOMETRYN' => 33, 'INET_ATON' => 33, 'INET_NTOA' => 33, 'LOAD_FILE' => 33, 'MBRWITHIN' => 33, 'MONTHNAME' => 33, 'NUMPOINTS' => 33, 'ROW_COUNT' => 33, 'ST_ASTEXT' => 33, 'ST_BUFFER' => 33, 'ST_EQUALS' => 33, 'ST_POINTN' => 33, 'ST_WITHIN' => 33, 'SUBSTRING' => 33, 'TO_BASE64' => 33, 'UPDATEXML' => 33, 'BIT_LENGTH' => 33, 'CONVERT_TZ' => 33, 'DAYOFMONTH' => 33, 'EXPORT_SET' => 33, 'FOUND_ROWS' => 33, 'GET_FORMAT' => 33, 'INET6_ATON' => 33, 'INET6_NTOA' => 33, 'INTERSECTS' => 33, 'MBRTOUCHES' => 33, 'MULTIPOINT' => 33, 'NAME_CONST' => 33, 'PERIOD_ADD' => 33, 'STARTPOINT' => 33, 'STDDEV_POP' => 33, 'ST_CROSSES' => 33, 'ST_ISEMPTY' => 33, 'ST_TOUCHES' => 33, 'TO_SECONDS' => 33, 'UNCOMPRESS' => 33, 'UUID_SHORT' => 33, 'WEEKOFYEAR' => 33, 'AES_DECRYPT' => 33, 'AES_ENCRYPT' => 33, 'CHAR_LENGTH' => 33, 'DATE_FORMAT' => 33, 'DES_DECRYPT' => 33, 'DES_ENCRYPT' => 33, 'FIND_IN_SET' => 33, 'FROM_BASE64' => 33, 'GEOMFROMWKB' => 33, 'GTID_SUBSET' => 33, 'LINEFROMWKB' => 33, 'MBRCONTAINS' => 33, 'MBRDISJOINT' => 33, 'MBROVERLAPS' => 33, 'MICROSECOND' => 33, 'PERIOD_DIFF' => 33, 'POLYFROMWKB' => 33, 'SEC_TO_TIME' => 33, 'STDDEV_SAMP' => 33, 'STR_TO_DATE' => 33, 'ST_ASBINARY' => 33, 'ST_CENTROID' => 33, 'ST_CONTAINS' => 33, 'ST_DISJOINT' => 33, 'ST_DISTANCE' => 33, 'ST_ENDPOINT' => 33, 'ST_ENVELOPE' => 33, 'ST_ISCLOSED' => 33, 'ST_ISSIMPLE' => 33, 'ST_OVERLAPS' => 33, 'SYSTEM_USER' => 33, 'TIME_FORMAT' => 33, 'TIME_TO_SEC' => 33, 'COERCIBILITY' => 33, 'EXTERIORRING' => 33, 'EXTRACTVALUE' => 33, 'GEOMETRYTYPE' => 33, 'GEOMFROMTEXT' => 33, 'GROUP_CONCAT' => 33, 'IS_FREE_LOCK' => 33, 'IS_USED_LOCK' => 33, 'LINEFROMTEXT' => 33, 'MLINEFROMWKB' => 33, 'MPOLYFROMWKB' => 33, 'MULTIPOLYGON' => 33, 'OCTET_LENGTH' => 33, 'OLD_PASSWORD' => 33, 'POINTFROMWKB' => 33, 'POLYFROMTEXT' => 33, 'RANDOM_BYTES' => 33, 'RELEASE_LOCK' => 33, 'SESSION_USER' => 33, 'ST_DIMENSION' => 33, 'ST_GEOMETRYN' => 33, 'ST_NUMPOINTS' => 33, 'TIMESTAMPADD' => 33, 'CONNECTION_ID' => 33, 'CREATE_DIGEST' => 33, 'FROM_UNIXTIME' => 33, 'GTID_SUBTRACT' => 33, 'INTERIORRINGN' => 33, 'MBRINTERSECTS' => 33, 'MLINEFROMTEXT' => 33, 'MPOINTFROMWKB' => 33, 'MPOLYFROMTEXT' => 33, 'NUMGEOMETRIES' => 33, 'POINTFROMTEXT' => 33, 'ST_DIFFERENCE' => 33, 'ST_INTERSECTS' => 33, 'ST_STARTPOINT' => 33, 'TIMESTAMPDIFF' => 33, 'WEIGHT_STRING' => 33, 'IS_IPV4_COMPAT' => 33, 'IS_IPV4_MAPPED' => 33, 'LAST_INSERT_ID' => 33, 'MPOINTFROMTEXT' => 33, 'POLYGONFROMWKB' => 33, 'ST_GEOMFROMWKB' => 33, 'ST_LINEFROMWKB' => 33, 'ST_POLYFROMWKB' => 33, 'UNIX_TIMESTAMP' => 33, 'ASYMMETRIC_SIGN' => 33, 'GEOMCOLLFROMWKB' => 33, 'MASTER_POS_WAIT' => 33, 'POLYGONFROMTEXT' => 33, 'ST_EXTERIORRING' => 33, 'ST_GEOMETRYTYPE' => 33, 'ST_GEOMFROMTEXT' => 33, 'ST_INTERSECTION' => 33, 'ST_LINEFROMTEXT' => 33, 'ST_POINTFROMWKB' => 33, 'ST_POLYFROMTEXT' => 33, 'SUBSTRING_INDEX' => 33, 'CHARACTER_LENGTH' => 33, 'GEOMCOLLFROMTEXT' => 33, 'GEOMETRYFROMTEXT' => 33, 'NUMINTERIORRINGS' => 33, 'ST_INTERIORRINGN' => 33, 'ST_NUMGEOMETRIES' => 33, 'ST_POINTFROMTEXT' => 33, 'ST_SYMDIFFERENCE' => 33, 'ASYMMETRIC_DERIVE' => 33, 'ASYMMETRIC_VERIFY' => 33, 'LINESTRINGFROMWKB' => 33, 'MULTIPOINTFROMWKB' => 33, 'ST_POLYGONFROMWKB' => 33, 'ASYMMETRIC_DECRYPT' => 33, 'ASYMMETRIC_ENCRYPT' => 33, 'MULTIPOINTFROMTEXT' => 33, 'ST_GEOMCOLLFROMTXT' => 33, 'ST_GEOMCOLLFROMWKB' => 33, 'ST_POLYGONFROMTEXT' => 33, 'MULTIPOLYGONFROMWKB' => 33, 'ST_GEOMCOLLFROMTEXT' => 33, 'ST_GEOMETRYFROMTEXT' => 33, 'ST_NUMINTERIORRINGS' => 33, 'UNCOMPRESSED_LENGTH' => 33, 'CREATE_DH_PARAMETERS' => 33, 'MULTIPOLYGONFROMTEXT' => 33, 'ST_LINESTRINGFROMWKB' => 33, 'MULTILINESTRINGFROMWKB' => 33, 'MULTILINESTRINGFROMTEXT' => 33, 'CREATE_ASYMMETRIC_PUB_KEY' => 33, 'GEOMETRYCOLLECTIONFROMWKB' => 33, 'CREATE_ASYMMETRIC_PRIV_KEY' => 33, 'GEOMETRYCOLLECTIONFROMTEXT' => 33, 'VALIDATE_PASSWORD_STRENGTH' => 33, 'SQL_THREAD_WAIT_AFTER_GTIDS' => 33, 'ST_GEOMETRYCOLLECTIONFROMWKB' => 33, 'ST_GEOMETRYCOLLECTIONFROMTEXT' => 33, 'WAIT_UNTIL_SQL_THREAD_AFTER_GTIDS' => 33, 'IF' => 35, 'IN' => 35, 'MOD' => 35, 'LEFT' => 35, 'MATCH' => 35, 'RIGHT' => 35, 'EXISTS' => 35, 'INSERT' => 35, 'REPEAT' => 35, 'SCHEMA' => 35, 'VALUES' => 35, 'CONVERT' => 35, 'DEFAULT' => 35, 'REPLACE' => 35, 'DATABASE' => 35, 'UTC_DATE' => 35, 'UTC_TIME' => 35, 'LOCALTIME' => 35, 'CURRENT_DATE' => 35, 'CURRENT_TIME' => 35, 'CURRENT_USER' => 35, 'UTC_TIMESTAMP' => 35, 'LOCALTIMESTAMP' => 35, 'CURRENT_TIMESTAMP' => 35, 'NOT IN' => 39, 'DATE' => 41, 'TIME' => 41, 'YEAR' => 41, 'POINT' => 41, 'POLYGON' => 41, 'TIMESTAMP' => 41, 'LINESTRING' => 41, 'MULTILINESTRING' => 41, 'GEOMETRYCOLLECTION' => 41, 'CHAR' => 43, 'BINARY' => 43, 'INTERVAL' => 43);
-    }
-    /**
-     * Context for MySQL 5.7.
-     *
-     * @category   Contexts
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class ContextMySql50700 extends \PhpMyAdmin\SqlParser\Context
-    {
-        /**
-         * List of keywords.
-         *
-         * The value associated to each keyword represents its flags.
-         *
-         * @see Token::FLAG_KEYWORD_RESERVED Token::FLAG_KEYWORD_COMPOSED
-         *      Token::FLAG_KEYWORD_DATA_TYPE Token::FLAG_KEYWORD_KEY
-         *      Token::FLAG_KEYWORD_FUNCTION
-         *
-         * @var array
-         */
-        public static $KEYWORDS = array('AT' => 1, 'DO' => 1, 'IO' => 1, 'NO' => 1, 'XA' => 1, 'ANY' => 1, 'CPU' => 1, 'END' => 1, 'IPC' => 1, 'NDB' => 1, 'NEW' => 1, 'ONE' => 1, 'ROW' => 1, 'XID' => 1, 'BOOL' => 1, 'BYTE' => 1, 'CODE' => 1, 'CUBE' => 1, 'DATA' => 1, 'DISK' => 1, 'ENDS' => 1, 'FAST' => 1, 'FILE' => 1, 'FULL' => 1, 'HASH' => 1, 'HELP' => 1, 'HOST' => 1, 'LAST' => 1, 'LESS' => 1, 'LIST' => 1, 'LOGS' => 1, 'MODE' => 1, 'NAME' => 1, 'NEXT' => 1, 'NONE' => 1, 'ONLY' => 1, 'OPEN' => 1, 'PAGE' => 1, 'PORT' => 1, 'PREV' => 1, 'ROWS' => 1, 'SLOW' => 1, 'SOME' => 1, 'STOP' => 1, 'THAN' => 1, 'TYPE' => 1, 'VIEW' => 1, 'WAIT' => 1, 'WORK' => 1, 'X509' => 1, 'AFTER' => 1, 'BEGIN' => 1, 'BLOCK' => 1, 'BTREE' => 1, 'CACHE' => 1, 'CHAIN' => 1, 'CLOSE' => 1, 'ERROR' => 1, 'EVENT' => 1, 'EVERY' => 1, 'FIRST' => 1, 'FIXED' => 1, 'FLUSH' => 1, 'FOUND' => 1, 'HOSTS' => 1, 'LEVEL' => 1, 'LOCAL' => 1, 'LOCKS' => 1, 'MERGE' => 1, 'MUTEX' => 1, 'NAMES' => 1, 'NCHAR' => 1, 'NEVER' => 1, 'OWNER' => 1, 'PHASE' => 1, 'PROXY' => 1, 'QUERY' => 1, 'QUICK' => 1, 'RELAY' => 1, 'RESET' => 1, 'RTREE' => 1, 'SHARE' => 1, 'SLAVE' => 1, 'START' => 1, 'SUPER' => 1, 'SWAPS' => 1, 'TYPES' => 1, 'UNTIL' => 1, 'VALUE' => 1, 'ACTION' => 1, 'ALWAYS' => 1, 'BACKUP' => 1, 'BINLOG' => 1, 'CIPHER' => 1, 'CLIENT' => 1, 'COMMIT' => 1, 'ENABLE' => 1, 'ENGINE' => 1, 'ERRORS' => 1, 'ESCAPE' => 1, 'EVENTS' => 1, 'EXPIRE' => 1, 'EXPORT' => 1, 'FAULTS' => 1, 'FIELDS' => 1, 'FILTER' => 1, 'GLOBAL' => 1, 'GRANTS' => 1, 'IMPORT' => 1, 'ISSUER' => 1, 'LEAVES' => 1, 'MASTER' => 1, 'MEDIUM' => 1, 'MEMORY' => 1, 'MODIFY' => 1, 'NUMBER' => 1, 'OFFSET' => 1, 'PARSER' => 1, 'PLUGIN' => 1, 'RELOAD' => 1, 'REMOVE' => 1, 'REPAIR' => 1, 'RESUME' => 1, 'ROLLUP' => 1, 'SERVER' => 1, 'SIGNED' => 1, 'SIMPLE' => 1, 'SOCKET' => 1, 'SONAME' => 1, 'SOUNDS' => 1, 'SOURCE' => 1, 'STARTS' => 1, 'STATUS' => 1, 'STRING' => 1, 'TABLES' => 1, 'ACCOUNT' => 1, 'ANALYSE' => 1, 'CHANGED' => 1, 'CHANNEL' => 1, 'COLUMNS' => 1, 'COMMENT' => 1, 'COMPACT' => 1, 'CONTEXT' => 1, 'CURRENT' => 1, 'DEFINER' => 1, 'DISABLE' => 1, 'DISCARD' => 1, 'DYNAMIC' => 1, 'ENGINES' => 1, 'EXECUTE' => 1, 'FOLLOWS' => 1, 'GENERAL' => 1, 'HANDLER' => 1, 'INDEXES' => 1, 'INSTALL' => 1, 'INVOKER' => 1, 'LOGFILE' => 1, 'MIGRATE' => 1, 'NO_WAIT' => 1, 'OPTIONS' => 1, 'PARTIAL' => 1, 'PLUGINS' => 1, 'PREPARE' => 1, 'PROFILE' => 1, 'REBUILD' => 1, 'RECOVER' => 1, 'RESTORE' => 1, 'RETURNS' => 1, 'ROUTINE' => 1, 'SESSION' => 1, 'STACKED' => 1, 'STORAGE' => 1, 'SUBJECT' => 1, 'SUSPEND' => 1, 'UNICODE' => 1, 'UNKNOWN' => 1, 'UPGRADE' => 1, 'USE_FRM' => 1, 'WITHOUT' => 1, 'WRAPPER' => 1, 'CASCADED' => 1, 'CHECKSUM' => 1, 'DATAFILE' => 1, 'DUMPFILE' => 1, 'EXCHANGE' => 1, 'EXTENDED' => 1, 'FUNCTION' => 1, 'LANGUAGE' => 1, 'MAX_ROWS' => 1, 'MAX_SIZE' => 1, 'MIN_ROWS' => 1, 'NATIONAL' => 1, 'NVARCHAR' => 1, 'PRECEDES' => 1, 'PRESERVE' => 1, 'PROFILES' => 1, 'REDOFILE' => 1, 'RELAYLOG' => 1, 'ROLLBACK' => 1, 'SCHEDULE' => 1, 'SECURITY' => 1, 'SHUTDOWN' => 1, 'SNAPSHOT' => 1, 'SWITCHES' => 1, 'TRIGGERS' => 1, 'UNDOFILE' => 1, 'WARNINGS' => 1, 'AGGREGATE' => 1, 'ALGORITHM' => 1, 'COMMITTED' => 1, 'DIRECTORY' => 1, 'DUPLICATE' => 1, 'EXPANSION' => 1, 'IO_THREAD' => 1, 'ISOLATION' => 1, 'NODEGROUP' => 1, 'PACK_KEYS' => 1, 'READ_ONLY' => 1, 'REDUNDANT' => 1, 'SAVEPOINT' => 1, 'SQL_CACHE' => 1, 'TEMPORARY' => 1, 'TEMPTABLE' => 1, 'UNDEFINED' => 1, 'UNINSTALL' => 1, 'VARIABLES' => 1, 'COMPLETION' => 1, 'COMPRESSED' => 1, 'CONCURRENT' => 1, 'CONNECTION' => 1, 'CONSISTENT' => 1, 'DEALLOCATE' => 1, 'IDENTIFIED' => 1, 'MASTER_SSL' => 1, 'NDBCLUSTER' => 1, 'PARTITIONS' => 1, 'PERSISTENT' => 1, 'PLUGIN_DIR' => 1, 'PRIVILEGES' => 1, 'REORGANIZE' => 1, 'REPEATABLE' => 1, 'ROW_FORMAT' => 1, 'SQL_THREAD' => 1, 'TABLESPACE' => 1, 'TABLE_NAME' => 1, 'VALIDATION' => 1, 'COLUMN_NAME' => 1, 'COMPRESSION' => 1, 'CURSOR_NAME' => 1, 'DIAGNOSTICS' => 1, 'EXTENT_SIZE' => 1, 'MASTER_HOST' => 1, 'MASTER_PORT' => 1, 'MASTER_USER' => 1, 'MYSQL_ERRNO' => 1, 'NONBLOCKING' => 1, 'PROCESSLIST' => 1, 'REPLICATION' => 1, 'SCHEMA_NAME' => 1, 'SQL_TSI_DAY' => 1, 'TRANSACTION' => 1, 'UNCOMMITTED' => 1, 'CATALOG_NAME' => 1, 'CLASS_ORIGIN' => 1, 'DEFAULT_AUTH' => 1, 'DES_KEY_FILE' => 1, 'INITIAL_SIZE' => 1, 'MASTER_DELAY' => 1, 'MESSAGE_TEXT' => 1, 'PARTITIONING' => 1, 'RELAY_THREAD' => 1, 'SERIALIZABLE' => 1, 'SQL_NO_CACHE' => 1, 'SQL_TSI_HOUR' => 1, 'SQL_TSI_WEEK' => 1, 'SQL_TSI_YEAR' => 1, 'SUBPARTITION' => 1, 'COLUMN_FORMAT' => 1, 'INSERT_METHOD' => 1, 'MASTER_SSL_CA' => 1, 'RELAY_LOG_POS' => 1, 'SQL_TSI_MONTH' => 1, 'SUBPARTITIONS' => 1, 'AUTO_INCREMENT' => 1, 'AVG_ROW_LENGTH' => 1, 'KEY_BLOCK_SIZE' => 1, 'MASTER_LOG_POS' => 1, 'MASTER_SSL_CRL' => 1, 'MASTER_SSL_KEY' => 1, 'RELAY_LOG_FILE' => 1, 'SQL_TSI_MINUTE' => 1, 'SQL_TSI_SECOND' => 1, 'TABLE_CHECKSUM' => 1, 'USER_RESOURCES' => 1, 'AUTOEXTEND_SIZE' => 1, 'CONSTRAINT_NAME' => 1, 'DELAY_KEY_WRITE' => 1, 'FILE_BLOCK_SIZE' => 1, 'MASTER_LOG_FILE' => 1, 'MASTER_PASSWORD' => 1, 'MASTER_SSL_CERT' => 1, 'PARSE_GCOL_EXPR' => 1, 'REPLICATE_DO_DB' => 1, 'SQL_AFTER_GTIDS' => 1, 'SQL_TSI_QUARTER' => 1, 'SUBCLASS_ORIGIN' => 1, 'MASTER_SERVER_ID' => 1, 'REDO_BUFFER_SIZE' => 1, 'SQL_BEFORE_GTIDS' => 1, 'STATS_PERSISTENT' => 1, 'UNDO_BUFFER_SIZE' => 1, 'CONSTRAINT_SCHEMA' => 1, 'GROUP_REPLICATION' => 1, 'IGNORE_SERVER_IDS' => 1, 'MASTER_SSL_CAPATH' => 1, 'MASTER_SSL_CIPHER' => 1, 'RETURNED_SQLSTATE' => 1, 'SQL_BUFFER_RESULT' => 1, 'STATS_AUTO_RECALC' => 1, 'CONSTRAINT_CATALOG' => 1, 'MASTER_RETRY_COUNT' => 1, 'MASTER_SSL_CRLPATH' => 1, 'MAX_STATEMENT_TIME' => 1, 'REPLICATE_DO_TABLE' => 1, 'SQL_AFTER_MTS_GAPS' => 1, 'STATS_SAMPLE_PAGES' => 1, 'REPLICATE_IGNORE_DB' => 1, 'MASTER_AUTO_POSITION' => 1, 'MASTER_CONNECT_RETRY' => 1, 'MAX_QUERIES_PER_HOUR' => 1, 'MAX_UPDATES_PER_HOUR' => 1, 'MAX_USER_CONNECTIONS' => 1, 'REPLICATE_REWRITE_DB' => 1, 'REPLICATE_IGNORE_TABLE' => 1, 'MASTER_HEARTBEAT_PERIOD' => 1, 'REPLICATE_WILD_DO_TABLE' => 1, 'MAX_CONNECTIONS_PER_HOUR' => 1, 'REPLICATE_WILD_IGNORE_TABLE' => 1, 'AS' => 3, 'BY' => 3, 'IS' => 3, 'ON' => 3, 'OR' => 3, 'TO' => 3, 'ADD' => 3, 'ALL' => 3, 'AND' => 3, 'ASC' => 3, 'DEC' => 3, 'DIV' => 3, 'FOR' => 3, 'GET' => 3, 'NOT' => 3, 'OUT' => 3, 'SQL' => 3, 'SSL' => 3, 'USE' => 3, 'XOR' => 3, 'BOTH' => 3, 'CALL' => 3, 'CASE' => 3, 'DESC' => 3, 'DROP' => 3, 'DUAL' => 3, 'EACH' => 3, 'ELSE' => 3, 'EXIT' => 3, 'FROM' => 3, 'INT1' => 3, 'INT2' => 3, 'INT3' => 3, 'INT4' => 3, 'INT8' => 3, 'INTO' => 3, 'JOIN' => 3, 'KEYS' => 3, 'KILL' => 3, 'LIKE' => 3, 'LOAD' => 3, 'LOCK' => 3, 'LONG' => 3, 'LOOP' => 3, 'NULL' => 3, 'READ' => 3, 'SHOW' => 3, 'THEN' => 3, 'TRUE' => 3, 'UNDO' => 3, 'WHEN' => 3, 'WITH' => 3, 'ALTER' => 3, 'CHECK' => 3, 'CROSS' => 3, 'FALSE' => 3, 'FETCH' => 3, 'FORCE' => 3, 'GRANT' => 3, 'GROUP' => 3, 'INNER' => 3, 'INOUT' => 3, 'LEAVE' => 3, 'LIMIT' => 3, 'LINES' => 3, 'ORDER' => 3, 'OUTER' => 3, 'PURGE' => 3, 'RANGE' => 3, 'READS' => 3, 'RLIKE' => 3, 'TABLE' => 3, 'UNION' => 3, 'USAGE' => 3, 'USING' => 3, 'WHERE' => 3, 'WHILE' => 3, 'WRITE' => 3, 'BEFORE' => 3, 'CHANGE' => 3, 'COLUMN' => 3, 'CREATE' => 3, 'CURSOR' => 3, 'DELETE' => 3, 'ELSEIF' => 3, 'FLOAT4' => 3, 'FLOAT8' => 3, 'HAVING' => 3, 'IGNORE' => 3, 'INFILE' => 3, 'LINEAR' => 3, 'OPTION' => 3, 'REGEXP' => 3, 'RENAME' => 3, 'RETURN' => 3, 'REVOKE' => 3, 'SELECT' => 3, 'SIGNAL' => 3, 'STORED' => 3, 'UNLOCK' => 3, 'UPDATE' => 3, 'ANALYZE' => 3, 'BETWEEN' => 3, 'CASCADE' => 3, 'COLLATE' => 3, 'DECLARE' => 3, 'DELAYED' => 3, 'ESCAPED' => 3, 'EXPLAIN' => 3, 'FOREIGN' => 3, 'ITERATE' => 3, 'LEADING' => 3, 'NATURAL' => 3, 'OUTFILE' => 3, 'PRIMARY' => 3, 'RELEASE' => 3, 'REQUIRE' => 3, 'SCHEMAS' => 3, 'TRIGGER' => 3, 'VARYING' => 3, 'VIRTUAL' => 3, 'CONTINUE' => 3, 'DAY_HOUR' => 3, 'DESCRIBE' => 3, 'DISTINCT' => 3, 'ENCLOSED' => 3, 'MAXVALUE' => 3, 'MODIFIES' => 3, 'OPTIMIZE' => 3, 'RESIGNAL' => 3, 'RESTRICT' => 3, 'SPECIFIC' => 3, 'SQLSTATE' => 3, 'STARTING' => 3, 'TRAILING' => 3, 'UNSIGNED' => 3, 'ZEROFILL' => 3, 'CONDITION' => 3, 'DATABASES' => 3, 'GENERATED' => 3, 'MIDDLEINT' => 3, 'PARTITION' => 3, 'PRECISION' => 3, 'PROCEDURE' => 3, 'SENSITIVE' => 3, 'SEPARATOR' => 3, 'ACCESSIBLE' => 3, 'ASENSITIVE' => 3, 'CONSTRAINT' => 3, 'DAY_MINUTE' => 3, 'DAY_SECOND' => 3, 'OPTIONALLY' => 3, 'READ_WRITE' => 3, 'REFERENCES' => 3, 'SQLWARNING' => 3, 'TERMINATED' => 3, 'YEAR_MONTH' => 3, 'DISTINCTROW' => 3, 'HOUR_MINUTE' => 3, 'HOUR_SECOND' => 3, 'INSENSITIVE' => 3, 'MASTER_BIND' => 3, 'LOW_PRIORITY' => 3, 'SQLEXCEPTION' => 3, 'VARCHARACTER' => 3, 'DETERMINISTIC' => 3, 'HIGH_PRIORITY' => 3, 'MINUTE_SECOND' => 3, 'STRAIGHT_JOIN' => 3, 'IO_AFTER_GTIDS' => 3, 'SQL_BIG_RESULT' => 3, 'DAY_MICROSECOND' => 3, 'IO_BEFORE_GTIDS' => 3, 'OPTIMIZER_COSTS' => 3, 'HOUR_MICROSECOND' => 3, 'SQL_SMALL_RESULT' => 3, 'MINUTE_MICROSECOND' => 3, 'NO_WRITE_TO_BINLOG' => 3, 'SECOND_MICROSECOND' => 3, 'SQL_CALC_FOUND_ROWS' => 3, 'MASTER_SSL_VERIFY_SERVER_CERT' => 3, 'GROUP BY' => 7, 'NOT NULL' => 7, 'ORDER BY' => 7, 'SET NULL' => 7, 'AND CHAIN' => 7, 'FULL JOIN' => 7, 'IF EXISTS' => 7, 'LEFT JOIN' => 7, 'LESS THAN' => 7, 'LOAD DATA' => 7, 'NO ACTION' => 7, 'ON DELETE' => 7, 'ON UPDATE' => 7, 'UNION ALL' => 7, 'CROSS JOIN' => 7, 'ESCAPED BY' => 7, 'FOR UPDATE' => 7, 'INNER JOIN' => 7, 'LINEAR KEY' => 7, 'NO RELEASE' => 7, 'OR REPLACE' => 7, 'RIGHT JOIN' => 7, 'ENCLOSED BY' => 7, 'LINEAR HASH' => 7, 'STARTING BY' => 7, 'AND NO CHAIN' => 7, 'FOR EACH ROW' => 7, 'NATURAL JOIN' => 7, 'PARTITION BY' => 7, 'SET PASSWORD' => 7, 'SQL SECURITY' => 7, 'CHARACTER SET' => 7, 'IF NOT EXISTS' => 7, 'TERMINATED BY' => 7, 'DATA DIRECTORY' => 7, 'UNION DISTINCT' => 7, 'DEFAULT CHARSET' => 7, 'DEFAULT COLLATE' => 7, 'FULL OUTER JOIN' => 7, 'INDEX DIRECTORY' => 7, 'LEFT OUTER JOIN' => 7, 'SUBPARTITION BY' => 7, 'GENERATED ALWAYS' => 7, 'RIGHT OUTER JOIN' => 7, 'NATURAL LEFT JOIN' => 7, 'START TRANSACTION' => 7, 'LOCK IN SHARE MODE' => 7, 'NATURAL RIGHT JOIN' => 7, 'SELECT TRANSACTION' => 7, 'DEFAULT CHARACTER SET' => 7, 'NATURAL LEFT OUTER JOIN' => 7, 'NATURAL RIGHT OUTER JOIN' => 7, 'WITH CONSISTENT SNAPSHOT' => 7, 'BIT' => 9, 'XML' => 9, 'ENUM' => 9, 'JSON' => 9, 'TEXT' => 9, 'ARRAY' => 9, 'SERIAL' => 9, 'BOOLEAN' => 9, 'DATETIME' => 9, 'GEOMETRY' => 9, 'MULTISET' => 9, 'MULTILINEPOINT' => 9, 'MULTILINEPOLYGON' => 9, 'INT' => 11, 'SET' => 11, 'BLOB' => 11, 'REAL' => 11, 'FLOAT' => 11, 'BIGINT' => 11, 'DOUBLE' => 11, 'DECIMAL' => 11, 'INTEGER' => 11, 'NUMERIC' => 11, 'TINYINT' => 11, 'VARCHAR' => 11, 'LONGBLOB' => 11, 'LONGTEXT' => 11, 'SMALLINT' => 11, 'TINYBLOB' => 11, 'TINYTEXT' => 11, 'CHARACTER' => 11, 'MEDIUMINT' => 11, 'VARBINARY' => 11, 'MEDIUMBLOB' => 11, 'MEDIUMTEXT' => 11, 'BINARY VARYING' => 15, 'KEY' => 19, 'INDEX' => 19, 'UNIQUE' => 19, 'SPATIAL' => 19, 'FULLTEXT' => 19, 'INDEX KEY' => 23, 'UNIQUE KEY' => 23, 'FOREIGN KEY' => 23, 'PRIMARY KEY' => 23, 'SPATIAL KEY' => 23, 'FULLTEXT KEY' => 23, 'UNIQUE INDEX' => 23, 'SPATIAL INDEX' => 23, 'FULLTEXT INDEX' => 23, 'X' => 33, 'Y' => 33, 'LN' => 33, 'PI' => 33, 'ABS' => 33, 'AVG' => 33, 'BIN' => 33, 'COS' => 33, 'COT' => 33, 'DAY' => 33, 'ELT' => 33, 'EXP' => 33, 'HEX' => 33, 'LOG' => 33, 'MAX' => 33, 'MD5' => 33, 'MID' => 33, 'MIN' => 33, 'NOW' => 33, 'OCT' => 33, 'ORD' => 33, 'POW' => 33, 'SHA' => 33, 'SIN' => 33, 'STD' => 33, 'SUM' => 33, 'TAN' => 33, 'ACOS' => 33, 'AREA' => 33, 'ASIN' => 33, 'ATAN' => 33, 'CAST' => 33, 'CEIL' => 33, 'CONV' => 33, 'HOUR' => 33, 'LOG2' => 33, 'LPAD' => 33, 'RAND' => 33, 'RPAD' => 33, 'SHA1' => 33, 'SHA2' => 33, 'SIGN' => 33, 'SQRT' => 33, 'SRID' => 33, 'ST_X' => 33, 'ST_Y' => 33, 'TRIM' => 33, 'USER' => 33, 'UUID' => 33, 'WEEK' => 33, 'ASCII' => 33, 'ASWKB' => 33, 'ASWKT' => 33, 'ATAN2' => 33, 'COUNT' => 33, 'CRC32' => 33, 'FIELD' => 33, 'FLOOR' => 33, 'INSTR' => 33, 'LCASE' => 33, 'LEAST' => 33, 'LOG10' => 33, 'LOWER' => 33, 'LTRIM' => 33, 'MONTH' => 33, 'POWER' => 33, 'QUOTE' => 33, 'ROUND' => 33, 'RTRIM' => 33, 'SLEEP' => 33, 'SPACE' => 33, 'UCASE' => 33, 'UNHEX' => 33, 'UPPER' => 33, 'ASTEXT' => 33, 'BIT_OR' => 33, 'BUFFER' => 33, 'CONCAT' => 33, 'DECODE' => 33, 'ENCODE' => 33, 'EQUALS' => 33, 'FORMAT' => 33, 'IFNULL' => 33, 'ISNULL' => 33, 'LENGTH' => 33, 'LOCATE' => 33, 'MINUTE' => 33, 'NULLIF' => 33, 'POINTN' => 33, 'SECOND' => 33, 'STDDEV' => 33, 'STRCMP' => 33, 'SUBSTR' => 33, 'WITHIN' => 33, 'ADDDATE' => 33, 'ADDTIME' => 33, 'AGAINST' => 33, 'BIT_AND' => 33, 'BIT_XOR' => 33, 'CEILING' => 33, 'CHARSET' => 33, 'CROSSES' => 33, 'CURDATE' => 33, 'CURTIME' => 33, 'DAYNAME' => 33, 'DEGREES' => 33, 'ENCRYPT' => 33, 'EXTRACT' => 33, 'GLENGTH' => 33, 'ISEMPTY' => 33, 'IS_IPV4' => 33, 'IS_IPV6' => 33, 'QUARTER' => 33, 'RADIANS' => 33, 'REVERSE' => 33, 'SOUNDEX' => 33, 'ST_AREA' => 33, 'ST_SRID' => 33, 'SUBDATE' => 33, 'SUBTIME' => 33, 'SYSDATE' => 33, 'TOUCHES' => 33, 'TO_DAYS' => 33, 'VAR_POP' => 33, 'VERSION' => 33, 'WEEKDAY' => 33, 'ASBINARY' => 33, 'CENTROID' => 33, 'COALESCE' => 33, 'COMPRESS' => 33, 'CONTAINS' => 33, 'DATEDIFF' => 33, 'DATE_ADD' => 33, 'DATE_SUB' => 33, 'DISJOINT' => 33, 'DISTANCE' => 33, 'ENDPOINT' => 33, 'ENVELOPE' => 33, 'GET_LOCK' => 33, 'GREATEST' => 33, 'ISCLOSED' => 33, 'ISSIMPLE' => 33, 'JSON_SET' => 33, 'MAKEDATE' => 33, 'MAKETIME' => 33, 'MAKE_SET' => 33, 'MBREQUAL' => 33, 'OVERLAPS' => 33, 'PASSWORD' => 33, 'POSITION' => 33, 'ST_ASWKB' => 33, 'ST_ASWKT' => 33, 'ST_UNION' => 33, 'TIMEDIFF' => 33, 'TRUNCATE' => 33, 'VARIANCE' => 33, 'VAR_SAMP' => 33, 'YEARWEEK' => 33, 'ANY_VALUE' => 33, 'BENCHMARK' => 33, 'BIT_COUNT' => 33, 'COLLATION' => 33, 'CONCAT_WS' => 33, 'DAYOFWEEK' => 33, 'DAYOFYEAR' => 33, 'DIMENSION' => 33, 'FROM_DAYS' => 33, 'GEOMETRYN' => 33, 'INET_ATON' => 33, 'INET_NTOA' => 33, 'JSON_KEYS' => 33, 'JSON_TYPE' => 33, 'LOAD_FILE' => 33, 'MBRCOVERS' => 33, 'MBREQUALS' => 33, 'MBRWITHIN' => 33, 'MONTHNAME' => 33, 'NUMPOINTS' => 33, 'ROW_COUNT' => 33, 'ST_ASTEXT' => 33, 'ST_BUFFER' => 33, 'ST_EQUALS' => 33, 'ST_LENGTH' => 33, 'ST_POINTN' => 33, 'ST_WITHIN' => 33, 'SUBSTRING' => 33, 'TO_BASE64' => 33, 'UPDATEXML' => 33, 'BIT_LENGTH' => 33, 'CONVERT_TZ' => 33, 'CONVEXHULL' => 33, 'DAYOFMONTH' => 33, 'EXPORT_SET' => 33, 'FOUND_ROWS' => 33, 'GET_FORMAT' => 33, 'INET6_ATON' => 33, 'INET6_NTOA' => 33, 'INTERSECTS' => 33, 'JSON_ARRAY' => 33, 'JSON_DEPTH' => 33, 'JSON_MERGE' => 33, 'JSON_QUOTE' => 33, 'JSON_VALID' => 33, 'MBRTOUCHES' => 33, 'MULTIPOINT' => 33, 'NAME_CONST' => 33, 'PERIOD_ADD' => 33, 'STARTPOINT' => 33, 'STDDEV_POP' => 33, 'ST_CROSSES' => 33, 'ST_GEOHASH' => 33, 'ST_ISEMPTY' => 33, 'ST_ISVALID' => 33, 'ST_TOUCHES' => 33, 'TO_SECONDS' => 33, 'UNCOMPRESS' => 33, 'UUID_SHORT' => 33, 'WEEKOFYEAR' => 33, 'AES_DECRYPT' => 33, 'AES_ENCRYPT' => 33, 'CHAR_LENGTH' => 33, 'DATE_FORMAT' => 33, 'DES_DECRYPT' => 33, 'DES_ENCRYPT' => 33, 'FIND_IN_SET' => 33, 'FROM_BASE64' => 33, 'GEOMFROMWKB' => 33, 'GTID_SUBSET' => 33, 'JSON_INSERT' => 33, 'JSON_LENGTH' => 33, 'JSON_OBJECT' => 33, 'JSON_PRETTY' => 33, 'JSON_REMOVE' => 33, 'JSON_SEARCH' => 33, 'LINEFROMWKB' => 33, 'MBRCONTAINS' => 33, 'MBRDISJOINT' => 33, 'MBROVERLAPS' => 33, 'MICROSECOND' => 33, 'PERIOD_DIFF' => 33, 'POLYFROMWKB' => 33, 'SEC_TO_TIME' => 33, 'STDDEV_SAMP' => 33, 'STR_TO_DATE' => 33, 'ST_ASBINARY' => 33, 'ST_CENTROID' => 33, 'ST_CONTAINS' => 33, 'ST_DISJOINT' => 33, 'ST_DISTANCE' => 33, 'ST_ENDPOINT' => 33, 'ST_ENVELOPE' => 33, 'ST_ISCLOSED' => 33, 'ST_ISSIMPLE' => 33, 'ST_OVERLAPS' => 33, 'ST_SIMPLIFY' => 33, 'ST_VALIDATE' => 33, 'SYSTEM_USER' => 33, 'TIME_FORMAT' => 33, 'TIME_TO_SEC' => 33, 'COERCIBILITY' => 33, 'EXTERIORRING' => 33, 'EXTRACTVALUE' => 33, 'GEOMETRYTYPE' => 33, 'GEOMFROMTEXT' => 33, 'GROUP_CONCAT' => 33, 'IS_FREE_LOCK' => 33, 'IS_USED_LOCK' => 33, 'JSON_EXTRACT' => 33, 'JSON_REPLACE' => 33, 'JSON_UNQUOTE' => 33, 'LINEFROMTEXT' => 33, 'MBRCOVEREDBY' => 33, 'MLINEFROMWKB' => 33, 'MPOLYFROMWKB' => 33, 'MULTIPOLYGON' => 33, 'OCTET_LENGTH' => 33, 'OLD_PASSWORD' => 33, 'POINTFROMWKB' => 33, 'POLYFROMTEXT' => 33, 'RANDOM_BYTES' => 33, 'RELEASE_LOCK' => 33, 'SESSION_USER' => 33, 'ST_ASGEOJSON' => 33, 'ST_DIMENSION' => 33, 'ST_GEOMETRYN' => 33, 'ST_NUMPOINTS' => 33, 'TIMESTAMPADD' => 33, 'CONNECTION_ID' => 33, 'FROM_UNIXTIME' => 33, 'GTID_SUBTRACT' => 33, 'INTERIORRINGN' => 33, 'JSON_CONTAINS' => 33, 'MBRINTERSECTS' => 33, 'MLINEFROMTEXT' => 33, 'MPOINTFROMWKB' => 33, 'MPOLYFROMTEXT' => 33, 'NUMGEOMETRIES' => 33, 'POINTFROMTEXT' => 33, 'ST_CONVEXHULL' => 33, 'ST_DIFFERENCE' => 33, 'ST_INTERSECTS' => 33, 'ST_STARTPOINT' => 33, 'TIMESTAMPDIFF' => 33, 'WEIGHT_STRING' => 33, 'IS_IPV4_COMPAT' => 33, 'IS_IPV4_MAPPED' => 33, 'LAST_INSERT_ID' => 33, 'MPOINTFROMTEXT' => 33, 'POLYGONFROMWKB' => 33, 'ST_GEOMFROMWKB' => 33, 'ST_LINEFROMWKB' => 33, 'ST_POLYFROMWKB' => 33, 'UNIX_TIMESTAMP' => 33, 'GEOMCOLLFROMWKB' => 33, 'MASTER_POS_WAIT' => 33, 'POLYGONFROMTEXT' => 33, 'ST_EXTERIORRING' => 33, 'ST_GEOMETRYTYPE' => 33, 'ST_GEOMFROMTEXT' => 33, 'ST_INTERSECTION' => 33, 'ST_LINEFROMTEXT' => 33, 'ST_MAKEENVELOPE' => 33, 'ST_MLINEFROMWKB' => 33, 'ST_MPOLYFROMWKB' => 33, 'ST_POINTFROMWKB' => 33, 'ST_POLYFROMTEXT' => 33, 'SUBSTRING_INDEX' => 33, 'CHARACTER_LENGTH' => 33, 'GEOMCOLLFROMTEXT' => 33, 'GEOMETRYFROMTEXT' => 33, 'JSON_MERGE_PATCH' => 33, 'NUMINTERIORRINGS' => 33, 'ST_INTERIORRINGN' => 33, 'ST_MLINEFROMTEXT' => 33, 'ST_MPOINTFROMWKB' => 33, 'ST_MPOLYFROMTEXT' => 33, 'ST_NUMGEOMETRIES' => 33, 'ST_POINTFROMTEXT' => 33, 'ST_SYMDIFFERENCE' => 33, 'JSON_ARRAY_APPEND' => 33, 'JSON_ARRAY_INSERT' => 33, 'JSON_STORAGE_FREE' => 33, 'JSON_STORAGE_SIZE' => 33, 'LINESTRINGFROMWKB' => 33, 'MULTIPOINTFROMWKB' => 33, 'RELEASE_ALL_LOCKS' => 33, 'ST_LATFROMGEOHASH' => 33, 'ST_MPOINTFROMTEXT' => 33, 'ST_POLYGONFROMWKB' => 33, 'JSON_CONTAINS_PATH' => 33, 'MULTIPOINTFROMTEXT' => 33, 'ST_BUFFER_STRATEGY' => 33, 'ST_DISTANCE_SPHERE' => 33, 'ST_GEOMCOLLFROMTXT' => 33, 'ST_GEOMCOLLFROMWKB' => 33, 'ST_GEOMFROMGEOJSON' => 33, 'ST_LONGFROMGEOHASH' => 33, 'ST_POLYGONFROMTEXT' => 33, 'JSON_MERGE_PRESERVE' => 33, 'MULTIPOLYGONFROMWKB' => 33, 'ST_GEOMCOLLFROMTEXT' => 33, 'ST_GEOMETRYFROMTEXT' => 33, 'ST_NUMINTERIORRINGS' => 33, 'ST_POINTFROMGEOHASH' => 33, 'UNCOMPRESSED_LENGTH' => 33, 'MULTIPOLYGONFROMTEXT' => 33, 'ST_LINESTRINGFROMWKB' => 33, 'ST_MULTIPOINTFROMWKB' => 33, 'ST_MULTIPOINTFROMTEXT' => 33, 'MULTILINESTRINGFROMWKB' => 33, 'ST_MULTIPOLYGONFROMWKB' => 33, 'MULTILINESTRINGFROMTEXT' => 33, 'ST_MULTIPOLYGONFROMTEXT' => 33, 'GEOMETRYCOLLECTIONFROMWKB' => 33, 'ST_MULTILINESTRINGFROMWKB' => 33, 'GEOMETRYCOLLECTIONFROMTEXT' => 33, 'ST_MULTILINESTRINGFROMTEXT' => 33, 'VALIDATE_PASSWORD_STRENGTH' => 33, 'WAIT_FOR_EXECUTED_GTID_SET' => 33, 'ST_GEOMETRYCOLLECTIONFROMWKB' => 33, 'ST_GEOMETRYCOLLECTIONFROMTEXT' => 33, 'WAIT_UNTIL_SQL_THREAD_AFTER_GTIDS' => 33, 'IF' => 35, 'IN' => 35, 'MOD' => 35, 'LEFT' => 35, 'MATCH' => 35, 'RIGHT' => 35, 'EXISTS' => 35, 'INSERT' => 35, 'REPEAT' => 35, 'SCHEMA' => 35, 'VALUES' => 35, 'CONVERT' => 35, 'DEFAULT' => 35, 'REPLACE' => 35, 'DATABASE' => 35, 'UTC_DATE' => 35, 'UTC_TIME' => 35, 'LOCALTIME' => 35, 'CURRENT_DATE' => 35, 'CURRENT_TIME' => 35, 'CURRENT_USER' => 35, 'UTC_TIMESTAMP' => 35, 'LOCALTIMESTAMP' => 35, 'CURRENT_TIMESTAMP' => 35, 'NOT IN' => 39, 'DATE' => 41, 'TIME' => 41, 'YEAR' => 41, 'POINT' => 41, 'POLYGON' => 41, 'TIMESTAMP' => 41, 'LINESTRING' => 41, 'MULTILINESTRING' => 41, 'GEOMETRYCOLLECTION' => 41, 'CHAR' => 43, 'BINARY' => 43, 'INTERVAL' => 43);
-    }
-    /**
-     * Context for MySQL 8.0.
-     *
-     * @category   Contexts
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class ContextMySql80000 extends \PhpMyAdmin\SqlParser\Context
-    {
-        /**
-         * List of keywords.
-         *
-         * The value associated to each keyword represents its flags.
-         *
-         * @see Token::FLAG_KEYWORD_RESERVED Token::FLAG_KEYWORD_COMPOSED
-         *      Token::FLAG_KEYWORD_DATA_TYPE Token::FLAG_KEYWORD_KEY
-         *      Token::FLAG_KEYWORD_FUNCTION
-         *
-         * @var array
-         */
-        public static $KEYWORDS = array('AT' => 1, 'DO' => 1, 'IO' => 1, 'NO' => 1, 'XA' => 1, 'ANY' => 1, 'CPU' => 1, 'END' => 1, 'IPC' => 1, 'NDB' => 1, 'NEW' => 1, 'ONE' => 1, 'ROW' => 1, 'XID' => 1, 'BOOL' => 1, 'BYTE' => 1, 'CODE' => 1, 'CUBE' => 1, 'DATA' => 1, 'DISK' => 1, 'ENDS' => 1, 'FAST' => 1, 'FILE' => 1, 'FULL' => 1, 'HASH' => 1, 'HELP' => 1, 'HOST' => 1, 'LAST' => 1, 'LESS' => 1, 'LIST' => 1, 'LOGS' => 1, 'MODE' => 1, 'NAME' => 1, 'NEXT' => 1, 'NONE' => 1, 'ONLY' => 1, 'OPEN' => 1, 'PAGE' => 1, 'PORT' => 1, 'PREV' => 1, 'ROWS' => 1, 'SLOW' => 1, 'SOME' => 1, 'STOP' => 1, 'THAN' => 1, 'TYPE' => 1, 'VIEW' => 1, 'WAIT' => 1, 'WORK' => 1, 'X509' => 1, 'AFTER' => 1, 'BEGIN' => 1, 'BLOCK' => 1, 'BTREE' => 1, 'CACHE' => 1, 'CHAIN' => 1, 'CLOSE' => 1, 'ERROR' => 1, 'EVENT' => 1, 'EVERY' => 1, 'FIRST' => 1, 'FIXED' => 1, 'FLUSH' => 1, 'FOUND' => 1, 'HOSTS' => 1, 'LEVEL' => 1, 'LOCAL' => 1, 'LOCKS' => 1, 'MERGE' => 1, 'MUTEX' => 1, 'NAMES' => 1, 'NCHAR' => 1, 'NEVER' => 1, 'OWNER' => 1, 'PHASE' => 1, 'PROXY' => 1, 'QUERY' => 1, 'QUICK' => 1, 'RELAY' => 1, 'RESET' => 1, 'RTREE' => 1, 'SHARE' => 1, 'SLAVE' => 1, 'START' => 1, 'SUPER' => 1, 'SWAPS' => 1, 'TYPES' => 1, 'UNTIL' => 1, 'VALUE' => 1, 'ACTION' => 1, 'ALWAYS' => 1, 'BACKUP' => 1, 'BINLOG' => 1, 'CIPHER' => 1, 'CLIENT' => 1, 'COMMIT' => 1, 'ENABLE' => 1, 'ENGINE' => 1, 'ERRORS' => 1, 'ESCAPE' => 1, 'EVENTS' => 1, 'EXPIRE' => 1, 'EXPORT' => 1, 'FAULTS' => 1, 'FIELDS' => 1, 'FILTER' => 1, 'GLOBAL' => 1, 'GRANTS' => 1, 'IMPORT' => 1, 'ISSUER' => 1, 'LEAVES' => 1, 'MASTER' => 1, 'MEDIUM' => 1, 'MEMORY' => 1, 'MODIFY' => 1, 'NUMBER' => 1, 'OFFSET' => 1, 'PARSER' => 1, 'PLUGIN' => 1, 'RELOAD' => 1, 'REMOVE' => 1, 'REPAIR' => 1, 'RESUME' => 1, 'ROLLUP' => 1, 'SERVER' => 1, 'SIGNED' => 1, 'SIMPLE' => 1, 'SOCKET' => 1, 'SONAME' => 1, 'SOUNDS' => 1, 'SOURCE' => 1, 'STARTS' => 1, 'STATUS' => 1, 'STRING' => 1, 'TABLES' => 1, 'ACCOUNT' => 1, 'ANALYSE' => 1, 'CHANGED' => 1, 'CHANNEL' => 1, 'COLUMNS' => 1, 'COMMENT' => 1, 'COMPACT' => 1, 'CONTEXT' => 1, 'CURRENT' => 1, 'DEFINER' => 1, 'DISABLE' => 1, 'DISCARD' => 1, 'DYNAMIC' => 1, 'ENGINES' => 1, 'EXECUTE' => 1, 'FOLLOWS' => 1, 'GENERAL' => 1, 'HANDLER' => 1, 'INDEXES' => 1, 'INSTALL' => 1, 'INVOKER' => 1, 'LOGFILE' => 1, 'MIGRATE' => 1, 'NO_WAIT' => 1, 'OPTIONS' => 1, 'PARTIAL' => 1, 'PERSIST' => 1, 'PLUGINS' => 1, 'PREPARE' => 1, 'PROFILE' => 1, 'REBUILD' => 1, 'RECOVER' => 1, 'RESTORE' => 1, 'RETURNS' => 1, 'ROUTINE' => 1, 'SESSION' => 1, 'STACKED' => 1, 'STORAGE' => 1, 'SUBJECT' => 1, 'SUSPEND' => 1, 'UNICODE' => 1, 'UNKNOWN' => 1, 'UPGRADE' => 1, 'USE_FRM' => 1, 'WITHOUT' => 1, 'WRAPPER' => 1, 'CASCADED' => 1, 'CHECKSUM' => 1, 'DATAFILE' => 1, 'DUMPFILE' => 1, 'EXCHANGE' => 1, 'EXTENDED' => 1, 'FUNCTION' => 1, 'LANGUAGE' => 1, 'MAX_ROWS' => 1, 'MAX_SIZE' => 1, 'MIN_ROWS' => 1, 'NATIONAL' => 1, 'NVARCHAR' => 1, 'PRECEDES' => 1, 'PRESERVE' => 1, 'PROFILES' => 1, 'REDOFILE' => 1, 'RELAYLOG' => 1, 'ROLLBACK' => 1, 'SCHEDULE' => 1, 'SECURITY' => 1, 'SHUTDOWN' => 1, 'SNAPSHOT' => 1, 'SWITCHES' => 1, 'TRIGGERS' => 1, 'UNDOFILE' => 1, 'WARNINGS' => 1, 'AGGREGATE' => 1, 'ALGORITHM' => 1, 'COMMITTED' => 1, 'DIRECTORY' => 1, 'DUPLICATE' => 1, 'EXPANSION' => 1, 'INVISIBLE' => 1, 'IO_THREAD' => 1, 'ISOLATION' => 1, 'NODEGROUP' => 1, 'PACK_KEYS' => 1, 'READ_ONLY' => 1, 'REDUNDANT' => 1, 'SAVEPOINT' => 1, 'SQL_CACHE' => 1, 'TEMPORARY' => 1, 'TEMPTABLE' => 1, 'UNDEFINED' => 1, 'UNINSTALL' => 1, 'VARIABLES' => 1, 'COMPLETION' => 1, 'COMPRESSED' => 1, 'CONCURRENT' => 1, 'CONNECTION' => 1, 'CONSISTENT' => 1, 'DEALLOCATE' => 1, 'IDENTIFIED' => 1, 'MASTER_SSL' => 1, 'NDBCLUSTER' => 1, 'PARTITIONS' => 1, 'PERSISTENT' => 1, 'PLUGIN_DIR' => 1, 'PRIVILEGES' => 1, 'REORGANIZE' => 1, 'REPEATABLE' => 1, 'ROW_FORMAT' => 1, 'SQL_THREAD' => 1, 'TABLESPACE' => 1, 'TABLE_NAME' => 1, 'VALIDATION' => 1, 'COLUMN_NAME' => 1, 'COMPRESSION' => 1, 'CURSOR_NAME' => 1, 'DIAGNOSTICS' => 1, 'EXTENT_SIZE' => 1, 'MASTER_HOST' => 1, 'MASTER_PORT' => 1, 'MASTER_USER' => 1, 'MYSQL_ERRNO' => 1, 'NONBLOCKING' => 1, 'PROCESSLIST' => 1, 'REPLICATION' => 1, 'SCHEMA_NAME' => 1, 'SQL_TSI_DAY' => 1, 'TRANSACTION' => 1, 'UNCOMMITTED' => 1, 'CATALOG_NAME' => 1, 'CLASS_ORIGIN' => 1, 'DEFAULT_AUTH' => 1, 'DES_KEY_FILE' => 1, 'INITIAL_SIZE' => 1, 'MASTER_DELAY' => 1, 'MESSAGE_TEXT' => 1, 'PARTITIONING' => 1, 'PERSIST_ONLY' => 1, 'RELAY_THREAD' => 1, 'SERIALIZABLE' => 1, 'SQL_NO_CACHE' => 1, 'SQL_TSI_HOUR' => 1, 'SQL_TSI_WEEK' => 1, 'SQL_TSI_YEAR' => 1, 'SUBPARTITION' => 1, 'COLUMN_FORMAT' => 1, 'INSERT_METHOD' => 1, 'MASTER_SSL_CA' => 1, 'RELAY_LOG_POS' => 1, 'SQL_TSI_MONTH' => 1, 'SUBPARTITIONS' => 1, 'AUTO_INCREMENT' => 1, 'AVG_ROW_LENGTH' => 1, 'KEY_BLOCK_SIZE' => 1, 'MASTER_LOG_POS' => 1, 'MASTER_SSL_CRL' => 1, 'MASTER_SSL_KEY' => 1, 'RELAY_LOG_FILE' => 1, 'SQL_TSI_MINUTE' => 1, 'SQL_TSI_SECOND' => 1, 'TABLE_CHECKSUM' => 1, 'USER_RESOURCES' => 1, 'AUTOEXTEND_SIZE' => 1, 'CONSTRAINT_NAME' => 1, 'DELAY_KEY_WRITE' => 1, 'FILE_BLOCK_SIZE' => 1, 'MASTER_LOG_FILE' => 1, 'MASTER_PASSWORD' => 1, 'MASTER_SSL_CERT' => 1, 'PARSE_GCOL_EXPR' => 1, 'REPLICATE_DO_DB' => 1, 'SQL_AFTER_GTIDS' => 1, 'SQL_TSI_QUARTER' => 1, 'SUBCLASS_ORIGIN' => 1, 'MASTER_SERVER_ID' => 1, 'REDO_BUFFER_SIZE' => 1, 'SQL_BEFORE_GTIDS' => 1, 'STATS_PERSISTENT' => 1, 'UNDO_BUFFER_SIZE' => 1, 'CONSTRAINT_SCHEMA' => 1, 'GROUP_REPLICATION' => 1, 'IGNORE_SERVER_IDS' => 1, 'MASTER_SSL_CAPATH' => 1, 'MASTER_SSL_CIPHER' => 1, 'RETURNED_SQLSTATE' => 1, 'SQL_BUFFER_RESULT' => 1, 'STATS_AUTO_RECALC' => 1, 'CONSTRAINT_CATALOG' => 1, 'MASTER_RETRY_COUNT' => 1, 'MASTER_SSL_CRLPATH' => 1, 'MAX_STATEMENT_TIME' => 1, 'REPLICATE_DO_TABLE' => 1, 'SQL_AFTER_MTS_GAPS' => 1, 'STATS_SAMPLE_PAGES' => 1, 'REPLICATE_IGNORE_DB' => 1, 'MASTER_AUTO_POSITION' => 1, 'MASTER_CONNECT_RETRY' => 1, 'MAX_QUERIES_PER_HOUR' => 1, 'MAX_UPDATES_PER_HOUR' => 1, 'MAX_USER_CONNECTIONS' => 1, 'REPLICATE_REWRITE_DB' => 1, 'REPLICATE_IGNORE_TABLE' => 1, 'MASTER_HEARTBEAT_PERIOD' => 1, 'REPLICATE_WILD_DO_TABLE' => 1, 'MAX_CONNECTIONS_PER_HOUR' => 1, 'REPLICATE_WILD_IGNORE_TABLE' => 1, 'AS' => 3, 'BY' => 3, 'IS' => 3, 'ON' => 3, 'OR' => 3, 'TO' => 3, 'ADD' => 3, 'ALL' => 3, 'AND' => 3, 'ASC' => 3, 'DEC' => 3, 'DIV' => 3, 'FOR' => 3, 'GET' => 3, 'NOT' => 3, 'OUT' => 3, 'SQL' => 3, 'SSL' => 3, 'USE' => 3, 'XOR' => 3, 'BOTH' => 3, 'CALL' => 3, 'CASE' => 3, 'DESC' => 3, 'DROP' => 3, 'DUAL' => 3, 'EACH' => 3, 'ELSE' => 3, 'EXIT' => 3, 'FROM' => 3, 'INT1' => 3, 'INT2' => 3, 'INT3' => 3, 'INT4' => 3, 'INT8' => 3, 'INTO' => 3, 'JOIN' => 3, 'KEYS' => 3, 'KILL' => 3, 'LIKE' => 3, 'LOAD' => 3, 'LOCK' => 3, 'LONG' => 3, 'LOOP' => 3, 'NULL' => 3, 'READ' => 3, 'SHOW' => 3, 'THEN' => 3, 'TRUE' => 3, 'UNDO' => 3, 'WHEN' => 3, 'WITH' => 3, 'ALTER' => 3, 'CHECK' => 3, 'CROSS' => 3, 'FALSE' => 3, 'FETCH' => 3, 'FORCE' => 3, 'GRANT' => 3, 'GROUP' => 3, 'INNER' => 3, 'INOUT' => 3, 'LEAVE' => 3, 'LIMIT' => 3, 'LINES' => 3, 'ORDER' => 3, 'OUTER' => 3, 'PURGE' => 3, 'RANGE' => 3, 'READS' => 3, 'RLIKE' => 3, 'TABLE' => 3, 'UNION' => 3, 'USAGE' => 3, 'USING' => 3, 'WHERE' => 3, 'WHILE' => 3, 'WRITE' => 3, 'BEFORE' => 3, 'CHANGE' => 3, 'COLUMN' => 3, 'CREATE' => 3, 'CURSOR' => 3, 'DELETE' => 3, 'ELSEIF' => 3, 'FLOAT4' => 3, 'FLOAT8' => 3, 'HAVING' => 3, 'IGNORE' => 3, 'INFILE' => 3, 'LINEAR' => 3, 'OPTION' => 3, 'REGEXP' => 3, 'RENAME' => 3, 'RETURN' => 3, 'REVOKE' => 3, 'SELECT' => 3, 'SIGNAL' => 3, 'STORED' => 3, 'UNLOCK' => 3, 'UPDATE' => 3, 'ANALYZE' => 3, 'BETWEEN' => 3, 'CASCADE' => 3, 'COLLATE' => 3, 'DECLARE' => 3, 'DELAYED' => 3, 'ESCAPED' => 3, 'EXPLAIN' => 3, 'FOREIGN' => 3, 'ITERATE' => 3, 'LEADING' => 3, 'NATURAL' => 3, 'OUTFILE' => 3, 'PRIMARY' => 3, 'RELEASE' => 3, 'REQUIRE' => 3, 'SCHEMAS' => 3, 'TRIGGER' => 3, 'VARYING' => 3, 'VIRTUAL' => 3, 'CONTINUE' => 3, 'DAY_HOUR' => 3, 'DESCRIBE' => 3, 'DISTINCT' => 3, 'ENCLOSED' => 3, 'MAXVALUE' => 3, 'MODIFIES' => 3, 'OPTIMIZE' => 3, 'RESIGNAL' => 3, 'RESTRICT' => 3, 'SPECIFIC' => 3, 'SQLSTATE' => 3, 'STARTING' => 3, 'TRAILING' => 3, 'UNSIGNED' => 3, 'ZEROFILL' => 3, 'CONDITION' => 3, 'DATABASES' => 3, 'GENERATED' => 3, 'MIDDLEINT' => 3, 'PARTITION' => 3, 'PRECISION' => 3, 'PROCEDURE' => 3, 'SENSITIVE' => 3, 'SEPARATOR' => 3, 'ACCESSIBLE' => 3, 'ASENSITIVE' => 3, 'CONSTRAINT' => 3, 'DAY_MINUTE' => 3, 'DAY_SECOND' => 3, 'OPTIONALLY' => 3, 'READ_WRITE' => 3, 'REFERENCES' => 3, 'SQLWARNING' => 3, 'TERMINATED' => 3, 'YEAR_MONTH' => 3, 'DISTINCTROW' => 3, 'HOUR_MINUTE' => 3, 'HOUR_SECOND' => 3, 'INSENSITIVE' => 3, 'MASTER_BIND' => 3, 'LOW_PRIORITY' => 3, 'SQLEXCEPTION' => 3, 'VARCHARACTER' => 3, 'DETERMINISTIC' => 3, 'HIGH_PRIORITY' => 3, 'MINUTE_SECOND' => 3, 'STRAIGHT_JOIN' => 3, 'IO_AFTER_GTIDS' => 3, 'SQL_BIG_RESULT' => 3, 'DAY_MICROSECOND' => 3, 'IO_BEFORE_GTIDS' => 3, 'OPTIMIZER_COSTS' => 3, 'HOUR_MICROSECOND' => 3, 'SQL_SMALL_RESULT' => 3, 'MINUTE_MICROSECOND' => 3, 'NO_WRITE_TO_BINLOG' => 3, 'SECOND_MICROSECOND' => 3, 'SQL_CALC_FOUND_ROWS' => 3, 'MASTER_SSL_VERIFY_SERVER_CERT' => 3, 'GROUP BY' => 7, 'NOT NULL' => 7, 'ORDER BY' => 7, 'SET NULL' => 7, 'AND CHAIN' => 7, 'FULL JOIN' => 7, 'IF EXISTS' => 7, 'LEFT JOIN' => 7, 'LESS THAN' => 7, 'LOAD DATA' => 7, 'NO ACTION' => 7, 'ON DELETE' => 7, 'ON UPDATE' => 7, 'UNION ALL' => 7, 'CROSS JOIN' => 7, 'ESCAPED BY' => 7, 'FOR UPDATE' => 7, 'INNER JOIN' => 7, 'LINEAR KEY' => 7, 'NO RELEASE' => 7, 'OR REPLACE' => 7, 'RIGHT JOIN' => 7, 'ENCLOSED BY' => 7, 'LINEAR HASH' => 7, 'STARTING BY' => 7, 'AND NO CHAIN' => 7, 'FOR EACH ROW' => 7, 'NATURAL JOIN' => 7, 'PARTITION BY' => 7, 'SET PASSWORD' => 7, 'SQL SECURITY' => 7, 'CHARACTER SET' => 7, 'IF NOT EXISTS' => 7, 'TERMINATED BY' => 7, 'DATA DIRECTORY' => 7, 'UNION DISTINCT' => 7, 'DEFAULT CHARSET' => 7, 'DEFAULT COLLATE' => 7, 'FULL OUTER JOIN' => 7, 'INDEX DIRECTORY' => 7, 'LEFT OUTER JOIN' => 7, 'SUBPARTITION BY' => 7, 'GENERATED ALWAYS' => 7, 'RIGHT OUTER JOIN' => 7, 'NATURAL LEFT JOIN' => 7, 'START TRANSACTION' => 7, 'LOCK IN SHARE MODE' => 7, 'NATURAL RIGHT JOIN' => 7, 'SELECT TRANSACTION' => 7, 'DEFAULT CHARACTER SET' => 7, 'NATURAL LEFT OUTER JOIN' => 7, 'NATURAL RIGHT OUTER JOIN' => 7, 'WITH CONSISTENT SNAPSHOT' => 7, 'BIT' => 9, 'XML' => 9, 'ENUM' => 9, 'JSON' => 9, 'TEXT' => 9, 'ARRAY' => 9, 'SERIAL' => 9, 'BOOLEAN' => 9, 'DATETIME' => 9, 'GEOMETRY' => 9, 'MULTISET' => 9, 'MULTILINEPOINT' => 9, 'MULTILINEPOLYGON' => 9, 'INT' => 11, 'SET' => 11, 'BLOB' => 11, 'REAL' => 11, 'FLOAT' => 11, 'BIGINT' => 11, 'DOUBLE' => 11, 'DECIMAL' => 11, 'INTEGER' => 11, 'NUMERIC' => 11, 'TINYINT' => 11, 'VARCHAR' => 11, 'LONGBLOB' => 11, 'LONGTEXT' => 11, 'SMALLINT' => 11, 'TINYBLOB' => 11, 'TINYTEXT' => 11, 'CHARACTER' => 11, 'MEDIUMINT' => 11, 'VARBINARY' => 11, 'MEDIUMBLOB' => 11, 'MEDIUMTEXT' => 11, 'BINARY VARYING' => 15, 'KEY' => 19, 'INDEX' => 19, 'UNIQUE' => 19, 'SPATIAL' => 19, 'FULLTEXT' => 19, 'INDEX KEY' => 23, 'UNIQUE KEY' => 23, 'FOREIGN KEY' => 23, 'PRIMARY KEY' => 23, 'SPATIAL KEY' => 23, 'FULLTEXT KEY' => 23, 'UNIQUE INDEX' => 23, 'SPATIAL INDEX' => 23, 'FULLTEXT INDEX' => 23, 'X' => 33, 'Y' => 33, 'LN' => 33, 'PI' => 33, 'ABS' => 33, 'AVG' => 33, 'BIN' => 33, 'COS' => 33, 'COT' => 33, 'DAY' => 33, 'ELT' => 33, 'EXP' => 33, 'HEX' => 33, 'LOG' => 33, 'MAX' => 33, 'MD5' => 33, 'MID' => 33, 'MIN' => 33, 'NOW' => 33, 'OCT' => 33, 'ORD' => 33, 'POW' => 33, 'SHA' => 33, 'SIN' => 33, 'STD' => 33, 'SUM' => 33, 'TAN' => 33, 'ACOS' => 33, 'AREA' => 33, 'ASIN' => 33, 'ATAN' => 33, 'CAST' => 33, 'CEIL' => 33, 'CONV' => 33, 'HOUR' => 33, 'LOG2' => 33, 'LPAD' => 33, 'RAND' => 33, 'RPAD' => 33, 'SHA1' => 33, 'SHA2' => 33, 'SIGN' => 33, 'SQRT' => 33, 'SRID' => 33, 'ST_X' => 33, 'ST_Y' => 33, 'TRIM' => 33, 'USER' => 33, 'UUID' => 33, 'WEEK' => 33, 'ASCII' => 33, 'ASWKB' => 33, 'ASWKT' => 33, 'ATAN2' => 33, 'COUNT' => 33, 'CRC32' => 33, 'FIELD' => 33, 'FLOOR' => 33, 'INSTR' => 33, 'LCASE' => 33, 'LEAST' => 33, 'LOG10' => 33, 'LOWER' => 33, 'LTRIM' => 33, 'MONTH' => 33, 'POWER' => 33, 'QUOTE' => 33, 'ROUND' => 33, 'RTRIM' => 33, 'SLEEP' => 33, 'SPACE' => 33, 'UCASE' => 33, 'UNHEX' => 33, 'UPPER' => 33, 'ASTEXT' => 33, 'BIT_OR' => 33, 'BUFFER' => 33, 'CONCAT' => 33, 'DECODE' => 33, 'ENCODE' => 33, 'EQUALS' => 33, 'FORMAT' => 33, 'IFNULL' => 33, 'ISNULL' => 33, 'LENGTH' => 33, 'LOCATE' => 33, 'MINUTE' => 33, 'NULLIF' => 33, 'POINTN' => 33, 'SECOND' => 33, 'STDDEV' => 33, 'STRCMP' => 33, 'SUBSTR' => 33, 'WITHIN' => 33, 'ADDDATE' => 33, 'ADDTIME' => 33, 'AGAINST' => 33, 'BIT_AND' => 33, 'BIT_XOR' => 33, 'CEILING' => 33, 'CHARSET' => 33, 'CROSSES' => 33, 'CURDATE' => 33, 'CURTIME' => 33, 'DAYNAME' => 33, 'DEGREES' => 33, 'ENCRYPT' => 33, 'EXTRACT' => 33, 'GLENGTH' => 33, 'ISEMPTY' => 33, 'IS_IPV4' => 33, 'IS_IPV6' => 33, 'IS_UUID' => 33, 'QUARTER' => 33, 'RADIANS' => 33, 'REVERSE' => 33, 'SOUNDEX' => 33, 'ST_AREA' => 33, 'ST_SRID' => 33, 'SUBDATE' => 33, 'SUBTIME' => 33, 'SYSDATE' => 33, 'TOUCHES' => 33, 'TO_DAYS' => 33, 'VAR_POP' => 33, 'VERSION' => 33, 'WEEKDAY' => 33, 'ASBINARY' => 33, 'CENTROID' => 33, 'COALESCE' => 33, 'COMPRESS' => 33, 'CONTAINS' => 33, 'DATEDIFF' => 33, 'DATE_ADD' => 33, 'DATE_SUB' => 33, 'DISJOINT' => 33, 'DISTANCE' => 33, 'ENDPOINT' => 33, 'ENVELOPE' => 33, 'GET_LOCK' => 33, 'GREATEST' => 33, 'ISCLOSED' => 33, 'ISSIMPLE' => 33, 'JSON_SET' => 33, 'MAKEDATE' => 33, 'MAKETIME' => 33, 'MAKE_SET' => 33, 'MBREQUAL' => 33, 'OVERLAPS' => 33, 'PASSWORD' => 33, 'POSITION' => 33, 'ST_ASWKB' => 33, 'ST_ASWKT' => 33, 'ST_UNION' => 33, 'TIMEDIFF' => 33, 'TRUNCATE' => 33, 'VARIANCE' => 33, 'VAR_SAMP' => 33, 'YEARWEEK' => 33, 'ANY_VALUE' => 33, 'BENCHMARK' => 33, 'BIT_COUNT' => 33, 'COLLATION' => 33, 'CONCAT_WS' => 33, 'DAYOFWEEK' => 33, 'DAYOFYEAR' => 33, 'DIMENSION' => 33, 'FROM_DAYS' => 33, 'GEOMETRYN' => 33, 'INET_ATON' => 33, 'INET_NTOA' => 33, 'JSON_KEYS' => 33, 'JSON_TYPE' => 33, 'LOAD_FILE' => 33, 'MBRCOVERS' => 33, 'MBREQUALS' => 33, 'MBRWITHIN' => 33, 'MONTHNAME' => 33, 'NUMPOINTS' => 33, 'ROW_COUNT' => 33, 'ST_ASTEXT' => 33, 'ST_BUFFER' => 33, 'ST_EQUALS' => 33, 'ST_LENGTH' => 33, 'ST_POINTN' => 33, 'ST_WITHIN' => 33, 'SUBSTRING' => 33, 'TO_BASE64' => 33, 'UPDATEXML' => 33, 'BIT_LENGTH' => 33, 'CONVERT_TZ' => 33, 'CONVEXHULL' => 33, 'DAYOFMONTH' => 33, 'EXPORT_SET' => 33, 'FOUND_ROWS' => 33, 'GET_FORMAT' => 33, 'INET6_ATON' => 33, 'INET6_NTOA' => 33, 'INTERSECTS' => 33, 'JSON_ARRAY' => 33, 'JSON_DEPTH' => 33, 'JSON_MERGE' => 33, 'JSON_QUOTE' => 33, 'JSON_VALID' => 33, 'MBRTOUCHES' => 33, 'MULTIPOINT' => 33, 'NAME_CONST' => 33, 'PERIOD_ADD' => 33, 'STARTPOINT' => 33, 'STDDEV_POP' => 33, 'ST_CROSSES' => 33, 'ST_GEOHASH' => 33, 'ST_ISEMPTY' => 33, 'ST_ISVALID' => 33, 'ST_TOUCHES' => 33, 'TO_SECONDS' => 33, 'UNCOMPRESS' => 33, 'UUID_SHORT' => 33, 'WEEKOFYEAR' => 33, 'AES_DECRYPT' => 33, 'AES_ENCRYPT' => 33, 'BIN_TO_UUID' => 33, 'CHAR_LENGTH' => 33, 'DATE_FORMAT' => 33, 'DES_DECRYPT' => 33, 'DES_ENCRYPT' => 33, 'FIND_IN_SET' => 33, 'FROM_BASE64' => 33, 'GEOMFROMWKB' => 33, 'GTID_SUBSET' => 33, 'JSON_INSERT' => 33, 'JSON_LENGTH' => 33, 'JSON_OBJECT' => 33, 'JSON_PRETTY' => 33, 'JSON_REMOVE' => 33, 'JSON_SEARCH' => 33, 'LINEFROMWKB' => 33, 'MBRCONTAINS' => 33, 'MBRDISJOINT' => 33, 'MBROVERLAPS' => 33, 'MICROSECOND' => 33, 'PERIOD_DIFF' => 33, 'POLYFROMWKB' => 33, 'SEC_TO_TIME' => 33, 'STDDEV_SAMP' => 33, 'STR_TO_DATE' => 33, 'ST_ASBINARY' => 33, 'ST_CENTROID' => 33, 'ST_CONTAINS' => 33, 'ST_DISJOINT' => 33, 'ST_DISTANCE' => 33, 'ST_ENDPOINT' => 33, 'ST_ENVELOPE' => 33, 'ST_ISCLOSED' => 33, 'ST_ISSIMPLE' => 33, 'ST_OVERLAPS' => 33, 'ST_SIMPLIFY' => 33, 'ST_VALIDATE' => 33, 'SYSTEM_USER' => 33, 'TIME_FORMAT' => 33, 'TIME_TO_SEC' => 33, 'UUID_TO_BIN' => 33, 'COERCIBILITY' => 33, 'EXTERIORRING' => 33, 'EXTRACTVALUE' => 33, 'GEOMETRYTYPE' => 33, 'GEOMFROMTEXT' => 33, 'GROUP_CONCAT' => 33, 'IS_FREE_LOCK' => 33, 'IS_USED_LOCK' => 33, 'JSON_EXTRACT' => 33, 'JSON_REPLACE' => 33, 'JSON_UNQUOTE' => 33, 'LINEFROMTEXT' => 33, 'MBRCOVEREDBY' => 33, 'MLINEFROMWKB' => 33, 'MPOLYFROMWKB' => 33, 'MULTIPOLYGON' => 33, 'OCTET_LENGTH' => 33, 'OLD_PASSWORD' => 33, 'POINTFROMWKB' => 33, 'POLYFROMTEXT' => 33, 'RANDOM_BYTES' => 33, 'RELEASE_LOCK' => 33, 'SESSION_USER' => 33, 'ST_ASGEOJSON' => 33, 'ST_DIMENSION' => 33, 'ST_GEOMETRYN' => 33, 'ST_NUMPOINTS' => 33, 'TIMESTAMPADD' => 33, 'CONNECTION_ID' => 33, 'FROM_UNIXTIME' => 33, 'GTID_SUBTRACT' => 33, 'INTERIORRINGN' => 33, 'JSON_CONTAINS' => 33, 'MBRINTERSECTS' => 33, 'MLINEFROMTEXT' => 33, 'MPOINTFROMWKB' => 33, 'MPOLYFROMTEXT' => 33, 'NUMGEOMETRIES' => 33, 'POINTFROMTEXT' => 33, 'ST_CONVEXHULL' => 33, 'ST_DIFFERENCE' => 33, 'ST_INTERSECTS' => 33, 'ST_STARTPOINT' => 33, 'TIMESTAMPDIFF' => 33, 'WEIGHT_STRING' => 33, 'IS_IPV4_COMPAT' => 33, 'IS_IPV4_MAPPED' => 33, 'LAST_INSERT_ID' => 33, 'MPOINTFROMTEXT' => 33, 'POLYGONFROMWKB' => 33, 'ST_GEOMFROMWKB' => 33, 'ST_LINEFROMWKB' => 33, 'ST_POLYFROMWKB' => 33, 'UNIX_TIMESTAMP' => 33, 'GEOMCOLLFROMWKB' => 33, 'MASTER_POS_WAIT' => 33, 'POLYGONFROMTEXT' => 33, 'ST_EXTERIORRING' => 33, 'ST_GEOMETRYTYPE' => 33, 'ST_GEOMFROMTEXT' => 33, 'ST_INTERSECTION' => 33, 'ST_LINEFROMTEXT' => 33, 'ST_MAKEENVELOPE' => 33, 'ST_MLINEFROMWKB' => 33, 'ST_MPOLYFROMWKB' => 33, 'ST_POINTFROMWKB' => 33, 'ST_POLYFROMTEXT' => 33, 'SUBSTRING_INDEX' => 33, 'CHARACTER_LENGTH' => 33, 'GEOMCOLLFROMTEXT' => 33, 'GEOMETRYFROMTEXT' => 33, 'JSON_MERGE_PATCH' => 33, 'NUMINTERIORRINGS' => 33, 'ST_INTERIORRINGN' => 33, 'ST_MLINEFROMTEXT' => 33, 'ST_MPOINTFROMWKB' => 33, 'ST_MPOLYFROMTEXT' => 33, 'ST_NUMGEOMETRIES' => 33, 'ST_POINTFROMTEXT' => 33, 'ST_SYMDIFFERENCE' => 33, 'JSON_ARRAY_APPEND' => 33, 'JSON_ARRAY_INSERT' => 33, 'JSON_STORAGE_FREE' => 33, 'JSON_STORAGE_SIZE' => 33, 'LINESTRINGFROMWKB' => 33, 'MULTIPOINTFROMWKB' => 33, 'RELEASE_ALL_LOCKS' => 33, 'ST_LATFROMGEOHASH' => 33, 'ST_MPOINTFROMTEXT' => 33, 'ST_POLYGONFROMWKB' => 33, 'JSON_CONTAINS_PATH' => 33, 'MULTIPOINTFROMTEXT' => 33, 'ST_BUFFER_STRATEGY' => 33, 'ST_DISTANCE_SPHERE' => 33, 'ST_GEOMCOLLFROMTXT' => 33, 'ST_GEOMCOLLFROMWKB' => 33, 'ST_GEOMFROMGEOJSON' => 33, 'ST_LONGFROMGEOHASH' => 33, 'ST_POLYGONFROMTEXT' => 33, 'JSON_MERGE_PRESERVE' => 33, 'MULTIPOLYGONFROMWKB' => 33, 'ST_GEOMCOLLFROMTEXT' => 33, 'ST_GEOMETRYFROMTEXT' => 33, 'ST_NUMINTERIORRINGS' => 33, 'ST_POINTFROMGEOHASH' => 33, 'UNCOMPRESSED_LENGTH' => 33, 'MULTIPOLYGONFROMTEXT' => 33, 'ST_LINESTRINGFROMWKB' => 33, 'ST_MULTIPOINTFROMWKB' => 33, 'ST_MULTIPOINTFROMTEXT' => 33, 'MULTILINESTRINGFROMWKB' => 33, 'ST_MULTIPOLYGONFROMWKB' => 33, 'MULTILINESTRINGFROMTEXT' => 33, 'ST_MULTIPOLYGONFROMTEXT' => 33, 'GEOMETRYCOLLECTIONFROMWKB' => 33, 'ST_MULTILINESTRINGFROMWKB' => 33, 'GEOMETRYCOLLECTIONFROMTEXT' => 33, 'ST_MULTILINESTRINGFROMTEXT' => 33, 'VALIDATE_PASSWORD_STRENGTH' => 33, 'WAIT_FOR_EXECUTED_GTID_SET' => 33, 'ST_GEOMETRYCOLLECTIONFROMWKB' => 33, 'ST_GEOMETRYCOLLECTIONFROMTEXT' => 33, 'WAIT_UNTIL_SQL_THREAD_AFTER_GTIDS' => 33, 'IF' => 35, 'IN' => 35, 'MOD' => 35, 'LEFT' => 35, 'MATCH' => 35, 'RIGHT' => 35, 'EXISTS' => 35, 'INSERT' => 35, 'REPEAT' => 35, 'SCHEMA' => 35, 'VALUES' => 35, 'CONVERT' => 35, 'DEFAULT' => 35, 'REPLACE' => 35, 'DATABASE' => 35, 'UTC_DATE' => 35, 'UTC_TIME' => 35, 'LOCALTIME' => 35, 'CURRENT_DATE' => 35, 'CURRENT_TIME' => 35, 'CURRENT_USER' => 35, 'UTC_TIMESTAMP' => 35, 'LOCALTIMESTAMP' => 35, 'CURRENT_TIMESTAMP' => 35, 'NOT IN' => 39, 'DATE' => 41, 'TIME' => 41, 'YEAR' => 41, 'POINT' => 41, 'POLYGON' => 41, 'TIMESTAMP' => 41, 'LINESTRING' => 41, 'MULTILINESTRING' => 41, 'GEOMETRYCOLLECTION' => 41, 'CHAR' => 43, 'BINARY' => 43, 'INTERVAL' => 43);
-    }
-}
-namespace PhpMyAdmin\SqlParser {
-    class Core
-    {
-        /**
-         * Whether errors should throw exceptions or just be stored.
-         *
-         * @var bool
-         *
-         * @see static::$errors
-         */
-        public $strict = false;
-        /**
-         * List of errors that occurred during lexing.
-         *
-         * Usually, the lexing does not stop once an error occurred because that
-         * error might be false positive or a partial result (even a bad one)
-         * might be needed.
-         *
-         * @var \Exception[]
-         *
-         * @see Core::error()
-         */
-        public $errors = array();
-        /**
-         * Creates a new error log.
-         *
-         * @param \Exception $error the error exception
-         *
-         * @throws \Exception throws the exception, if strict mode is enabled
-         */
-        public function error($error)
-        {
-        }
-    }
-}
-namespace PhpMyAdmin\SqlParser\Exceptions {
-    /**
-     * Exception thrown by the lexer.
-     *
-     * @category   Exceptions
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class LexerException extends \Exception
-    {
-        /**
-         * The character that produced this error.
-         *
-         * @var string
-         */
-        public $ch;
-        /**
-         * The index of the character that produced this error.
-         *
-         * @var int
-         */
-        public $pos;
-        /**
-         * Constructor.
-         *
-         * @param string $msg  the message of this exception
-         * @param string $ch   the character that produced this exception
-         * @param int    $pos  the position of the character
-         * @param int    $code the code of this error
-         */
-        public function __construct($msg = '', $ch = '', $pos = 0, $code = 0)
-        {
-        }
-    }
-    /**
-     * Exception thrown by the lexer.
-     *
-     * @category   Exceptions
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class LoaderException extends \Exception
-    {
-        /**
-         * The failed load name.
-         *
-         * @var string
-         */
-        public $name;
-        /**
-         * Constructor.
-         *
-         * @param string $msg  the message of this exception
-         * @param string $name the character that produced this exception
-         * @param int    $code the code of this error
-         */
-        public function __construct($msg = '', $name = '', $code = 0)
-        {
-        }
-    }
-    /**
-     * Exception thrown by the parser.
-     *
-     * @category   Exceptions
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class ParserException extends \Exception
-    {
-        /**
-         * The token that produced this error.
-         *
-         * @var \PhpMyAdmin\SqlParser\Token
-         */
-        public $token;
-        /**
-         * Constructor.
-         *
-         * @param string $msg   the message of this exception
-         * @param \PhpMyAdmin\SqlParser\Token  $token the token that produced this exception
-         * @param int    $code  the code of this error
-         */
-        public function __construct($msg = '', \PhpMyAdmin\SqlParser\Token $token = null, $code = 0)
-        {
-        }
-    }
-}
-namespace PhpMyAdmin\SqlParser {
-    /**
-     * Performs lexical analysis over a SQL statement and splits it in multiple
-     * tokens.
-     *
-     * The output of the lexer is affected by the context of the SQL statement.
-     *
-     * @category Lexer
-     *
-     * @license  https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     *
-     * @see      Context
-     */
-    class Lexer extends \PhpMyAdmin\SqlParser\Core
-    {
-        /**
-         * A list of methods that are used in lexing the SQL query.
-         *
-         * @var array
-         */
-        public static $PARSER_METHODS = array(
-            // It is best to put the parsers in order of their complexity
-            // (ascending) and their occurrence rate (descending).
-            //
-            // Conflicts:
-            //
-            // 1. `parseDelimiter`, `parseUnknown`, `parseKeyword`, `parseNumber`
-            // They fight over delimiter. The delimiter may be a keyword, a
-            // number or almost any character which makes the delimiter one of
-            // the first tokens that must be parsed.
-            //
-            // 1. `parseNumber` and `parseOperator`
-            // They fight over `+` and `-`.
-            //
-            // 2. `parseComment` and `parseOperator`
-            // They fight over `/` (as in ```/*comment*/``` or ```a / b```)
-            //
-            // 3. `parseBool` and `parseKeyword`
-            // They fight over `TRUE` and `FALSE`.
-            //
-            // 4. `parseKeyword` and `parseUnknown`
-            // They fight over words. `parseUnknown` does not know about
-            // keywords.
-            'parseDelimiter',
-            'parseWhitespace',
-            'parseNumber',
-            'parseComment',
-            'parseOperator',
-            'parseBool',
-            'parseString',
-            'parseSymbol',
-            'parseKeyword',
-            'parseLabel',
-            'parseUnknown',
-        );
-        /**
-         * The string to be parsed.
-         *
-         * @var string|\PhpMyAdmin\SqlParser\UtfString
-         */
-        public $str = '';
-        /**
-         * The length of `$str`.
-         *
-         * By storing its length, a lot of time is saved, because parsing methods
-         * would call `strlen` everytime.
-         *
-         * @var int
-         */
-        public $len = 0;
-        /**
-         * The index of the last parsed character.
-         *
-         * @var int
-         */
-        public $last = 0;
-        /**
-         * Tokens extracted from given strings.
-         *
-         * @var \PhpMyAdmin\SqlParser\TokensList
-         */
-        public $list;
-        /**
-         * The default delimiter. This is used, by default, in all new instances.
-         *
-         * @var string
-         */
-        public static $DEFAULT_DELIMITER = ';';
-        /**
-         * Statements delimiter.
-         * This may change during lexing.
-         *
-         * @var string
-         */
-        public $delimiter;
-        /**
-         * The length of the delimiter.
-         *
-         * Because `parseDelimiter` can be called a lot, it would perform a lot of
-         * calls to `strlen`, which might affect performance when the delimiter is
-         * big.
-         *
-         * @var int
-         */
-        public $delimiterLen;
-        /**
-         * Gets the tokens list parsed by a new instance of a lexer.
-         *
-         * @param string|\PhpMyAdmin\SqlParser\UtfString $str       the query to be lexed
-         * @param bool             $strict    whether strict mode should be
-         *                                    enabled or not
-         * @param string           $delimiter the delimiter to be used
-         *
-         * @return \PhpMyAdmin\SqlParser\TokensList
-         */
-        public static function getTokens($str, $strict = false, $delimiter = null)
-        {
-        }
-        /**
-         * Constructor.
-         *
-         * @param string|\PhpMyAdmin\SqlParser\UtfString $str       the query to be lexed
-         * @param bool             $strict    whether strict mode should be
-         *                                    enabled or not
-         * @param string           $delimiter the delimiter to be used
-         */
-        public function __construct($str, $strict = false, $delimiter = null)
-        {
-        }
-        /**
-         * Sets the delimiter.
-         *
-         * @param string $delimiter the new delimiter
-         */
-        public function setDelimiter($delimiter)
-        {
-        }
-        /**
-         * Parses the string and extracts lexemes.
-         */
-        public function lex()
-        {
-        }
-        /**
-         * Creates a new error log.
-         *
-         * @param string $msg  the error message
-         * @param string $str  the character that produced the error
-         * @param int    $pos  the position of the character
-         * @param int    $code the code of the error
-         *
-         * @throws \PhpMyAdmin\SqlParser\Exceptions\LexerException throws the exception, if strict mode is enabled
-         */
-        public function error($msg, $str = '', $pos = 0, $code = 0)
-        {
-        }
-        /**
-         * Parses a keyword.
-         *
-         * @return null|\PhpMyAdmin\SqlParser\Token
-         */
-        public function parseKeyword()
-        {
-        }
-        /**
-         * Parses a label.
-         *
-         * @return null|\PhpMyAdmin\SqlParser\Token
-         */
-        public function parseLabel()
-        {
-        }
-        /**
-         * Parses an operator.
-         *
-         * @return null|\PhpMyAdmin\SqlParser\Token
-         */
-        public function parseOperator()
-        {
-        }
-        /**
-         * Parses a whitespace.
-         *
-         * @return null|\PhpMyAdmin\SqlParser\Token
-         */
-        public function parseWhitespace()
-        {
-        }
-        /**
-         * Parses a comment.
-         *
-         * @return null|\PhpMyAdmin\SqlParser\Token
-         */
-        public function parseComment()
-        {
-        }
-        /**
-         * Parses a boolean.
-         *
-         * @return null|\PhpMyAdmin\SqlParser\Token
-         */
-        public function parseBool()
-        {
-        }
-        /**
-         * Parses a number.
-         *
-         * @return null|\PhpMyAdmin\SqlParser\Token
-         */
-        public function parseNumber()
-        {
-        }
-        /**
-         * Parses a string.
-         *
-         * @param string $quote additional starting symbol
-         *
-         * @return null|\PhpMyAdmin\SqlParser\Token
-         * @throws \PhpMyAdmin\SqlParser\Exceptions\LexerException
-         */
-        public function parseString($quote = '')
-        {
-        }
-        /**
-         * Parses a symbol.
-         *
-         * @return null|\PhpMyAdmin\SqlParser\Token
-         * @throws \PhpMyAdmin\SqlParser\Exceptions\LexerException
-         */
-        public function parseSymbol()
-        {
-        }
-        /**
-         * Parses unknown parts of the query.
-         *
-         * @return null|\PhpMyAdmin\SqlParser\Token
-         */
-        public function parseUnknown()
-        {
-        }
-        /**
-         * Parses the delimiter of the query.
-         *
-         * @return null|\PhpMyAdmin\SqlParser\Token
-         */
-        public function parseDelimiter()
-        {
-        }
-    }
-    /**
-     * Takes multiple tokens (contained in a Lexer instance) as input and builds a
-     * parse tree.
-     *
-     * @category Parser
-     *
-     * @license  https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class Parser extends \PhpMyAdmin\SqlParser\Core
-    {
-        /**
-         * Array of classes that are used in parsing the SQL statements.
-         *
-         * @var array
-         */
-        public static $STATEMENT_PARSERS = array(
-            // MySQL Utility Statements
-            'DESCRIBE' => 'PhpMyAdmin\SqlParser\Statements\ExplainStatement',
-            'DESC' => 'PhpMyAdmin\SqlParser\Statements\ExplainStatement',
-            'EXPLAIN' => 'PhpMyAdmin\SqlParser\Statements\ExplainStatement',
-            'FLUSH' => '',
-            'GRANT' => '',
-            'HELP' => '',
-            'SET PASSWORD' => '',
-            'STATUS' => '',
-            'USE' => '',
-            // Table Maintenance Statements
-            // https://dev.mysql.com/doc/refman/5.7/en/table-maintenance-sql.html
-            'ANALYZE' => 'PhpMyAdmin\SqlParser\Statements\AnalyzeStatement',
-            'BACKUP' => 'PhpMyAdmin\SqlParser\Statements\BackupStatement',
-            'CHECK' => 'PhpMyAdmin\SqlParser\Statements\CheckStatement',
-            'CHECKSUM' => 'PhpMyAdmin\SqlParser\Statements\ChecksumStatement',
-            'OPTIMIZE' => 'PhpMyAdmin\SqlParser\Statements\OptimizeStatement',
-            'REPAIR' => 'PhpMyAdmin\SqlParser\Statements\RepairStatement',
-            'RESTORE' => 'PhpMyAdmin\SqlParser\Statements\RestoreStatement',
-            // Database Administration Statements
-            // https://dev.mysql.com/doc/refman/5.7/en/sql-syntax-server-administration.html
-            'SET' => 'PhpMyAdmin\SqlParser\Statements\SetStatement',
-            'SHOW' => 'PhpMyAdmin\SqlParser\Statements\ShowStatement',
-            // Data Definition Statements.
-            // https://dev.mysql.com/doc/refman/5.7/en/sql-syntax-data-definition.html
-            'ALTER' => 'PhpMyAdmin\SqlParser\Statements\AlterStatement',
-            'CREATE' => 'PhpMyAdmin\SqlParser\Statements\CreateStatement',
-            'DROP' => 'PhpMyAdmin\SqlParser\Statements\DropStatement',
-            'RENAME' => 'PhpMyAdmin\SqlParser\Statements\RenameStatement',
-            'TRUNCATE' => 'PhpMyAdmin\SqlParser\Statements\TruncateStatement',
-            // Data Manipulation Statements.
-            // https://dev.mysql.com/doc/refman/5.7/en/sql-syntax-data-manipulation.html
-            'CALL' => 'PhpMyAdmin\SqlParser\Statements\CallStatement',
-            'DELETE' => 'PhpMyAdmin\SqlParser\Statements\DeleteStatement',
-            'DO' => '',
-            'HANDLER' => '',
-            'INSERT' => 'PhpMyAdmin\SqlParser\Statements\InsertStatement',
-            'LOAD DATA' => 'PhpMyAdmin\SqlParser\Statements\LoadStatement',
-            'REPLACE' => 'PhpMyAdmin\SqlParser\Statements\ReplaceStatement',
-            'SELECT' => 'PhpMyAdmin\SqlParser\Statements\SelectStatement',
-            'UPDATE' => 'PhpMyAdmin\SqlParser\Statements\UpdateStatement',
-            // Prepared Statements.
-            // https://dev.mysql.com/doc/refman/5.7/en/sql-syntax-prepared-statements.html
-            'DEALLOCATE' => '',
-            'EXECUTE' => '',
-            'PREPARE' => '',
-            // Transactional and Locking Statements
-            // https://dev.mysql.com/doc/refman/5.7/en/commit.html
-            'BEGIN' => 'PhpMyAdmin\SqlParser\Statements\TransactionStatement',
-            'COMMIT' => 'PhpMyAdmin\SqlParser\Statements\TransactionStatement',
-            'ROLLBACK' => 'PhpMyAdmin\SqlParser\Statements\TransactionStatement',
-            'START TRANSACTION' => 'PhpMyAdmin\SqlParser\Statements\TransactionStatement',
-            'PURGE' => 'PhpMyAdmin\SqlParser\Statements\PurgeStatement',
-            // Lock statements
-            // https://dev.mysql.com/doc/refman/5.7/en/lock-tables.html
-            'LOCK' => 'PhpMyAdmin\SqlParser\Statements\LockStatement',
-            'UNLOCK' => 'PhpMyAdmin\SqlParser\Statements\LockStatement',
-        );
-        /**
-         * Array of classes that are used in parsing SQL components.
-         *
-         * @var array
-         */
-        public static $KEYWORD_PARSERS = array(
-            // This is not a proper keyword and was added here to help the
-            // formatter.
-            'PARTITION BY' => array(),
-            'SUBPARTITION BY' => array(),
-            // This is not a proper keyword and was added here to help the
-            // builder.
-            '_OPTIONS' => array('class' => 'PhpMyAdmin\SqlParser\Components\OptionsArray', 'field' => 'options'),
-            '_END_OPTIONS' => array('class' => 'PhpMyAdmin\SqlParser\Components\OptionsArray', 'field' => 'end_options'),
-            'INTERSECT' => array('class' => 'PhpMyAdmin\SqlParser\Components\UnionKeyword', 'field' => 'union'),
-            'EXCEPT' => array('class' => 'PhpMyAdmin\SqlParser\Components\UnionKeyword', 'field' => 'union'),
-            'UNION' => array('class' => 'PhpMyAdmin\SqlParser\Components\UnionKeyword', 'field' => 'union'),
-            'UNION ALL' => array('class' => 'PhpMyAdmin\SqlParser\Components\UnionKeyword', 'field' => 'union'),
-            'UNION DISTINCT' => array('class' => 'PhpMyAdmin\SqlParser\Components\UnionKeyword', 'field' => 'union'),
-            // Actual clause parsers.
-            'ALTER' => array('class' => 'PhpMyAdmin\SqlParser\Components\Expression', 'field' => 'table', 'options' => array('parseField' => 'table')),
-            'ANALYZE' => array('class' => 'PhpMyAdmin\SqlParser\Components\ExpressionArray', 'field' => 'tables', 'options' => array('parseField' => 'table')),
-            'BACKUP' => array('class' => 'PhpMyAdmin\SqlParser\Components\ExpressionArray', 'field' => 'tables', 'options' => array('parseField' => 'table')),
-            'CALL' => array('class' => 'PhpMyAdmin\SqlParser\Components\FunctionCall', 'field' => 'call'),
-            'CHECK' => array('class' => 'PhpMyAdmin\SqlParser\Components\ExpressionArray', 'field' => 'tables', 'options' => array('parseField' => 'table')),
-            'CHECKSUM' => array('class' => 'PhpMyAdmin\SqlParser\Components\ExpressionArray', 'field' => 'tables', 'options' => array('parseField' => 'table')),
-            'CROSS JOIN' => array('class' => 'PhpMyAdmin\SqlParser\Components\JoinKeyword', 'field' => 'join'),
-            'DROP' => array('class' => 'PhpMyAdmin\SqlParser\Components\ExpressionArray', 'field' => 'fields', 'options' => array('parseField' => 'table')),
-            'FORCE' => array('class' => 'PhpMyAdmin\SqlParser\Components\IndexHint', 'field' => 'index_hints'),
-            'FROM' => array('class' => 'PhpMyAdmin\SqlParser\Components\ExpressionArray', 'field' => 'from', 'options' => array('field' => 'table')),
-            'GROUP BY' => array('class' => 'PhpMyAdmin\SqlParser\Components\GroupKeyword', 'field' => 'group'),
-            'HAVING' => array('class' => 'PhpMyAdmin\SqlParser\Components\Condition', 'field' => 'having'),
-            'IGNORE' => array('class' => 'PhpMyAdmin\SqlParser\Components\IndexHint', 'field' => 'index_hints'),
-            'INTO' => array('class' => 'PhpMyAdmin\SqlParser\Components\IntoKeyword', 'field' => 'into'),
-            'JOIN' => array('class' => 'PhpMyAdmin\SqlParser\Components\JoinKeyword', 'field' => 'join'),
-            'LEFT JOIN' => array('class' => 'PhpMyAdmin\SqlParser\Components\JoinKeyword', 'field' => 'join'),
-            'LEFT OUTER JOIN' => array('class' => 'PhpMyAdmin\SqlParser\Components\JoinKeyword', 'field' => 'join'),
-            'ON' => array('class' => 'PhpMyAdmin\SqlParser\Components\Expression', 'field' => 'table', 'options' => array('parseField' => 'table')),
-            'RIGHT JOIN' => array('class' => 'PhpMyAdmin\SqlParser\Components\JoinKeyword', 'field' => 'join'),
-            'RIGHT OUTER JOIN' => array('class' => 'PhpMyAdmin\SqlParser\Components\JoinKeyword', 'field' => 'join'),
-            'INNER JOIN' => array('class' => 'PhpMyAdmin\SqlParser\Components\JoinKeyword', 'field' => 'join'),
-            'FULL JOIN' => array('class' => 'PhpMyAdmin\SqlParser\Components\JoinKeyword', 'field' => 'join'),
-            'FULL OUTER JOIN' => array('class' => 'PhpMyAdmin\SqlParser\Components\JoinKeyword', 'field' => 'join'),
-            'NATURAL JOIN' => array('class' => 'PhpMyAdmin\SqlParser\Components\JoinKeyword', 'field' => 'join'),
-            'NATURAL LEFT JOIN' => array('class' => 'PhpMyAdmin\SqlParser\Components\JoinKeyword', 'field' => 'join'),
-            'NATURAL RIGHT JOIN' => array('class' => 'PhpMyAdmin\SqlParser\Components\JoinKeyword', 'field' => 'join'),
-            'NATURAL LEFT OUTER JOIN' => array('class' => 'PhpMyAdmin\SqlParser\Components\JoinKeyword', 'field' => 'join'),
-            'NATURAL RIGHT OUTER JOIN' => array('class' => 'PhpMyAdmin\SqlParser\Components\JoinKeyword', 'field' => 'join'),
-            'STRAIGHT_JOIN' => array('class' => 'PhpMyAdmin\SqlParser\Components\JoinKeyword', 'field' => 'join'),
-            'LIMIT' => array('class' => 'PhpMyAdmin\SqlParser\Components\Limit', 'field' => 'limit'),
-            'OPTIMIZE' => array('class' => 'PhpMyAdmin\SqlParser\Components\ExpressionArray', 'field' => 'tables', 'options' => array('parseField' => 'table')),
-            'ORDER BY' => array('class' => 'PhpMyAdmin\SqlParser\Components\OrderKeyword', 'field' => 'order'),
-            'PARTITION' => array('class' => 'PhpMyAdmin\SqlParser\Components\ArrayObj', 'field' => 'partition'),
-            'PROCEDURE' => array('class' => 'PhpMyAdmin\SqlParser\Components\FunctionCall', 'field' => 'procedure'),
-            'RENAME' => array('class' => 'PhpMyAdmin\SqlParser\Components\RenameOperation', 'field' => 'renames'),
-            'REPAIR' => array('class' => 'PhpMyAdmin\SqlParser\Components\ExpressionArray', 'field' => 'tables', 'options' => array('parseField' => 'table')),
-            'RESTORE' => array('class' => 'PhpMyAdmin\SqlParser\Components\ExpressionArray', 'field' => 'tables', 'options' => array('parseField' => 'table')),
-            'SET' => array('class' => 'PhpMyAdmin\SqlParser\Components\SetOperation', 'field' => 'set'),
-            'SELECT' => array('class' => 'PhpMyAdmin\SqlParser\Components\ExpressionArray', 'field' => 'expr'),
-            'TRUNCATE' => array('class' => 'PhpMyAdmin\SqlParser\Components\Expression', 'field' => 'table', 'options' => array('parseField' => 'table')),
-            'UPDATE' => array('class' => 'PhpMyAdmin\SqlParser\Components\ExpressionArray', 'field' => 'tables', 'options' => array('parseField' => 'table')),
-            'USE' => array('class' => 'PhpMyAdmin\SqlParser\Components\IndexHint', 'field' => 'index_hints'),
-            'VALUE' => array('class' => 'PhpMyAdmin\SqlParser\Components\Array2d', 'field' => 'values'),
-            'VALUES' => array('class' => 'PhpMyAdmin\SqlParser\Components\Array2d', 'field' => 'values'),
-            'WHERE' => array('class' => 'PhpMyAdmin\SqlParser\Components\Condition', 'field' => 'where'),
-        );
-        /**
-         * The list of tokens that are parsed.
-         *
-         * @var \PhpMyAdmin\SqlParser\TokensList
-         */
-        public $list;
-        /**
-         * List of statements parsed.
-         *
-         * @var \PhpMyAdmin\SqlParser\Statement[]
-         */
-        public $statements = array();
-        /**
-         * The number of opened brackets.
-         *
-         * @var int
-         */
-        public $brackets = 0;
-        /**
-         * Constructor.
-         *
-         * @param string|\PhpMyAdmin\SqlParser\UtfString|\PhpMyAdmin\SqlParser\TokensList $list   the list of tokens to be parsed
-         * @param bool                        $strict whether strict mode should be enabled or not
-         */
-        public function __construct($list = null, $strict = false)
-        {
-        }
-        /**
-         * Builds the parse trees.
-         * @throws \PhpMyAdmin\SqlParser\Exceptions\ParserException
-         */
-        public function parse()
-        {
-        }
-        /**
-         * Creates a new error log.
-         *
-         * @param string $msg   the error message
-         * @param \PhpMyAdmin\SqlParser\Token  $token the token that produced the error
-         * @param int    $code  the code of the error
-         *
-         * @throws \PhpMyAdmin\SqlParser\Exceptions\ParserException throws the exception, if strict mode is enabled
-         */
-        public function error($msg, \PhpMyAdmin\SqlParser\Token $token = null, $code = 0)
-        {
-        }
-    }
-    /**
-     * Abstract statement definition.
-     *
-     * @category Statements
-     *
-     * @license  https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    abstract class Statement
-    {
-        /**
-         * Options for this statement.
-         *
-         * The option would be the key and the value can be an integer or an array.
-         *
-         * The integer represents only the index used.
-         *
-         * The array may have two keys: `0` is used to represent the index used and
-         * `1` is the type of the option (which may be 'var' or 'var='). Both
-         * options mean they expect a value after the option (e.g. `A = B` or `A B`,
-         * in which case `A` is the key and `B` is the value). The only difference
-         * is in the building process. `var` options are built as `A B` and  `var=`
-         * options are built as `A = B`
-         *
-         * Two options that can be used together must have different values for
-         * indexes, else, when they will be used together, an error will occur.
-         *
-         * @var array
-         */
-        public static $OPTIONS = array();
-        /**
-         * The clauses of this statement, in order.
-         *
-         * The value attributed to each clause is used by the builder and it may
-         * have one of the following values:
-         *
-         *     - 1 = 01 - add the clause only
-         *     - 2 = 10 - add the keyword
-         *     - 3 = 11 - add both the keyword and the clause
-         *
-         * @var array
-         */
-        public static $CLAUSES = array();
-        public static $END_OPTIONS = array();
-        /**
-         * The options of this query.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\OptionsArray
-         *
-         * @see static::$OPTIONS
-         */
-        public $options;
-        /**
-         * The index of the first token used in this statement.
-         *
-         * @var int
-         */
-        public $first;
-        /**
-         * The index of the last token used in this statement.
-         *
-         * @var int
-         */
-        public $last;
-        /**
-         * Constructor.
-         *
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser the instance that requests parsing
-         * @param \PhpMyAdmin\SqlParser\TokensList $list   the list of tokens to be parsed
-         */
-        public function __construct(\PhpMyAdmin\SqlParser\Parser $parser = null, \PhpMyAdmin\SqlParser\TokensList $list = null)
-        {
-        }
-        /**
-         * Builds the string representation of this statement.
-         *
-         * @return string
-         */
-        public function build()
-        {
-        }
-        /**
-         * Parses the statements defined by the tokens list.
-         *
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser the instance that requests parsing
-         * @param \PhpMyAdmin\SqlParser\TokensList $list   the list of tokens to be parsed
-         * @throws \Exceptions\ParserException
-         */
-        public function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list)
-        {
-        }
-        /**
-         * Function called before the token is processed.
-         *
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser the instance that requests parsing
-         * @param \PhpMyAdmin\SqlParser\TokensList $list   the list of tokens to be parsed
-         * @param \PhpMyAdmin\SqlParser\Token      $token  the token that is being parsed
-         */
-        public function before(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list, \PhpMyAdmin\SqlParser\Token $token)
-        {
-        }
-        /**
-         * Function called after the token was processed.
-         *
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser the instance that requests parsing
-         * @param \PhpMyAdmin\SqlParser\TokensList $list   the list of tokens to be parsed
-         * @param \PhpMyAdmin\SqlParser\Token      $token  the token that is being parsed
-         */
-        public function after(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list, \PhpMyAdmin\SqlParser\Token $token)
-        {
-        }
-        /**
-         * Gets the clauses of this statement.
-         *
-         * @return array
-         */
-        public function getClauses()
-        {
-        }
-        /**
-         * Builds the string representation of this statement.
-         *
-         * @see static::build
-         *
-         * @return string
-         */
-        public function __toString()
-        {
-        }
-        /**
-         * Validates the order of the clauses in parsed statement
-         * Ideally this should be called after successfully
-         * completing the parsing of each statement.
-         *
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser the instance that requests parsing
-         * @param \PhpMyAdmin\SqlParser\TokensList $list   the list of tokens to be parsed
-         *
-         * @return bool
-         * @throws \Exceptions\ParserException
-         */
-        public function validateClauseOrder($parser, $list)
-        {
-        }
-    }
-}
-namespace PhpMyAdmin\SqlParser\Statements {
-    /**
-     * `ALTER` statement.
-     *
-     * @category   Statements
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class AlterStatement extends \PhpMyAdmin\SqlParser\Statement
-    {
-        /**
-         * Table affected.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression
-         */
-        public $table;
-        /**
-         * Column affected by this statement.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\AlterOperation[]
-         */
-        public $altered = array();
-        /**
-         * Options of this statement.
-         *
-         * @var array
-         */
-        public static $OPTIONS = array('ONLINE' => 1, 'OFFLINE' => 1, 'IGNORE' => 2, 'DATABASE' => 3, 'EVENT' => 3, 'FUNCTION' => 3, 'PROCEDURE' => 3, 'SERVER' => 3, 'TABLE' => 3, 'TABLESPACE' => 3, 'USER' => 3, 'VIEW' => 3);
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser the instance that requests parsing
-         * @param \PhpMyAdmin\SqlParser\TokensList $list   the list of tokens to be parsed
-         */
-        public function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list)
-        {
-        }
-        /**
-         * @return string
-         */
-        public function build()
-        {
-        }
-    }
-    /**
-     * `ANALYZE` statement.
-     *
-     * ANALYZE array(NO_WRITE_TO_BINLOG | LOCAL] TABLE
-     *  tbl_name array(, tbl_name] ...
-     *
-     * @category   Statements
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class AnalyzeStatement extends \PhpMyAdmin\SqlParser\Statement
-    {
-        /**
-         * Options of this statement.
-         *
-         * @var array
-         */
-        public static $OPTIONS = array('TABLE' => 1, 'NO_WRITE_TO_BINLOG' => 2, 'LOCAL' => 3);
-        /**
-         * Analyzed tables.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression[]
-         */
-        public $tables;
-    }
-    /**
-     * Maintenance statement.
-     *
-     * They follow the syntax:
-     *     STMT [some options] tbl_name [, tbl_name] ... [some more options]
-     *
-     * @category   Statements
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class MaintenanceStatement extends \PhpMyAdmin\SqlParser\Statement
-    {
-        /**
-         * Tables maintained.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression[]
-         */
-        public $tables;
-        /**
-         * Function called after the token was processed.
-         *
-         * Parses the additional options from the end.
-         *
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser the instance that requests parsing
-         * @param \PhpMyAdmin\SqlParser\TokensList $list   the list of tokens to be parsed
-         * @param \PhpMyAdmin\SqlParser\Token      $token  the token that is being parsed
-         */
-        public function after(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list, \PhpMyAdmin\SqlParser\Token $token)
-        {
-        }
-    }
-    /**
-     * `BACKUP` statement.
-     *
-     * BACKUP TABLE tbl_name array(, tbl_name] ... TO '/path/to/backup/directory'
-     *
-     * @category   Statements
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class BackupStatement extends \PhpMyAdmin\SqlParser\Statements\MaintenanceStatement
-    {
-        /**
-         * Options of this statement.
-         *
-         * @var array
-         */
-        public static $OPTIONS = array('TABLE' => 1, 'NO_WRITE_TO_BINLOG' => 2, 'LOCAL' => 3, 'TO' => array(4, 'var'));
-    }
-    /**
-     * `CALL` statement.
-     *
-     * CALL sp_name([parameter[,...]])
-     *
-     * or
-     *
-     * CALL sp_name[()]
-     *
-     * @category   Statements
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class CallStatement extends \PhpMyAdmin\SqlParser\Statement
-    {
-        /**
-         * The name of the function and its parameters.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\FunctionCall
-         */
-        public $call;
-        /**
-         * Build statement for CALL.
-         *
-         * @return string
-         */
-        public function build()
-        {
-        }
-    }
-    /**
-     * `CHECK` statement.
-     *
-     * CHECK TABLE tbl_name array(, tbl_name] ... array(option] ...
-     *
-     * @category   Statements
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class CheckStatement extends \PhpMyAdmin\SqlParser\Statements\MaintenanceStatement
-    {
-        /**
-         * Options of this statement.
-         *
-         * @var array
-         */
-        public static $OPTIONS = array('TABLE' => 1, 'FOR UPGRADE' => 2, 'QUICK' => 3, 'FAST' => 4, 'MEDIUM' => 5, 'EXTENDED' => 6, 'CHANGED' => 7);
-    }
-    /**
-     * `CHECKSUM` statement.
-     *
-     * CHECKSUM TABLE tbl_name array(, tbl_name] ... array( QUICK | EXTENDED ]
-     *
-     * @category   Statements
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class ChecksumStatement extends \PhpMyAdmin\SqlParser\Statements\MaintenanceStatement
-    {
-        /**
-         * Options of this statement.
-         *
-         * @var array
-         */
-        public static $OPTIONS = array('TABLE' => 1, 'QUICK' => 2, 'EXTENDED' => 3);
-    }
-    /**
-     * `CREATE` statement.
-     *
-     * @category   Statements
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class CreateStatement extends \PhpMyAdmin\SqlParser\Statement
-    {
-        /**
-         * Options for `CREATE` statements.
-         *
-         * @var array
-         */
-        public static $OPTIONS = array(
-            // CREATE TABLE
-            'TEMPORARY' => 1,
-            // CREATE VIEW
-            'OR REPLACE' => 2,
-            'ALGORITHM' => array(3, 'var='),
-            // `DEFINER` is also used for `CREATE FUNCTION / PROCEDURE`
-            'DEFINER' => array(4, 'expr='),
-            // Used in `CREATE VIEW`
-            'SQL SECURITY' => array(5, 'var'),
-            'DATABASE' => 6,
-            'EVENT' => 6,
-            'FUNCTION' => 6,
-            'INDEX' => 6,
-            'UNIQUE INDEX' => 6,
-            'FULLTEXT INDEX' => 6,
-            'SPATIAL INDEX' => 6,
-            'PROCEDURE' => 6,
-            'SERVER' => 6,
-            'TABLE' => 6,
-            'TABLESPACE' => 6,
-            'TRIGGER' => 6,
-            'USER' => 6,
-            'VIEW' => 6,
-            'SCHEMA' => 6,
-            // CREATE TABLE
-            'IF NOT EXISTS' => 7,
-        );
-        /**
-         * All database options.
-         *
-         * @var array
-         */
-        public static $DB_OPTIONS = array('CHARACTER SET' => array(1, 'var='), 'CHARSET' => array(1, 'var='), 'DEFAULT CHARACTER SET' => array(1, 'var='), 'DEFAULT CHARSET' => array(1, 'var='), 'DEFAULT COLLATE' => array(2, 'var='), 'COLLATE' => array(2, 'var='));
-        /**
-         * All table options.
-         *
-         * @var array
-         */
-        public static $TABLE_OPTIONS = array('ENGINE' => array(1, 'var='), 'AUTO_INCREMENT' => array(2, 'var='), 'AVG_ROW_LENGTH' => array(3, 'var'), 'CHARACTER SET' => array(4, 'var='), 'CHARSET' => array(4, 'var='), 'DEFAULT CHARACTER SET' => array(4, 'var='), 'DEFAULT CHARSET' => array(4, 'var='), 'CHECKSUM' => array(5, 'var'), 'DEFAULT COLLATE' => array(6, 'var='), 'COLLATE' => array(6, 'var='), 'COMMENT' => array(7, 'var='), 'CONNECTION' => array(8, 'var'), 'DATA DIRECTORY' => array(9, 'var'), 'DELAY_KEY_WRITE' => array(10, 'var'), 'INDEX DIRECTORY' => array(11, 'var'), 'INSERT_METHOD' => array(12, 'var'), 'KEY_BLOCK_SIZE' => array(13, 'var'), 'MAX_ROWS' => array(14, 'var'), 'MIN_ROWS' => array(15, 'var'), 'PACK_KEYS' => array(16, 'var'), 'PASSWORD' => array(17, 'var'), 'ROW_FORMAT' => array(18, 'var'), 'TABLESPACE' => array(19, 'var'), 'STORAGE' => array(20, 'var'), 'UNION' => array(21, 'var'));
-        /**
-         * All function options.
-         *
-         * @var array
-         */
-        public static $FUNC_OPTIONS = array('NOT' => array(2, 'var'), 'FUNCTION' => array(3, 'var='), 'PROCEDURE' => array(3, 'var='), 'CONTAINS' => array(4, 'expr'), 'NO' => array(4, 'var'), 'READS' => array(4, 'var'), 'MODIFIES' => array(4, 'expr'), 'SQL SECURITY' => array(6, 'var'), 'LANGUAGE' => array(7, 'var'), 'COMMENT' => array(8, 'var'), 'CREATE' => 1, 'DETERMINISTIC' => 2, 'DATA' => 5);
-        /**
-         * All trigger options.
-         *
-         * @var array
-         */
-        public static $TRIGGER_OPTIONS = array('BEFORE' => 1, 'AFTER' => 1, 'INSERT' => 2, 'UPDATE' => 2, 'DELETE' => 2);
-        /**
-         * The name of the entity that is created.
-         *
-         * Used by all `CREATE` statements.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression
-         */
-        public $name;
-        /**
-         * The options of the entity (table, procedure, function, etc.).
-         *
-         * Used by `CREATE TABLE`, `CREATE FUNCTION` and `CREATE PROCEDURE`.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\OptionsArray
-         *
-         * @see static::$TABLE_OPTIONS
-         * @see static::$FUNC_OPTIONS
-         * @see static::$TRIGGER_OPTIONS
-         */
-        public $entityOptions;
-        /**
-         * If `CREATE TABLE`, a list of columns and keys.
-         * If `CREATE VIEW`, a list of columns.
-         *
-         * Used by `CREATE TABLE` and `CREATE VIEW`.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\CreateDefinition[]|\PhpMyAdmin\SqlParser\Components\ArrayObj
-         */
-        public $fields;
-        /**
-         * If `CREATE TABLE ... SELECT`.
-         * If `CREATE VIEW AS ` ... SELECT`.
-         *
-         * Used by `CREATE TABLE`, `CREATE VIEW`
-         *
-         * @var \PhpMyAdmin\SqlParser\Statements\SelectStatement|null
-         */
-        public $select;
-        /**
-         * If `CREATE TABLE ... LIKE`.
-         *
-         * Used by `CREATE TABLE`
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression
-         */
-        public $like;
-        /**
-         * Expression used for partitioning.
-         *
-         * @var string
-         */
-        public $partitionBy;
-        /**
-         * The number of partitions.
-         *
-         * @var int
-         */
-        public $partitionsNum;
-        /**
-         * Expression used for subpartitioning.
-         *
-         * @var string
-         */
-        public $subpartitionBy;
-        /**
-         * The number of subpartitions.
-         *
-         * @var int
-         */
-        public $subpartitionsNum;
-        /**
-         * The partition of the new table.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\PartitionDefinition[]
-         */
-        public $partitions;
-        /**
-         * If `CREATE TRIGGER` the name of the table.
-         *
-         * Used by `CREATE TRIGGER`.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression
-         */
-        public $table;
-        /**
-         * The return data type of this routine.
-         *
-         * Used by `CREATE FUNCTION`.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\DataType
-         */
-        public $return;
-        /**
-         * The parameters of this routine.
-         *
-         * Used by `CREATE FUNCTION` and `CREATE PROCEDURE`.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\ParameterDefinition[]
-         */
-        public $parameters;
-        /**
-         * The body of this function or procedure.
-         * For views, it is the select statement that creates the view.
-         * Used by `CREATE FUNCTION`, `CREATE PROCEDURE` and `CREATE VIEW`.
-         *
-         * @var \PhpMyAdmin\SqlParser\Token[]|string
-         */
-        public $body = array();
-        /**
-         * @return string
-         */
-        public function build()
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser the instance that requests parsing
-         * @param \PhpMyAdmin\SqlParser\TokensList $list   the list of tokens to be parsed
-         */
-        public function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list)
-        {
-        }
-    }
-    /**
-     * `DELETE` statement.
-     *
-     * DELETE [LOW_PRIORITY] [QUICK] [IGNORE] FROM tbl_name
-     *     [PARTITION (partition_name,...)]
-     *     [WHERE where_condition]
-     *     [ORDER BY ...]
-     *     [LIMIT row_count]
-     *
-     * Multi-table syntax
-     *
-     * DELETE [LOW_PRIORITY] [QUICK] [IGNORE]
-     *   tbl_name[.*] [, tbl_name[.*]] ...
-     *   FROM table_references
-     *   [WHERE where_condition]
-     *
-     * OR
-     *
-     * DELETE [LOW_PRIORITY] [QUICK] [IGNORE]
-     *   FROM tbl_name[.*] [, tbl_name[.*]] ...
-     *   USING table_references
-     *   [WHERE where_condition]
-     *
-     *
-     * @category   Statements
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class DeleteStatement extends \PhpMyAdmin\SqlParser\Statement
-    {
-        /**
-         * Options for `DELETE` statements.
-         *
-         * @var array
-         */
-        public static $OPTIONS = array('LOW_PRIORITY' => 1, 'QUICK' => 2, 'IGNORE' => 3);
-        /**
-         * The clauses of this statement, in order.
-         *
-         * @see Statement::$CLAUSES
-         *
-         * @var array
-         */
-        public static $CLAUSES = array(
-            'DELETE' => array('DELETE', 2),
-            // Used for options.
-            '_OPTIONS' => array('_OPTIONS', 1),
-            'FROM' => array('FROM', 3),
-            'PARTITION' => array('PARTITION', 3),
-            'USING' => array('USING', 3),
-            'WHERE' => array('WHERE', 3),
-            'ORDER BY' => array('ORDER BY', 3),
-            'LIMIT' => array('LIMIT', 3),
-        );
-        /**
-         * Table(s) used as sources for this statement.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression[]
-         */
-        public $from;
-        /**
-         * Joins.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\JoinKeyword[]
-         */
-        public $join;
-        /**
-         * Tables used as sources for this statement.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression[]
-         */
-        public $using;
-        /**
-         * Columns used in this statement.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression[]
-         */
-        public $columns;
-        /**
-         * Partitions used as source for this statement.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\ArrayObj
-         */
-        public $partition;
-        /**
-         * Conditions used for filtering each row of the result set.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Condition[]
-         */
-        public $where;
-        /**
-         * Specifies the order of the rows in the result set.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\OrderKeyword[]
-         */
-        public $order;
-        /**
-         * Conditions used for limiting the size of the result set.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Limit
-         */
-        public $limit;
-        /**
-         * @return string
-         */
-        public function build()
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser the instance that requests parsing
-         * @param \PhpMyAdmin\SqlParser\TokensList $list   the list of tokens to be parsed
-         */
-        public function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list)
-        {
-        }
-    }
-    /**
-     * `DROP` statement.
-     *
-     * @category   Statements
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class DropStatement extends \PhpMyAdmin\SqlParser\Statement
-    {
-        /**
-         * Options of this statement.
-         *
-         * @var array
-         */
-        public static $OPTIONS = array('DATABASE' => 1, 'EVENT' => 1, 'FUNCTION' => 1, 'INDEX' => 1, 'LOGFILE' => 1, 'PROCEDURE' => 1, 'SCHEMA' => 1, 'SERVER' => 1, 'TABLE' => 1, 'VIEW' => 1, 'TABLESPACE' => 1, 'TRIGGER' => 1, 'USER' => 1, 'TEMPORARY' => 2, 'IF EXISTS' => 3);
-        /**
-         * The clauses of this statement, in order.
-         *
-         * @see Statement::$CLAUSES
-         *
-         * @var array
-         */
-        public static $CLAUSES = array(
-            'DROP' => array('DROP', 2),
-            // Used for options.
-            '_OPTIONS' => array('_OPTIONS', 1),
-            // Used for select expressions.
-            'DROP_' => array('DROP', 1),
-            'ON' => array('ON', 3),
-        );
-        /**
-         * Dropped elements.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression[]
-         */
-        public $fields;
-        /**
-         * Table of the dropped index.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression
-         */
-        public $table;
-    }
-    /**
-     * Not implemented (yet) statements.
-     *
-     * The `after` function makes the parser jump straight to the first delimiter.
-     *
-     * @category   Statements
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class NotImplementedStatement extends \PhpMyAdmin\SqlParser\Statement
-    {
-        /**
-         * The part of the statement that can't be parsed.
-         *
-         * @var \PhpMyAdmin\SqlParser\Token[]
-         */
-        public $unknown = array();
-        /**
-         * @return string
-         */
-        public function build()
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser the instance that requests parsing
-         * @param \PhpMyAdmin\SqlParser\TokensList $list   the list of tokens to be parsed
-         */
-        public function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list)
-        {
-        }
-    }
-    /**
-     * `EXPLAIN` statement.
-     *
-     * @category   Statements
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class ExplainStatement extends \PhpMyAdmin\SqlParser\Statements\NotImplementedStatement
-    {
-    }
-    /**
-     * `INSERT` statement.
-     *
-     * INSERT [LOW_PRIORITY | DELAYED | HIGH_PRIORITY] [IGNORE]
-     *     [INTO] tbl_name
-     *     [PARTITION (partition_name,...)]
-     *     [(col_name,...)]
-     *     {VALUES | VALUE} ({expr | DEFAULT},...),(...),...
-     *     [ ON DUPLICATE KEY UPDATE
-     *       col_name=expr
-     *         [, col_name=expr] ... ]
-     *
-     * or
-     *
-     * INSERT [LOW_PRIORITY | DELAYED | HIGH_PRIORITY] [IGNORE]
-     *     [INTO] tbl_name
-     *     [PARTITION (partition_name,...)]
-     *     SET col_name={expr | DEFAULT}, ...
-     *     [ ON DUPLICATE KEY UPDATE
-     *       col_name=expr
-     *         [, col_name=expr] ... ]
-     *
-     * or
-     *
-     * INSERT [LOW_PRIORITY | HIGH_PRIORITY] [IGNORE]
-     *     [INTO] tbl_name
-     *     [PARTITION (partition_name,...)]
-     *     [(col_name,...)]
-     *     SELECT ...
-     *     [ ON DUPLICATE KEY UPDATE
-     *       col_name=expr
-     *         [, col_name=expr] ... ]
-     *
-     * @category   Statements
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class InsertStatement extends \PhpMyAdmin\SqlParser\Statement
-    {
-        /**
-         * Options for `INSERT` statements.
-         *
-         * @var array
-         */
-        public static $OPTIONS = array('LOW_PRIORITY' => 1, 'DELAYED' => 2, 'HIGH_PRIORITY' => 3, 'IGNORE' => 4);
-        /**
-         * Tables used as target for this statement.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\IntoKeyword
-         */
-        public $into;
-        /**
-         * Values to be inserted.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\ArrayObj[]|null
-         */
-        public $values;
-        /**
-         * If SET clause is present
-         * holds the SetOperation.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\SetOperation[]
-         */
-        public $set;
-        /**
-         * If SELECT clause is present
-         * holds the SelectStatement.
-         *
-         * @var \PhpMyAdmin\SqlParser\Statements\SelectStatement
-         */
-        public $select;
-        /**
-         * If ON DUPLICATE KEY UPDATE clause is present
-         * holds the SetOperation.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\SetOperation[]
-         */
-        public $onDuplicateSet;
-        /**
-         * @return string
-         */
-        public function build()
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser the instance that requests parsing
-         * @param \PhpMyAdmin\SqlParser\TokensList $list   the list of tokens to be parsed
-         */
-        public function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list)
-        {
-        }
-    }
-    /**
-     * `LOAD` statement.
-     *
-     * LOAD DATA [LOW_PRIORITY | CONCURRENT] [LOCAL] INFILE 'file_name'
-     *   [REPLACE | IGNORE]
-     *   INTO TABLE tbl_name
-     *   [PARTITION (partition_name,...)]
-     *   [CHARACTER SET charset_name]
-     *   [{FIELDS | COLUMNS}
-     *       [TERMINATED BY 'string']
-     *       [[OPTIONALLY] ENCLOSED BY 'char']
-     *       [ESCAPED BY 'char']
-     *   ]
-     *   [LINES
-     *       [STARTING BY 'string']
-     *       [TERMINATED BY 'string']
-     *  ]
-     *   [IGNORE number {LINES | ROWS}]
-     *   [(col_name_or_user_var,...)]
-     *   [SET col_name = expr,...]
-     *
-     *
-     * @category   Statements
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class LoadStatement extends \PhpMyAdmin\SqlParser\Statement
-    {
-        /**
-         * Options for `LOAD` statements and their slot ID.
-         *
-         * @var array
-         */
-        public static $OPTIONS = array('LOW_PRIORITY' => 1, 'CONCURRENT' => 1, 'LOCAL' => 2);
-        /**
-         * FIELDS/COLUMNS Options for `LOAD DATA...INFILE` statements.
-         *
-         * @var array
-         */
-        public static $FIELDS_OPTIONS = array('TERMINATED BY' => array(1, 'expr'), 'OPTIONALLY' => 2, 'ENCLOSED BY' => array(3, 'expr'), 'ESCAPED BY' => array(4, 'expr'));
-        /**
-         * LINES Options for `LOAD DATA...INFILE` statements.
-         *
-         * @var array
-         */
-        public static $LINES_OPTIONS = array('STARTING BY' => array(1, 'expr'), 'TERMINATED BY' => array(2, 'expr'));
-        /**
-         * File name being used to load data.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression
-         */
-        public $file_name;
-        /**
-         * Table used as destination for this statement.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression
-         */
-        public $table;
-        /**
-         * Partitions used as source for this statement.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\ArrayObj
-         */
-        public $partition;
-        /**
-         * Character set used in this statement.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression
-         */
-        public $charset_name;
-        /**
-         * Options for FIELDS/COLUMNS keyword.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\OptionsArray
-         *
-         * @see static::$FIELDS_OPTIONS
-         */
-        public $fields_options;
-        /**
-         * Whether to use `FIELDS` or `COLUMNS` while building.
-         *
-         * @var string
-         */
-        public $fields_keyword;
-        /**
-         * Options for OPTIONS keyword.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\OptionsArray
-         *
-         * @see static::$LINES_OPTIONS
-         */
-        public $lines_options;
-        /**
-         * Column names or user variables.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression[]
-         */
-        public $col_name_or_user_var;
-        /**
-         * SET clause's updated values(optional).
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\SetOperation[]
-         */
-        public $set;
-        /**
-         * Ignore 'number' LINES/ROWS.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression
-         */
-        public $ignore_number;
-        /**
-         * REPLACE/IGNORE Keyword.
-         *
-         * @var string
-         */
-        public $replace_ignore;
-        /**
-         * LINES/ROWS Keyword.
-         *
-         * @var string
-         */
-        public $lines_rows;
-        /**
-         * @return string
-         */
-        public function build()
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser the instance that requests parsing
-         * @param \PhpMyAdmin\SqlParser\TokensList $list   the list of tokens to be parsed
-         */
-        public function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list)
-        {
-        }
-        public function parseFileOptions(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list, $keyword = 'FIELDS')
-        {
-        }
-        public function parseKeywordsAccordingToState($parser, $list, $state)
-        {
-        }
-    }
-    /**
-     * `LOCK` statement.
-     *
-     * @category   Statements
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class LockStatement extends \PhpMyAdmin\SqlParser\Statement
-    {
-        /**
-         * Tables with their Lock expressions.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\LockExpression[]
-         */
-        public $locked = array();
-        /**
-         * Whether it's a LOCK statement
-         * if false, it's an UNLOCK statement
-         */
-        public $isLock = true;
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser the instance that requests parsing
-         * @param \PhpMyAdmin\SqlParser\TokensList $list   the list of tokens to be parsed
-         */
-        public function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list)
-        {
-        }
-        /**
-         * @return string
-         */
-        public function build()
-        {
-        }
-    }
-    /**
-     * `OPTIMIZE` statement.
-     *
-     * OPTIMIZE [NO_WRITE_TO_BINLOG | LOCAL] TABLE
-     *  tbl_name [, tbl_name] ...
-     *
-     * @category   Statements
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class OptimizeStatement extends \PhpMyAdmin\SqlParser\Statement
-    {
-        /**
-         * Options of this statement.
-         *
-         * @var array
-         */
-        public static $OPTIONS = array('TABLE' => 1, 'NO_WRITE_TO_BINLOG' => 2, 'LOCAL' => 3);
-        /**
-         * Optimized tables.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression[]
-         */
-        public $tables;
-    }
-    /**
-     * `PURGE` statement.
-     *
-     * PURGE { BINARY | MASTER } LOGS
-     *   { TO 'log_name' | BEFORE datetime_expr }
-     *
-     * @category   Statements
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class PurgeStatement extends \PhpMyAdmin\SqlParser\Statement
-    {
-        /**
-         * The type of logs
-         *
-         * @var String
-         */
-        public $log_type;
-        /**
-         * The end option of this query.
-         *
-         * @var String
-         */
-        public $end_option;
-        /**
-         * The end expr of this query.
-         *
-         * @var String
-         */
-        public $end_expr;
-        /**
-         * @return string
-         */
-        public function build()
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser the instance that requests parsing
-         * @param \PhpMyAdmin\SqlParser\TokensList $list   the list of tokens to be parsed
-         */
-        public function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list)
-        {
-        }
-    }
-    /**
-     * `RENAME` statement.
-     *
-     * RENAME TABLE tbl_name TO new_tbl_name
-     *  [, tbl_name2 TO new_tbl_name2] ...
-     *
-     * @category   Statements
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class RenameStatement extends \PhpMyAdmin\SqlParser\Statement
-    {
-        /**
-         * The old and new names of the tables.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\RenameOperation[]
-         */
-        public $renames;
-        /**
-         * Function called before the token is processed.
-         *
-         * Skips the `TABLE` keyword after `RENAME`.
-         *
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser the instance that requests parsing
-         * @param \PhpMyAdmin\SqlParser\TokensList $list   the list of tokens to be parsed
-         * @param \PhpMyAdmin\SqlParser\Token      $token  the token that is being parsed
-         */
-        public function before(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list, \PhpMyAdmin\SqlParser\Token $token)
-        {
-        }
-        /**
-         * @return string
-         */
-        public function build()
-        {
-        }
-    }
-    /**
-     * `REPAIR` statement.
-     *
-     * REPAIR [NO_WRITE_TO_BINLOG | LOCAL] TABLE
-     *  tbl_name [, tbl_name] ...
-     *  [QUICK] [EXTENDED] [USE_FRM]
-     *
-     * @category   Statements
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class RepairStatement extends \PhpMyAdmin\SqlParser\Statements\MaintenanceStatement
-    {
-        /**
-         * Options of this statement.
-         *
-         * @var array
-         */
-        public static $OPTIONS = array('TABLE' => 1, 'NO_WRITE_TO_BINLOG' => 2, 'LOCAL' => 3, 'QUICK' => 4, 'EXTENDED' => 5, 'USE_FRM' => 6);
-    }
-    /**
-     * `REPLACE` statement.
-     *
-     * REPLACE [LOW_PRIORITY | DELAYED]
-     *     [INTO] tbl_name [(col_name,...)]
-     *     {VALUES | VALUE} ({expr | DEFAULT},...),(...),...
-     *
-     * or
-     *
-     * REPLACE [LOW_PRIORITY | DELAYED]
-     *     [INTO] tbl_name
-     *     SET col_name={expr | DEFAULT}, ...
-     *
-     * or
-     *
-     * REPLACE [LOW_PRIORITY | DELAYED]
-     *   [INTO] tbl_name
-     *   [PARTITION (partition_name,...)]
-     *   [(col_name,...)]
-     *   SELECT ...
-     *
-     * @category   Statements
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class ReplaceStatement extends \PhpMyAdmin\SqlParser\Statement
-    {
-        /**
-         * Options for `REPLACE` statements and their slot ID.
-         *
-         * @var array
-         */
-        public static $OPTIONS = array('LOW_PRIORITY' => 1, 'DELAYED' => 1);
-        /**
-         * Tables used as target for this statement.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\IntoKeyword
-         */
-        public $into;
-        /**
-         * Values to be replaced.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Array2d
-         */
-        public $values;
-        /**
-         * If SET clause is present
-         * holds the SetOperation.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\SetOperation[]
-         */
-        public $set;
-        /**
-         * If SELECT clause is present
-         * holds the SelectStatement.
-         *
-         * @var \PhpMyAdmin\SqlParser\Statements\SelectStatement
-         */
-        public $select;
-        /**
-         * @return string
-         */
-        public function build()
-        {
-        }
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser the instance that requests parsing
-         * @param \PhpMyAdmin\SqlParser\TokensList $list   the list of tokens to be parsed
-         */
-        public function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list)
-        {
-        }
-    }
-    /**
-     * `RESTORE` statement.
-     *
-     * RESTORE TABLE tbl_name [, tbl_name] ... FROM '/path/to/backup/directory'
-     *
-     * @category   Statements
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class RestoreStatement extends \PhpMyAdmin\SqlParser\Statements\MaintenanceStatement
-    {
-        /**
-         * Options of this statement.
-         *
-         * @var array
-         */
-        public static $OPTIONS = array('TABLE' => 1, 'FROM' => array(2, 'var'));
-    }
-    /**
-     * `SELECT` statement.
-     *
-     * SELECT
-     *     [ALL | DISTINCT | DISTINCTROW ]
-     *       [HIGH_PRIORITY]
-     *       [MAX_STATEMENT_TIME = N]
-     *       [STRAIGHT_JOIN]
-     *       [SQL_SMALL_RESULT] [SQL_BIG_RESULT] [SQL_BUFFER_RESULT]
-     *       [SQL_CACHE | SQL_NO_CACHE] [SQL_CALC_FOUND_ROWS]
-     *     select_expr [, select_expr ...]
-     *     [FROM table_references
-     *       [PARTITION partition_list]
-     *     [WHERE where_condition]
-     *     [GROUP BY {col_name | expr | position}
-     *       [ASC | DESC), ... [WITH ROLLUP]]
-     *     [HAVING where_condition]
-     *     [ORDER BY {col_name | expr | position}
-     *       [ASC | DESC), ...]
-     *     [LIMIT {[offset,] row_count | row_count OFFSET offset}]
-     *     [PROCEDURE procedure_name(argument_list)]
-     *     [INTO OUTFILE 'file_name'
-     *         [CHARACTER SET charset_name]
-     *         export_options
-     *       | INTO DUMPFILE 'file_name'
-     *       | INTO var_name [, var_name]]
-     *     [FOR UPDATE | LOCK IN SHARE MODE]]
-     *
-     * @category   Statements
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class SelectStatement extends \PhpMyAdmin\SqlParser\Statement
-    {
-        /**
-         * Options for `SELECT` statements and their slot ID.
-         *
-         * @var array
-         */
-        public static $OPTIONS = array('ALL' => 1, 'DISTINCT' => 1, 'DISTINCTROW' => 1, 'HIGH_PRIORITY' => 2, 'MAX_STATEMENT_TIME' => array(3, 'var='), 'STRAIGHT_JOIN' => 4, 'SQL_SMALL_RESULT' => 5, 'SQL_BIG_RESULT' => 6, 'SQL_BUFFER_RESULT' => 7, 'SQL_CACHE' => 8, 'SQL_NO_CACHE' => 8, 'SQL_CALC_FOUND_ROWS' => 9);
-        public static $END_OPTIONS = array('FOR UPDATE' => 1, 'LOCK IN SHARE MODE' => 1);
-        /**
-         * The clauses of this statement, in order.
-         *
-         * @see Statement::$CLAUSES
-         *
-         * @var array
-         */
-        public static $CLAUSES = array(
-            'SELECT' => array('SELECT', 2),
-            // Used for options.
-            '_OPTIONS' => array('_OPTIONS', 1),
-            // Used for selected expressions.
-            '_SELECT' => array('SELECT', 1),
-            'INTO' => array('INTO', 3),
-            'FROM' => array('FROM', 3),
-            'FORCE' => array('FORCE', 1),
-            'USE' => array('USE', 1),
-            'IGNORE' => array('IGNORE', 3),
-            'PARTITION' => array('PARTITION', 3),
-            'JOIN' => array('JOIN', 1),
-            'FULL JOIN' => array('FULL JOIN', 1),
-            'INNER JOIN' => array('INNER JOIN', 1),
-            'LEFT JOIN' => array('LEFT JOIN', 1),
-            'LEFT OUTER JOIN' => array('LEFT OUTER JOIN', 1),
-            'RIGHT JOIN' => array('RIGHT JOIN', 1),
-            'RIGHT OUTER JOIN' => array('RIGHT OUTER JOIN', 1),
-            'NATURAL JOIN' => array('NATURAL JOIN', 1),
-            'NATURAL LEFT JOIN' => array('NATURAL LEFT JOIN', 1),
-            'NATURAL RIGHT JOIN' => array('NATURAL RIGHT JOIN', 1),
-            'NATURAL LEFT OUTER JOIN' => array('NATURAL LEFT OUTER JOIN', 1),
-            'NATURAL RIGHT OUTER JOIN' => array('NATURAL RIGHT JOIN', 1),
-            'WHERE' => array('WHERE', 3),
-            'GROUP BY' => array('GROUP BY', 3),
-            'HAVING' => array('HAVING', 3),
-            'ORDER BY' => array('ORDER BY', 3),
-            'LIMIT' => array('LIMIT', 3),
-            'PROCEDURE' => array('PROCEDURE', 3),
-            'UNION' => array('UNION', 1),
-            'EXCEPT' => array('EXCEPT', 1),
-            'INTERSECT' => array('INTERSECT', 1),
-            '_END_OPTIONS' => array('_END_OPTIONS', 1),
-        );
-        /**
-         * Expressions that are being selected by this statement.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression[]
-         */
-        public $expr = array();
-        /**
-         * Tables used as sources for this statement.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression[]
-         */
-        public $from = array();
-        /**
-         * Index hints
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\IndexHint[]
-         */
-        public $index_hints;
-        /**
-         * Partitions used as source for this statement.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\ArrayObj
-         */
-        public $partition;
-        /**
-         * Conditions used for filtering each row of the result set.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Condition[]
-         */
-        public $where;
-        /**
-         * Conditions used for grouping the result set.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\GroupKeyword[]
-         */
-        public $group;
-        /**
-         * Conditions used for filtering the result set.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Condition[]
-         */
-        public $having;
-        /**
-         * Specifies the order of the rows in the result set.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\OrderKeyword[]
-         */
-        public $order;
-        /**
-         * Conditions used for limiting the size of the result set.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Limit
-         */
-        public $limit;
-        /**
-         * Procedure that should process the data in the result set.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\FunctionCall
-         */
-        public $procedure;
-        /**
-         * Destination of this result set.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\IntoKeyword
-         */
-        public $into;
-        /**
-         * Joins.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\JoinKeyword[]
-         */
-        public $join;
-        /**
-         * Unions.
-         *
-         * @var \PhpMyAdmin\SqlParser\Statements\SelectStatement[]
-         */
-        public $union = array();
-        /**
-         * The end options of this query.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\OptionsArray
-         *
-         * @see static::$END_OPTIONS
-         */
-        public $end_options;
-        /**
-         * Gets the clauses of this statement.
-         *
-         * @return array
-         */
-        public function getClauses()
-        {
-        }
-    }
-    /**
-     * `SET` statement.
-     *
-     * @category   Statements
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class SetStatement extends \PhpMyAdmin\SqlParser\Statement
-    {
-        /**
-         * The clauses of this statement, in order.
-         *
-         * @see Statement::$CLAUSES
-         *
-         * @var array
-         */
-        public static $CLAUSES = array('SET' => array('SET', 3), '_END_OPTIONS' => array('_END_OPTIONS', 1));
-        /**
-         * Possible exceptions in SET statment.
-         *
-         * @var array
-         */
-        public static $OPTIONS = array('CHARSET' => array(3, 'var'), 'CHARACTER SET' => array(3, 'var'), 'NAMES' => array(3, 'var'), 'PASSWORD' => array(3, 'expr'), 'SESSION' => 3, 'GLOBAL' => 3, 'PERSIST' => 3, 'PERSIST_ONLY' => 3, '@@SESSION' => 3, '@@GLOBAL' => 3, '@@PERSIST' => 3, '@@PERSIST_ONLY' => 3);
-        public static $END_OPTIONS = array('COLLATE' => array(1, 'var'), 'DEFAULT' => 1);
-        /**
-         * Options used in current statement.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\OptionsArray[]
-         */
-        public $options;
-        /**
-         * The end options of this query.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\OptionsArray
-         *
-         * @see static::$END_OPTIONS
-         */
-        public $end_options;
-        /**
-         * The updated values.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\SetOperation[]
-         */
-        public $set;
-        /**
-         * @return string
-         */
-        public function build()
-        {
-        }
-    }
-    /**
-     * `SHOW` statement.
-     *
-     * @category   Statements
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class ShowStatement extends \PhpMyAdmin\SqlParser\Statements\NotImplementedStatement
-    {
-        /**
-         * Options of this statement.
-         *
-         * @var array
-         */
-        public static $OPTIONS = array('CREATE' => 1, 'AUTHORS' => 2, 'BINARY' => 2, 'BINLOG' => 2, 'CHARACTER' => 2, 'CODE' => 2, 'COLLATION' => 2, 'COLUMNS' => 2, 'CONTRIBUTORS' => 2, 'DATABASE' => 2, 'DATABASES' => 2, 'ENGINE' => 2, 'ENGINES' => 2, 'ERRORS' => 2, 'EVENT' => 2, 'EVENTS' => 2, 'FUNCTION' => 2, 'GRANTS' => 2, 'HOSTS' => 2, 'INDEX' => 2, 'INNODB' => 2, 'LOGS' => 2, 'MASTER' => 2, 'OPEN' => 2, 'PLUGINS' => 2, 'PRIVILEGES' => 2, 'PROCEDURE' => 2, 'PROCESSLIST' => 2, 'PROFILE' => 2, 'PROFILES' => 2, 'SCHEDULER' => 2, 'SET' => 2, 'SLAVE' => 2, 'STATUS' => 2, 'TABLE' => 2, 'TABLES' => 2, 'TRIGGER' => 2, 'TRIGGERS' => 2, 'VARIABLES' => 2, 'VIEW' => 2, 'WARNINGS' => 2);
-    }
-    /**
-     * Transaction statement.
-     *
-     * @category   Statements
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class TransactionStatement extends \PhpMyAdmin\SqlParser\Statement
-    {
-        /**
-         * START TRANSACTION and BEGIN.
-         *
-         * @var int
-         */
-        const TYPE_BEGIN = 1;
-        /**
-         * COMMIT and ROLLBACK.
-         *
-         * @var int
-         */
-        const TYPE_END = 2;
-        /**
-         * The type of this query.
-         *
-         * @var int
-         */
-        public $type;
-        /**
-         * The list of statements in this transaction.
-         *
-         * @var \PhpMyAdmin\SqlParser\Statement[]
-         */
-        public $statements;
-        /**
-         * The ending transaction statement which may be a `COMMIT` or a `ROLLBACK`.
-         *
-         * @var \PhpMyAdmin\SqlParser\Statements\TransactionStatement
-         */
-        public $end;
-        /**
-         * Options for this query.
-         *
-         * @var array
-         */
-        public static $OPTIONS = array('START TRANSACTION' => 1, 'BEGIN' => 1, 'COMMIT' => 1, 'ROLLBACK' => 1, 'WITH CONSISTENT SNAPSHOT' => 2, 'WORK' => 2, 'AND NO CHAIN' => 3, 'AND CHAIN' => 3, 'RELEASE' => 4, 'NO RELEASE' => 4);
-        /**
-         * @param \PhpMyAdmin\SqlParser\Parser     $parser the instance that requests parsing
-         * @param \PhpMyAdmin\SqlParser\TokensList $list   the list of tokens to be parsed
-         */
-        public function parse(\PhpMyAdmin\SqlParser\Parser $parser, \PhpMyAdmin\SqlParser\TokensList $list)
-        {
-        }
-        /**
-         * @return string
-         */
-        public function build()
-        {
-        }
-    }
-    /**
-     * `TRUNCATE` statement.
-     *
-     * @category   Statements
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class TruncateStatement extends \PhpMyAdmin\SqlParser\Statement
-    {
-        /**
-         * Options for `TRUNCATE` statements.
-         *
-         * @var array
-         */
-        public static $OPTIONS = array('TABLE' => 1);
-        /**
-         * The name of the truncated table.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression
-         */
-        public $table;
-        /**
-         * Special build method for truncate statement as Statement::build would return empty string.
-         *
-         * @return string
-         */
-        public function build()
-        {
-        }
-    }
-    /**
-     * `UPDATE` statement.
-     *
-     * UPDATE [LOW_PRIORITY] [IGNORE] table_reference
-     *     SET col_name1={expr1|DEFAULT} [, col_name2={expr2|DEFAULT}] ...
-     *     [WHERE where_condition]
-     *     [ORDER BY ...]
-     *     [LIMIT row_count]
-     *
-     * or
-     *
-     * UPDATE [LOW_PRIORITY] [IGNORE] table_references
-     *     SET col_name1={expr1|DEFAULT} [, col_name2={expr2|DEFAULT}] ...
-     *     [WHERE where_condition]
-     *
-     * @category   Statements
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class UpdateStatement extends \PhpMyAdmin\SqlParser\Statement
-    {
-        /**
-         * Options for `UPDATE` statements and their slot ID.
-         *
-         * @var array
-         */
-        public static $OPTIONS = array('LOW_PRIORITY' => 1, 'IGNORE' => 2);
-        /**
-         * The clauses of this statement, in order.
-         *
-         * @see Statement::$CLAUSES
-         *
-         * @var array
-         */
-        public static $CLAUSES = array(
-            'UPDATE' => array('UPDATE', 2),
-            // Used for options.
-            '_OPTIONS' => array('_OPTIONS', 1),
-            // Used for updated tables.
-            '_UPDATE' => array('UPDATE', 1),
-            'SET' => array('SET', 3),
-            'WHERE' => array('WHERE', 3),
-            'ORDER BY' => array('ORDER BY', 3),
-            'LIMIT' => array('LIMIT', 3),
-        );
-        /**
-         * Tables used as sources for this statement.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Expression[]
-         */
-        public $tables;
-        /**
-         * The updated values.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\SetOperation[]
-         */
-        public $set;
-        /**
-         * Conditions used for filtering each row of the result set.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Condition[]
-         */
-        public $where;
-        /**
-         * Specifies the order of the rows in the result set.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\OrderKeyword[]
-         */
-        public $order;
-        /**
-         * Conditions used for limiting the size of the result set.
-         *
-         * @var \PhpMyAdmin\SqlParser\Components\Limit
-         */
-        public $limit;
-    }
-}
-namespace PhpMyAdmin\SqlParser {
-    /**
-     * A structure representing a lexeme that explicitly indicates its
-     * categorization for the purpose of parsing.
-     *
-     * @category Tokens
-     *
-     * @license  https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class Token
-    {
-        // Types of tokens (a vague description of a token's purpose).
-        /**
-         * This type is used when the token is invalid or its type cannot be
-         * determined because of the ambiguous context. Further analysis might be
-         * required to detect its type.
-         *
-         * @var int
-         */
-        const TYPE_NONE = 0;
-        /**
-         * SQL specific keywords: SELECT, UPDATE, INSERT, etc.
-         *
-         * @var int
-         */
-        const TYPE_KEYWORD = 1;
-        /**
-         * Any type of legal operator.
-         *
-         * Arithmetic operators: +, -, *, /, etc.
-         * Logical operators: ===, <>, !==, etc.
-         * Bitwise operators: &, |, ^, etc.
-         * Assignment operators: =, +=, -=, etc.
-         * SQL specific operators: . (e.g. .. WHERE database.table ..),
-         *                         * (e.g. SELECT * FROM ..)
-         *
-         * @var int
-         */
-        const TYPE_OPERATOR = 2;
-        /**
-         * Spaces, tabs, new lines, etc.
-         *
-         * @var int
-         */
-        const TYPE_WHITESPACE = 3;
-        /**
-         * Any type of legal comment.
-         *
-         * Bash (#), C (/* *\/) or SQL (--) comments:
-         *
-         *      -- SQL-comment
-         *
-         *      #Bash-like comment
-         *
-         *      /*C-like comment*\/
-         *
-         * or:
-         *
-         *      /*C-like
-         *        comment*\/
-         *
-         * Backslashes were added to respect PHP's comments syntax.
-         *
-         * @var int
-         */
-        const TYPE_COMMENT = 4;
-        /**
-         * Boolean values: true or false.
-         *
-         * @var int
-         */
-        const TYPE_BOOL = 5;
-        /**
-         * Numbers: 4, 0x8, 15.16, 23e42, etc.
-         *
-         * @var int
-         */
-        const TYPE_NUMBER = 6;
-        /**
-         * Literal strings: 'string', "test".
-         * Some of these strings are actually symbols.
-         *
-         * @var int
-         */
-        const TYPE_STRING = 7;
-        /**
-         * Database, table names, variables, etc.
-         * For example: ```SELECT `foo`, `bar` FROM `database`.`table`;```.
-         *
-         * @var int
-         */
-        const TYPE_SYMBOL = 8;
-        /**
-         * Delimits an unknown string.
-         * For example: ```SELECT * FROM test;```, `test` is a delimiter.
-         *
-         * @var int
-         */
-        const TYPE_DELIMITER = 9;
-        /**
-         * Labels in LOOP statement, ITERATE statement etc.
-         * For example (only for begin label):
-         *  begin_label: BEGIN [statement_list] END [end_label]
-         *  begin_label: LOOP [statement_list] END LOOP [end_label]
-         *  begin_label: REPEAT [statement_list] ... END REPEAT [end_label]
-         *  begin_label: WHILE ... DO [statement_list] END WHILE [end_label].
-         *
-         * @var int
-         */
-        const TYPE_LABEL = 10;
-        // Flags that describe the tokens in more detail.
-        // All keywords must have flag 1 so `Context::isKeyword` method doesn't
-        // require strict comparison.
-        const FLAG_KEYWORD_RESERVED = 2;
-        const FLAG_KEYWORD_COMPOSED = 4;
-        const FLAG_KEYWORD_DATA_TYPE = 8;
-        const FLAG_KEYWORD_KEY = 16;
-        const FLAG_KEYWORD_FUNCTION = 32;
-        // Numbers related flags.
-        const FLAG_NUMBER_HEX = 1;
-        const FLAG_NUMBER_FLOAT = 2;
-        const FLAG_NUMBER_APPROXIMATE = 4;
-        const FLAG_NUMBER_NEGATIVE = 8;
-        const FLAG_NUMBER_BINARY = 16;
-        // Strings related flags.
-        const FLAG_STRING_SINGLE_QUOTES = 1;
-        const FLAG_STRING_DOUBLE_QUOTES = 2;
-        // Comments related flags.
-        const FLAG_COMMENT_BASH = 1;
-        const FLAG_COMMENT_C = 2;
-        const FLAG_COMMENT_SQL = 4;
-        const FLAG_COMMENT_MYSQL_CMD = 8;
-        // Operators related flags.
-        const FLAG_OPERATOR_ARITHMETIC = 1;
-        const FLAG_OPERATOR_LOGICAL = 2;
-        const FLAG_OPERATOR_BITWISE = 4;
-        const FLAG_OPERATOR_ASSIGNMENT = 8;
-        const FLAG_OPERATOR_SQL = 16;
-        // Symbols related flags.
-        const FLAG_SYMBOL_VARIABLE = 1;
-        const FLAG_SYMBOL_BACKTICK = 2;
-        const FLAG_SYMBOL_USER = 4;
-        const FLAG_SYMBOL_SYSTEM = 8;
-        const FLAG_SYMBOL_PARAMETER = 16;
-        /**
-         * The token it its raw string representation.
-         *
-         * @var string
-         */
-        public $token;
-        /**
-         * The value this token contains (i.e. token after some evaluation).
-         *
-         * @var mixed
-         */
-        public $value;
-        /**
-         * The keyword value this token contains, always uppercase.
-         *
-         * @var mixed
-         */
-        public $keyword;
-        /**
-         * The type of this token.
-         *
-         * @var int
-         */
-        public $type;
-        /**
-         * The flags of this token.
-         *
-         * @var int
-         */
-        public $flags;
-        /**
-         * The position in the initial string where this token started.
-         *
-         * The position is counted in chars, not bytes, so you should
-         * use mb_* functions to properly handle utf-8 multibyte chars.
-         *
-         * @var int
-         */
-        public $position;
-        /**
-         * Constructor.
-         *
-         * @param string $token the value of the token
-         * @param int    $type  the type of the token
-         * @param int    $flags the flags of the token
-         */
-        public function __construct($token, $type = 0, $flags = 0)
-        {
-        }
-        /**
-         * Does little processing to the token to extract a value.
-         *
-         * If no processing can be done it will return the initial string.
-         *
-         * @return mixed
-         */
-        public function extract()
-        {
-        }
-        /**
-         * Converts the token into an inline token by replacing tabs and new lines.
-         *
-         * @return string
-         */
-        public function getInlineToken()
-        {
-        }
-    }
-    /**
-     * A structure representing a list of tokens.
-     *
-     * @category Tokens
-     *
-     * @license  https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class TokensList implements \ArrayAccess
-    {
-        /**
-         * The array of tokens.
-         *
-         * @var array
-         */
-        public $tokens = array();
-        /**
-         * The count of tokens.
-         *
-         * @var int
-         */
-        public $count = 0;
-        /**
-         * The index of the next token to be returned.
-         *
-         * @var int
-         */
-        public $idx = 0;
-        /**
-         * Constructor.
-         *
-         * @param array $tokens the initial array of tokens
-         * @param int   $count  the count of tokens in the initial array
-         */
-        public function __construct(array $tokens = array(), $count = -1)
-        {
-        }
-        /**
-         * Builds an array of tokens by merging their raw value.
-         *
-         * @param string|\PhpMyAdmin\SqlParser\Token[]|\PhpMyAdmin\SqlParser\TokensList $list the tokens to be built
-         *
-         * @return string
-         */
-        public static function build($list)
-        {
-        }
-        /**
-         * Adds a new token.
-         *
-         * @param \PhpMyAdmin\SqlParser\Token $token token to be added in list
-         */
-        public function add(\PhpMyAdmin\SqlParser\Token $token)
-        {
-        }
-        /**
-         * Gets the next token. Skips any irrelevant token (whitespaces and
-         * comments).
-         *
-         * @return \PhpMyAdmin\SqlParser\Token|null
-         */
-        public function getNext()
-        {
-        }
-        /**
-         * Gets the next token.
-         *
-         * @param int $type the type
-         *
-         * @return \PhpMyAdmin\SqlParser\Token|null
-         */
-        public function getNextOfType($type)
-        {
-        }
-        /**
-         * Gets the next token.
-         *
-         * @param int    $type  the type of the token
-         * @param string $value the value of the token
-         *
-         * @return \PhpMyAdmin\SqlParser\Token|null
-         */
-        public function getNextOfTypeAndValue($type, $value)
-        {
-        }
-        /**
-         * Sets an value inside the container.
-         *
-         * @param int   $offset the offset to be set
-         * @param \PhpMyAdmin\SqlParser\Token $value  the token to be saved
-         */
-        #[\ReturnTypeWillChange]
-        public function offsetSet($offset, $value)
-        {
-        }
-        /**
-         * Gets a value from the container.
-         *
-         * @param int $offset the offset to be returned
-         *
-         * @return \PhpMyAdmin\SqlParser\Token
-         */
-        #[\ReturnTypeWillChange]
-        public function offsetGet($offset)
-        {
-        }
-        /**
-         * Checks if an offset was previously set.
-         *
-         * @param int $offset the offset to be checked
-         *
-         * @return bool
-         */
-        #[\ReturnTypeWillChange]
-        public function offsetExists($offset)
-        {
-        }
-        /**
-         * Unsets the value of an offset.
-         *
-         * @param int $offset the offset to be unset
-         */
-        #[\ReturnTypeWillChange]
-        public function offsetUnset($offset)
-        {
-        }
-    }
-    class Translator
-    {
-        /**
-         * Loads translator.
-         */
-        public static function load()
-        {
-        }
-        /**
-         * Translates a string.
-         *
-         * @param string $msgid String to be translated
-         *
-         * @return string translated string (or original, if not found)
-         */
-        public static function gettext($msgid)
-        {
-        }
-    }
-    /**
-     * Implements array-like access for UTF-8 strings.
-     *
-     * In this library, this class should be used to parse UTF-8 queries.
-     *
-     * @category Misc
-     *
-     * @license  https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class UtfString implements \ArrayAccess
-    {
-        /**
-         * The raw, multi-byte string.
-         *
-         * @var string
-         */
-        public $str = '';
-        /**
-         * The index of current byte.
-         *
-         * For ASCII strings, the byte index is equal to the character index.
-         *
-         * @var int
-         */
-        public $byteIdx = 0;
-        /**
-         * The index of current character.
-         *
-         * For non-ASCII strings, some characters occupy more than one byte and
-         * the character index will have a lower value than the byte index.
-         *
-         * @var int
-         */
-        public $charIdx = 0;
-        /**
-         * The length of the string (in bytes).
-         *
-         * @var int
-         */
-        public $byteLen = 0;
-        /**
-         * The length of the string (in characters).
-         *
-         * @var int
-         */
-        public $charLen = 0;
-        /**
-         * Constructor.
-         *
-         * @param string $str the string
-         */
-        public function __construct($str)
-        {
-        }
-        /**
-         * Checks if the given offset exists.
-         *
-         * @param int $offset the offset to be checked
-         *
-         * @return bool
-         */
-        public function offsetExists($offset)
-        {
-        }
-        /**
-         * Gets the character at given offset.
-         *
-         * @param int $offset the offset to be returned
-         *
-         * @return string|null
-         */
-        public function offsetGet($offset)
-        {
-        }
-        /**
-         * Sets the value of a character.
-         *
-         * @param int    $offset the offset to be set
-         * @param string $value  the value to be set
-         *
-         * @throws \Exception not implemented
-         */
-        public function offsetSet($offset, $value)
-        {
-        }
-        /**
-         * Unsets an index.
-         *
-         * @param int $offset the value to be unset
-         *
-         * @throws \Exception not implemented
-         */
-        public function offsetUnset($offset)
-        {
-        }
-        /**
-         * Gets the length of an UTF-8 character.
-         *
-         * According to RFC 3629, a UTF-8 character can have at most 4 bytes.
-         * However, this implementation supports UTF-8 characters containing up to 6
-         * bytes.
-         *
-         * @param string $byte the byte to be analyzed
-         *
-         * @see https://tools.ietf.org/html/rfc3629
-         *
-         * @return int
-         */
-        public static function getCharLength($byte)
-        {
-        }
-        /**
-         * Returns the length in characters of the string.
-         *
-         * @return int
-         */
-        public function length()
-        {
-        }
-        /**
-         * Returns the contained string.
-         *
-         * @return string
-         */
-        public function __toString()
-        {
-        }
-    }
-}
-namespace PhpMyAdmin\SqlParser\Utils {
-    /**
-     * Buffer query utilities.
-     *
-     * Implements a specialized lexer used to extract statements from large inputs
-     * that are being buffered. After each statement has been extracted, a lexer or
-     * a parser may be used.
-     *
-     * @category   Lexer
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class BufferedQuery
-    {
-        // Constants that describe the current status of the parser.
-        // A string is being parsed.
-        const STATUS_STRING = 16;
-        // 0001 0000
-        const STATUS_STRING_SINGLE_QUOTES = 17;
-        // 0001 0001
-        const STATUS_STRING_DOUBLE_QUOTES = 18;
-        // 0001 0010
-        const STATUS_STRING_BACKTICK = 20;
-        // 0001 0100
-        // A comment is being parsed.
-        const STATUS_COMMENT = 32;
-        // 0010 0000
-        const STATUS_COMMENT_BASH = 33;
-        // 0010 0001
-        const STATUS_COMMENT_C = 34;
-        // 0010 0010
-        const STATUS_COMMENT_SQL = 36;
-        // 0010 0100
-        /**
-         * The query that is being processed.
-         *
-         * This field can be modified just by appending to it!
-         *
-         * @var string
-         */
-        public $query = '';
-        /**
-         * The options of this parser.
-         *
-         * @var array
-         */
-        public $options = array();
-        /**
-         * The last delimiter used.
-         *
-         * @var string
-         */
-        public $delimiter;
-        /**
-         * The length of the delimiter.
-         *
-         * @var int
-         */
-        public $delimiterLen;
-        /**
-         * The current status of the parser.
-         *
-         * @var int
-         */
-        public $status;
-        /**
-         * The last incomplete query that was extracted.
-         *
-         * @var string
-         */
-        public $current = '';
-        /**
-         * Constructor.
-         *
-         * @param string $query   the query to be parsed
-         * @param array  $options the options of this parser
-         */
-        public function __construct($query = '', array $options = array())
-        {
-        }
-        /**
-         * Sets the delimiter.
-         *
-         * Used to update the length of it too.
-         *
-         * @param string $delimiter
-         */
-        public function setDelimiter($delimiter)
-        {
-        }
-        /**
-         * Extracts a statement from the buffer.
-         *
-         * @param bool $end whether the end of the buffer was reached
-         *
-         * @return string|false
-         */
-        public function extract($end = false)
-        {
-        }
-    }
-    /**
-     * CLI interface.
-     *
-     * @category   Exceptions
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class CLI
-    {
-        public function mergeLongOpts(&$params, &$longopts)
-        {
-        }
-        public function usageHighlight()
-        {
-        }
-        public function getopt($opt, $long)
-        {
-        }
-        public function parseHighlight()
-        {
-        }
-        public function runHighlight()
-        {
-        }
-        public function usageLint()
-        {
-        }
-        public function parseLint()
-        {
-        }
-        public function runLint()
-        {
-        }
-        public function usageTokenize()
-        {
-        }
-        public function parseTokenize()
-        {
-        }
-        public function runTokenize()
-        {
-        }
-        public function readStdin()
-        {
-        }
-    }
-    /**
-     * Error related utilities.
-     *
-     * @category   Exceptions
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class Error
-    {
-        /**
-         * Gets the errors of a lexer and a parser.
-         *
-         * @param array $objs objects from where the errors will be extracted
-         *
-         * @return array Each element of the array represents an error.
-         *               `$err[0]` holds the error message.
-         *               `$err[1]` holds the error code.
-         *               `$err[2]` holds the string that caused the issue.
-         *               `$err[3]` holds the position of the string.
-         *               (i.e. `array($msg, $code, $str, $pos)`)
-         */
-        public static function get($objs)
-        {
-        }
-        /**
-         * Formats the specified errors.
-         *
-         * @param array  $errors the errors to be formatted
-         * @param string $format The format of an error.
-         *                       '$1$d' is replaced by the position of this error.
-         *                       '$2$s' is replaced by the error message.
-         *                       '$3$d' is replaced by the error code.
-         *                       '$4$s' is replaced by the string that caused the
-         *                       issue.
-         *                       '$5$d' is replaced by the position of the string.
-         *
-         * @return array
-         */
-        public static function format($errors, $format = '#%1$d: %2$s (near "%4$s" at position %5$d)')
-        {
-        }
-    }
-    /**
-     * Utilities that are used for formatting queries.
-     *
-     * @category   Misc
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class Formatter
-    {
-        /**
-         * The formatting options.
-         *
-         * @var array
-         */
-        public $options;
-        /**
-         * Clauses that are usually short.
-         *
-         * These clauses share the line with the next clause.
-         *
-         * E.g. if INSERT was not here, the formatter would produce:
-         *
-         *      INSERT
-         *      INTO foo
-         *      VALUES(0, 0, 0),(1, 1, 1);
-         *
-         * Instead of:
-         *
-         *      INSERT INTO foo
-         *      VALUES(0, 0, 0),(1, 1, 1)
-         *
-         * @var array
-         */
-        public static $SHORT_CLAUSES = array('CREATE' => true, 'INSERT' => true);
-        /**
-         * Clauses that must be inlined.
-         *
-         * These clauses usually are short and it's nicer to have them inline.
-         *
-         * @var array
-         */
-        public static $INLINE_CLAUSES = array('CREATE' => true, 'INTO' => true, 'LIMIT' => true, 'PARTITION BY' => true, 'PARTITION' => true, 'PROCEDURE' => true, 'SUBPARTITION BY' => true, 'VALUES' => true);
-        /**
-         * Constructor.
-         *
-         * @param array $options the formatting options
-         */
-        public function __construct(array $options = array())
-        {
-        }
-        /**
-         * The default formatting options.
-         *
-         * @return array
-         */
-        protected function getDefaultOptions()
-        {
-        }
-        /**
-         * The styles used for HTML formatting.
-         * array($type, $flags, $span, $callback).
-         *
-         * @return array
-         */
-        protected function getDefaultFormats()
-        {
-        }
-        /**
-         * Formats the given list of tokens.
-         *
-         * @param \PhpMyAdmin\SqlParser\TokensList $list the list of tokens
-         *
-         * @return string
-         */
-        public function formatList($list)
-        {
-        }
-        public function escapeConsole($string)
-        {
-        }
-        /**
-         * Tries to print the query and returns the result.
-         *
-         * @param \PhpMyAdmin\SqlParser\Token $token the token to be printed
-         *
-         * @return string
-         */
-        public function toString($token)
-        {
-        }
-        /**
-         * Formats a query.
-         *
-         * @param string $query   The query to be formatted
-         * @param array  $options the formatting options
-         *
-         * @return string the formatted string
-         */
-        public static function format($query, array $options = array())
-        {
-        }
-        /**
-         * Computes the length of a group.
-         *
-         * A group is delimited by a pair of brackets.
-         *
-         * @param \PhpMyAdmin\SqlParser\TokensList $list the list of tokens
-         *
-         * @return int
-         */
-        public static function getGroupLength($list)
-        {
-        }
-        /**
-         * Checks if a token is a statement or a clause inside a statement.
-         *
-         * @param \PhpMyAdmin\SqlParser\Token $token the token to be checked
-         *
-         * @return int|bool
-         */
-        public static function isClause($token)
-        {
-        }
-    }
-    /**
-     * Miscellaneous utilities.
-     *
-     * @category   Misc
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class Misc
-    {
-        /**
-         * Gets a list of all aliases and their original names.
-         *
-         * @param \PhpMyAdmin\SqlParser\Statements\SelectStatement $statement the statement to be processed
-         * @param string          $database  the name of the database
-         *
-         * @return array
-         */
-        public static function getAliases($statement, $database)
-        {
-        }
-    }
-    /**
-     * Statement utilities.
-     *
-     * @category   Statement
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class Query
-    {
-        /**
-         * Functions that set the flag `is_func`.
-         *
-         * @var array
-         */
-        public static $FUNCTIONS = array('SUM', 'AVG', 'STD', 'STDDEV', 'MIN', 'MAX', 'BIT_OR', 'BIT_AND');
-        public static $ALLFLAGS = array(
-            /*
-             * select ... DISTINCT ...
-             */
-            'distinct' => false,
-            /*
-             * drop ... DATABASE ...
-             */
-            'drop_database' => false,
-            /*
-             * ... GROUP BY ...
-             */
-            'group' => false,
-            /*
-             * ... HAVING ...
-             */
-            'having' => false,
-            /*
-             * INSERT ...
-             * or
-             * REPLACE ...
-             * or
-             * DELETE ...
-             */
-            'is_affected' => false,
-            /*
-             * select ... PROCEDURE ANALYSE( ... ) ...
-             */
-            'is_analyse' => false,
-            /*
-             * select COUNT( ... ) ...
-             */
-            'is_count' => false,
-            /*
-             * DELETE ...
-             */
-            'is_delete' => false,
-            // @deprecated; use `querytype`
-            /*
-             * EXPLAIN ...
-             */
-            'is_explain' => false,
-            // @deprecated; use `querytype`
-            /*
-             * select ... INTO OUTFILE ...
-             */
-            'is_export' => false,
-            /*
-             * select FUNC( ... ) ...
-             */
-            'is_func' => false,
-            /*
-             * select ... GROUP BY ...
-             * or
-             * select ... HAVING ...
-             */
-            'is_group' => false,
-            /*
-             * INSERT ...
-             * or
-             * REPLACE ...
-             * or
-             * LOAD DATA ...
-             */
-            'is_insert' => false,
-            /*
-             * ANALYZE ...
-             * or
-             * CHECK ...
-             * or
-             * CHECKSUM ...
-             * or
-             * OPTIMIZE ...
-             * or
-             * REPAIR ...
-             */
-            'is_maint' => false,
-            /*
-             * CALL ...
-             */
-            'is_procedure' => false,
-            /*
-             * REPLACE ...
-             */
-            'is_replace' => false,
-            // @deprecated; use `querytype`
-            /*
-             * SELECT ...
-             */
-            'is_select' => false,
-            // @deprecated; use `querytype`
-            /*
-             * SHOW ...
-             */
-            'is_show' => false,
-            // @deprecated; use `querytype`
-            /*
-             * Contains a subquery.
-             */
-            'is_subquery' => false,
-            /*
-             * ... JOIN ...
-             */
-            'join' => false,
-            /*
-             * ... LIMIT ...
-             */
-            'limit' => false,
-            /*
-             * TODO
-             */
-            'offset' => false,
-            /*
-             * ... ORDER ...
-             */
-            'order' => false,
-            /*
-             * The type of the query (which is usually the first keyword of
-             * the statement).
-             */
-            'querytype' => false,
-            /*
-             * Whether a page reload is required.
-             */
-            'reload' => false,
-            /*
-             * SELECT ... FROM ...
-             */
-            'select_from' => false,
-            /*
-             * ... UNION ...
-             */
-            'union' => false,
-        );
-        /**
-         * Gets an array with flags this statement has.
-         *
-         * @param \PhpMyAdmin\SqlParser\Statement|null $statement the statement to be processed
-         * @param bool           $all       if `false`, false values will not be included
-         *
-         * @return array
-         */
-        public static function getFlags($statement, $all = false)
-        {
-        }
-        /**
-         * Parses a query and gets all information about it.
-         *
-         * @param string $query the query to be parsed
-         *
-         * @return array The array returned is the one returned by
-         *               `static::getFlags()`, with the following keys added:
-         *               - parser - the parser used to analyze the query;
-         *               - statement - the first statement resulted from parsing;
-         *               - select_tables - the real name of the tables selected;
-         *               if there are no table names in the `SELECT`
-         *               expressions, the table names are fetched from the
-         *               `FROM` expressions
-         *               - select_expr - selected expressions
-         */
-        public static function getAll($query)
-        {
-        }
-        /**
-         * Gets a list of all tables used in this statement.
-         *
-         * @param \PhpMyAdmin\SqlParser\Statement $statement statement to be scanned
-         *
-         * @return array
-         */
-        public static function getTables($statement)
-        {
-        }
-        /**
-         * Gets a specific clause.
-         *
-         * @param \PhpMyAdmin\SqlParser\Statement  $statement the parsed query that has to be modified
-         * @param \PhpMyAdmin\SqlParser\TokensList $list      the list of tokens
-         * @param string     $clause    the clause to be returned
-         * @param int|string $type      The type of the search.
-         *                              If int,
-         *                              -1 for everything that was before
-         *                              0 only for the clause
-         *                              1 for everything after
-         *                              If string, the name of the first clause that
-         *                              should not be included.
-         * @param bool       $skipFirst whether to skip the first keyword in clause
-         *
-         * @return string
-         */
-        public static function getClause($statement, $list, $clause, $type = 0, $skipFirst = true)
-        {
-        }
-        /**
-         * Builds a query by rebuilding the statement from the tokens list supplied
-         * and replaces a clause.
-         *
-         * It is a very basic version of a query builder.
-         *
-         * @param \PhpMyAdmin\SqlParser\Statement  $statement the parsed query that has to be modified
-         * @param \PhpMyAdmin\SqlParser\TokensList $list      the list of tokens
-         * @param string     $old       The type of the clause that should be
-         *                              replaced. This can be an entire clause.
-         * @param string     $new       The new clause. If this parameter is omitted
-         *                              it is considered to be equal with `$old`.
-         * @param bool       $onlyType  whether only the type of the clause should
-         *                              be replaced or the entire clause
-         *
-         * @return string
-         */
-        public static function replaceClause($statement, $list, $old, $new = null, $onlyType = false)
-        {
-        }
-        /**
-         * Builds a query by rebuilding the statement from the tokens list supplied
-         * and replaces multiple clauses.
-         *
-         * @param \PhpMyAdmin\SqlParser\Statement  $statement the parsed query that has to be modified
-         * @param \PhpMyAdmin\SqlParser\TokensList $list      the list of tokens
-         * @param array      $ops       Clauses to be replaced. Contains multiple
-         *                              arrays having two values: array($old, $new).
-         *                              Clauses must be sorted.
-         *
-         * @return string
-         */
-        public static function replaceClauses($statement, $list, array $ops)
-        {
-        }
-        /**
-         * Gets the first full statement in the query.
-         *
-         * @param string $query     the query to be analyzed
-         * @param string $delimiter the delimiter to be used
-         *
-         * @return array array containing the first full query, the
-         *               remaining part of the query and the last
-         *               delimiter
-         */
-        public static function getFirstStatement($query, $delimiter = null)
-        {
-        }
-        /**
-         * Gets a starting offset of a specific clause.
-         *
-         * @param \PhpMyAdmin\SqlParser\Statement  $statement the parsed query that has to be modified
-         * @param \PhpMyAdmin\SqlParser\TokensList $list      the list of tokens
-         * @param string     $clause    the clause to be returned
-         *
-         * @return int
-         */
-        public static function getClauseStartOffset($statement, $list, $clause)
-        {
-        }
-    }
-    /**
-     * Routine utilities.
-     *
-     * @category   Routines
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class Routine
-    {
-        /**
-         * Parses a parameter of a routine.
-         *
-         * @param string $param parameter's definition
-         *
-         * @return array
-         */
-        public static function getReturnType($param)
-        {
-        }
-        /**
-         * Parses a parameter of a routine.
-         *
-         * @param string $param parameter's definition
-         *
-         * @return array
-         */
-        public static function getParameter($param)
-        {
-        }
-        /**
-         * Gets the parameters of a routine from the parse tree.
-         *
-         * @param \PhpMyAdmin\SqlParser\Statements\CreateStatement $statement the statement to be processed
-         *
-         * @return array
-         */
-        public static function getParameters($statement)
-        {
-        }
-    }
-    /**
-     * Table utilities.
-     *
-     * @category   Statement
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class Table
-    {
-        /**
-         * Gets the foreign keys of the table.
-         *
-         * @param \PhpMyAdmin\SqlParser\Statements\CreateStatement $statement the statement to be processed
-         *
-         * @return array
-         */
-        public static function getForeignKeys($statement)
-        {
-        }
-        /**
-         * Gets fields of the table.
-         *
-         * @param \PhpMyAdmin\SqlParser\Statements\CreateStatement $statement the statement to be processed
-         *
-         * @return array
-         */
-        public static function getFields($statement)
-        {
-        }
-    }
-    /**
-     * Token utilities.
-     *
-     * @category   Token
-     *
-     * @license    https://www.gnu.org/licenses/gpl-2.0.txt GPL-2.0+
-     */
-    class Tokens
-    {
-        /**
-         * Checks if a pattern is a match for the specified token.
-         *
-         * @param \PhpMyAdmin\SqlParser\Token $token   the token to be matched
-         * @param array $pattern the pattern to be matches
-         *
-         * @return bool
-         */
-        public static function match(\PhpMyAdmin\SqlParser\Token $token, array $pattern)
-        {
-        }
-        public static function replaceTokens($list, array $find, array $replace)
-        {
-        }
-    }
-}
 namespace WPML\LIB\WP {
     class Attachment
     {
@@ -61718,6 +56766,659 @@ namespace WPML\LIB\WP {
          * @return mixed
          */
         public static function withoutError(callable $func)
+        {
+        }
+    }
+}
+namespace WPML\PHP\Auryn {
+    interface Reflector
+    {
+        /**
+         * Retrieves ReflectionClass instances, caching them for future retrieval
+         *
+         * @param string $class
+         * @return \ReflectionClass
+         */
+        public function getClass($class);
+        /**
+         * Retrieves and caches the constructor (ReflectionMethod) for the specified class
+         *
+         * @param string $class
+         * @return \ReflectionMethod
+         */
+        public function getCtor($class);
+        /**
+         * Retrieves and caches an array of constructor parameters for the given class
+         *
+         * @param string $class
+         * @return \ReflectionParameter[]
+         */
+        public function getCtorParams($class);
+        /**
+         * Retrieves the class type-hint from a given ReflectionParameter
+         *
+         * There is no way to directly access a parameter's type-hint without
+         * instantiating a new ReflectionClass instance and calling its getName()
+         * method. This method stores the results of this approach so that if
+         * the same parameter type-hint or ReflectionClass is needed again we
+         * already have it cached.
+         *
+         * @param \ReflectionFunctionAbstract $function
+         * @param \ReflectionParameter $param
+         */
+        public function getParamTypeHint(\ReflectionFunctionAbstract $function, \ReflectionParameter $param);
+        /**
+         * Retrieves and caches a reflection for the specified function
+         *
+         * @param string $functionName
+         * @return \ReflectionFunction
+         */
+        public function getFunction($functionName);
+        /**
+         * Retrieves and caches a reflection for the specified class method
+         *
+         * @param mixed $classNameOrInstance
+         * @param string $methodName
+         * @return \ReflectionMethod
+         */
+        public function getMethod($classNameOrInstance, $methodName);
+    }
+    class CachingReflector implements \WPML\PHP\Auryn\Reflector
+    {
+        const CACHE_KEY_CLASSES = 'auryn.refls.classes.';
+        const CACHE_KEY_CTORS = 'auryn.refls.ctors.';
+        const CACHE_KEY_CTOR_PARAMS = 'auryn.refls.ctor-params.';
+        const CACHE_KEY_FUNCS = 'auryn.refls.funcs.';
+        const CACHE_KEY_METHODS = 'auryn.refls.methods.';
+        public function __construct(\WPML\PHP\Auryn\Reflector $reflector = null, \WPML\PHP\Auryn\ReflectionCache $cache = null)
+        {
+        }
+        public function getClass($class)
+        {
+        }
+        public function getCtor($class)
+        {
+        }
+        public function getCtorParams($class)
+        {
+        }
+        public function getParamTypeHint(\ReflectionFunctionAbstract $function, \ReflectionParameter $param)
+        {
+        }
+        public function getFunction($functionName)
+        {
+        }
+        public function getMethod($classNameOrInstance, $methodName)
+        {
+        }
+    }
+    class InjectorException extends \Exception
+    {
+    }
+    class ConfigException extends \WPML\PHP\Auryn\InjectorException
+    {
+    }
+    class Executable
+    {
+        public function __construct(\ReflectionFunctionAbstract $reflFunc, $invocationObject = null)
+        {
+        }
+        public function __invoke()
+        {
+        }
+        public function getCallableReflection()
+        {
+        }
+        public function getInvocationObject()
+        {
+        }
+        public function isInstanceMethod()
+        {
+        }
+    }
+    class InjectionException extends \WPML\PHP\Auryn\InjectorException
+    {
+        public $dependencyChain;
+        public function __construct(array $inProgressMakes, $message = "", $code = 0, \Exception $previous = null)
+        {
+        }
+        /**
+         * Add a human readable version of the invalid callable to the standard 'invalid invokable' message.
+         */
+        public static function fromInvalidCallable(array $inProgressMakes, $callableOrMethodStr, \Exception $previous = null)
+        {
+        }
+        /**
+         * Returns the hierarchy of dependencies that were being created when
+         * the exception occurred.
+         * @return array
+         */
+        public function getDependencyChain()
+        {
+        }
+    }
+    class Injector
+    {
+        const A_RAW = ':';
+        const A_DELEGATE = '+';
+        const A_DEFINE = '@';
+        const I_BINDINGS = 1;
+        const I_DELEGATES = 2;
+        const I_PREPARES = 4;
+        const I_ALIASES = 8;
+        const I_SHARES = 16;
+        const I_ALL = 31;
+        const E_NON_EMPTY_STRING_ALIAS = 1;
+        const M_NON_EMPTY_STRING_ALIAS = "Invalid alias: non-empty string required at arguments 1 and 2";
+        const E_SHARED_CANNOT_ALIAS = 2;
+        const M_SHARED_CANNOT_ALIAS = "Cannot alias class %s to %s because it is currently shared";
+        const E_SHARE_ARGUMENT = 3;
+        const M_SHARE_ARGUMENT = "%s::share() requires a string class name or object instance at Argument 1; %s specified";
+        const E_ALIASED_CANNOT_SHARE = 4;
+        const M_ALIASED_CANNOT_SHARE = "Cannot share class %s because it is currently aliased to %s";
+        const E_INVOKABLE = 5;
+        const M_INVOKABLE = "Invalid invokable: callable or provisional string required";
+        const E_NON_PUBLIC_CONSTRUCTOR = 6;
+        const M_NON_PUBLIC_CONSTRUCTOR = "Cannot instantiate protected/private constructor in class %s";
+        const E_NEEDS_DEFINITION = 7;
+        const M_NEEDS_DEFINITION = "Injection definition required for %s %s";
+        const E_MAKE_FAILURE = 8;
+        const M_MAKE_FAILURE = "Could not make %s: %s";
+        const E_UNDEFINED_PARAM = 9;
+        const M_UNDEFINED_PARAM = "No definition available to provision typeless parameter \$%s at position %d in %s()%s";
+        const E_DELEGATE_ARGUMENT = 10;
+        const M_DELEGATE_ARGUMENT = "%s::delegate expects a valid callable or executable class::method string at Argument 2%s";
+        const E_CYCLIC_DEPENDENCY = 11;
+        const M_CYCLIC_DEPENDENCY = "Detected a cyclic dependency while provisioning %s";
+        const E_MAKING_FAILED = 12;
+        const M_MAKING_FAILED = "Making %s did not result in an object, instead result is of type '%s'";
+        public function __construct(\WPML\PHP\Auryn\Reflector $reflector = null)
+        {
+        }
+        public function __clone()
+        {
+        }
+        /**
+         * Define instantiation directives for the specified class
+         *
+         * @param string $name The class (or alias) whose constructor arguments we wish to define
+         * @param array $args An array mapping parameter names to values/instructions
+         * @return self
+         */
+        public function define($name, array $args)
+        {
+        }
+        /**
+         * Assign a global default value for all parameters named $paramName
+         *
+         * Global parameter definitions are only used for parameters with no typehint, pre-defined or
+         * call-time definition.
+         *
+         * @param string $paramName The parameter name for which this value applies
+         * @param mixed $value The value to inject for this parameter name
+         * @return self
+         */
+        public function defineParam($paramName, $value)
+        {
+        }
+        /**
+         * Define an alias for all occurrences of a given typehint
+         *
+         * Use this method to specify implementation classes for interface and abstract class typehints.
+         *
+         * @param string $original The typehint to replace
+         * @param string $alias The implementation name
+         * @throws \WPML\PHP\Auryn\ConfigException if any argument is empty or not a string
+         * @return self
+         */
+        public function alias($original, $alias)
+        {
+        }
+        /**
+         * Share the specified class/instance across the Injector context
+         *
+         * @param mixed $nameOrInstance The class or object to share
+         * @throws \WPML\PHP\Auryn\ConfigException if $nameOrInstance is not a string or an object
+         * @return self
+         */
+        public function share($nameOrInstance)
+        {
+        }
+        /**
+         * Register a prepare callable to modify/prepare objects of type $name after instantiation
+         *
+         * Any callable or provisionable invokable may be specified. Preparers are passed two
+         * arguments: the instantiated object to be mutated and the current Injector instance.
+         *
+         * @param string $name
+         * @param mixed $callableOrMethodStr Any callable or provisionable invokable method
+         * @throws \WPML\PHP\Auryn\InjectionException if $callableOrMethodStr is not a callable.
+         *                            See https://github.com/rdlowrey/auryn#injecting-for-execution
+         * @return self
+         */
+        public function prepare($name, $callableOrMethodStr)
+        {
+        }
+        /**
+         * Delegate the creation of $name instances to the specified callable
+         *
+         * @param string $name
+         * @param mixed $callableOrMethodStr Any callable or provisionable invokable method
+         * @throws \WPML\PHP\Auryn\ConfigException if $callableOrMethodStr is not a callable.
+         * @return self
+         */
+        public function delegate($name, $callableOrMethodStr)
+        {
+        }
+        /**
+         * Retrieve stored data for the specified definition type
+         *
+         * Exposes introspection of existing binds/delegates/shares/etc for decoration and composition.
+         *
+         * @param string $nameFilter An optional class name filter
+         * @param int $typeFilter A bitmask of Injector::* type constant flags
+         * @return array
+         */
+        public function inspect($nameFilter = null, $typeFilter = null)
+        {
+        }
+        /**
+         * Instantiate/provision a class instance
+         *
+         * @param string $name
+         * @param array $args
+         * @throws \WPML\PHP\Auryn\InjectionException if a cyclic gets detected when provisioning
+         * @return mixed
+         */
+        public function make($name, array $args = array())
+        {
+        }
+        /**
+         * Invoke the specified callable or class::method string, provisioning dependencies along the way
+         *
+         * @param mixed $callableOrMethodStr A valid PHP callable or a provisionable ClassName::methodName string
+         * @param array $args Optional array specifying params with which to invoke the provisioned callable
+         * @throws \WPML\PHP\Auryn\InjectionException
+         * @return mixed Returns the invocation result returned from calling the generated executable
+         */
+        public function execute($callableOrMethodStr, array $args = array())
+        {
+        }
+        /**
+         * Provision an Executable instance from any valid callable or class::method string
+         *
+         * @param mixed $callableOrMethodStr A valid PHP callable or a provisionable ClassName::methodName string
+         * @return \Auryn\Executable
+         */
+        public function buildExecutable($callableOrMethodStr)
+        {
+        }
+    }
+    interface ReflectionCache
+    {
+        public function fetch($key);
+        public function store($key, $data);
+    }
+    class ReflectionCacheApc implements \WPML\PHP\Auryn\ReflectionCache
+    {
+        public function __construct(\WPML\PHP\Auryn\ReflectionCache $localCache = null)
+        {
+        }
+        public function setTimeToLive($seconds)
+        {
+        }
+        public function fetch($key)
+        {
+        }
+        public function store($key, $data)
+        {
+        }
+    }
+    class ReflectionCacheArray implements \WPML\PHP\Auryn\ReflectionCache
+    {
+        public function fetch($key)
+        {
+        }
+        public function store($key, $data)
+        {
+        }
+    }
+    class StandardReflector implements \WPML\PHP\Auryn\Reflector
+    {
+        public function getClass($class)
+        {
+        }
+        public function getCtor($class)
+        {
+        }
+        public function getCtorParams($class)
+        {
+        }
+        public function getParamTypeHint(\ReflectionFunctionAbstract $function, \ReflectionParameter $param)
+        {
+        }
+        public function getFunction($functionName)
+        {
+        }
+        public function getMethod($classNameOrInstance, $methodName)
+        {
+        }
+    }
+}
+namespace WPML\PHP {
+    class Boolean
+    {
+        /** @return true */
+        public static function true()
+        {
+        }
+        /** @return false */
+        public static function false()
+        {
+        }
+    }
+    /**
+     * @template ReturnTypeFromArray
+     */
+    interface ConstructableFromArrayInterface
+    {
+        /**
+         * @phpstan-ignore-next-line Mixed array as input.
+         *
+         * @param array $array
+         * @return \WPML\PHP\ReturnTypeFromArray
+         */
+        public static function fromArray($array);
+    }
+    /**
+     * @template ReturnTypeFromArray
+     */
+    trait ConstructableFromArrayTrait
+    {
+        /**
+         * @phpstan-ignore-next-line Mixed array as input.
+         * @param array $array
+         *
+         * @throws \WPML\PHP\Exception If the constructor is not accessible.
+         * @throws \WPML\PHP\InvalidArgumentException If a required argument is missing.
+         *
+         * @return \WPML\PHP\ReturnTypeFromArray
+         */
+        public static function fromArray($array)
+        {
+        }
+    }
+    class DateTime extends \DateTime
+    {
+        /**
+         * @param string $datetime
+         * @param \DateTimeZone|null $timezone
+         *
+         * @throws \WPML\PHP\InvalidArgumentException
+         */
+        public function __construct($datetime = 'now', \DateTimeZone $timezone = null)
+        {
+        }
+        /**
+         * @param string|null $datetime
+         * @param \DateTimeZone|null $timezone
+         *
+         * @return \WPML\PHP\DateTime|null
+         */
+        public static function create($datetime = 'now', \DateTimeZone $timezone = null)
+        {
+        }
+    }
+}
+namespace WPML\PHP\Exception {
+    class Exception extends \Exception
+    {
+    }
+    class ClassDoesNotExistException extends \WPML\PHP\Exception\Exception
+    {
+        public function __construct(string $classname)
+        {
+        }
+    }
+    class InvalidArgumentException extends \WPML\PHP\Exception\Exception
+    {
+    }
+    class InvalidItemIdException extends \InvalidArgumentException
+    {
+    }
+    class InvalidTypeException extends \InvalidArgumentException
+    {
+    }
+    class RuntimeException extends \WPML\PHP\Exception\Exception
+    {
+    }
+}
+namespace WPML\PHP\Logger {
+    interface LoggerInterface
+    {
+        /**
+         * @param string $message
+         *
+         * @return void
+         */
+        public function error($message);
+        /**
+         * @param string $message
+         *
+         * @return void
+         */
+        public function notice($message);
+    }
+    class DebugFileLogger implements \WPML\PHP\Logger\LoggerInterface
+    {
+        /**
+         * @param \WPML\PHP\Logger\LoggerInterface $logger
+         *
+         * @return void
+         */
+        public static function load(\WPML\PHP\Logger\LoggerInterface $logger)
+        {
+        }
+        public static function getInstance(): \WPML\PHP\Logger\LoggerInterface
+        {
+        }
+        /**
+         * @param string $message
+         *
+         * @return void
+         */
+        public function error($message)
+        {
+        }
+        /**
+         * @param string $message
+         *
+         * @return void
+         */
+        public function notice($message)
+        {
+        }
+    }
+}
+namespace WPML\PHP\Value {
+    abstract class Internal
+    {
+        const THROW_EXCEPTION = '_THROW_EXCEPTION_';
+        const KEY_DOES_NOT_EXIST = '_KEY_DOES_NOT_EXIST_';
+        /**
+         * @template T
+         * @param \WPML\PHP\Value\T $fallback
+         * @param string $exceptionMsg
+         *
+         * @throws \WPML\PHP\Value\InvalidArgumentException
+         *
+         * @return \WPML\PHP\Value\T
+         */
+        public static function fallbackOrException($fallback, $exceptionMsg)
+        {
+        }
+        /**
+         * @template T
+         * @param \WPML\PHP\Value\T|array<\WPML\PHP\Value\T> $value
+         *
+         * @return \WPML\PHP\Value\T|array<mixed>|\WPML\PHP\Value\Internal::KEY_DOES_NOT_EXIST
+         */
+        public static function getValueFromArray($value)
+        {
+        }
+        /**
+         * @param mixed $value
+         *
+         * @return string
+         */
+        public static function msgKeyDoesNotExist($value)
+        {
+        }
+    }
+    class Is
+    {
+        /**
+         * @param mixed $value
+         *
+         * @return bool
+         *
+         * @psalm-assert-if-true string $value
+         */
+        public static function string($value)
+        {
+        }
+        /**
+         * @param mixed $value
+         *
+         * @return bool
+         *
+         * @psalm-assert-if-true string $value
+         */
+        public static function nonEmptyString($value)
+        {
+        }
+        /**
+         * @param mixed $value
+         *
+         * @return bool
+         *
+         * @psalm-assert-if-true int $value
+         */
+        public static function int($value)
+        {
+        }
+        /**
+         * @param mixed $value
+         * @param callable(mixed):bool $isType
+         *
+         * @return bool
+         *
+         * @psalm-assert-if-true array $value
+         */
+        public static function arrayOfSameType($value, $isType)
+        {
+        }
+        /**
+         * @param mixed $value
+         * @param array<string, callable(mixed):bool> $structure
+         *
+         * @return bool
+         *
+         * @psalm-assert-if-true array $value
+         */
+        public static function array($value, $structure)
+        {
+        }
+    }
+    class Validate
+    {
+        /**
+         * @template T
+         *
+         * @param mixed $value
+         * @param \WPML\PHP\Value\T $fallback
+         *
+         * @throws \WPML\PHP\Value\InvalidArgumentException
+         *
+         * @psalm-return ($fallback is Internal::THROW_EXCEPTION ? string : string|T)
+         */
+        public static function string($value, $fallback = \WPML\PHP\Value\Internal::THROW_EXCEPTION)
+        {
+        }
+        /**
+         * @template T
+         * @param mixed $value
+         * @param \WPML\PHP\Value\T $fallback
+         *
+         * @throws \WPML\PHP\Value\InvalidArgumentException
+         *
+         * @psalm-return ($fallback is Internal::THROW_EXCEPTION ? string : string|T)
+         */
+        public static function nonEmptyString($value, $fallback = \WPML\PHP\Value\Internal::THROW_EXCEPTION)
+        {
+        }
+        /**
+         * This function validates if the value is an integer value.
+         * It also accepts a string which has the same value when casted to an integer.
+         * For example, '123' is valid (and returned as int), but '123.45' is not.
+         *
+         * @template T
+         *
+         * @param mixed $value
+         * @param \WPML\PHP\Value\T $fallback
+         *
+         * @throws \WPML\PHP\Value\InvalidArgumentException
+         *
+         * @psalm-return ($fallback is Internal::THROW_EXCEPTION ? int : int|T)
+         */
+        public static function int($value, $fallback = \WPML\PHP\Value\Internal::THROW_EXCEPTION)
+        {
+        }
+        /**
+         * @template R
+         * @template T
+         *
+         * @param mixed $value
+         * @param array<string, callable(mixed):R> $structure
+         * @param \WPML\PHP\Value\T $fallback
+         *
+         * @throws \WPML\PHP\Value\InvalidArgumentException
+         *
+         * @psalm-assert-if-true array $value
+         * @psalm-return ($fallback is Internal::THROW_EXCEPTION ? array<R> : T)
+         */
+        public static function array($value, $structure, $fallback = \WPML\PHP\Value\Internal::THROW_EXCEPTION)
+        {
+        }
+        /**
+         * @template R
+         * @template T
+         *
+         * @param mixed $value
+         * @param callable(mixed):R $validateType
+         * @param \WPML\PHP\Value\T $fallback
+         *
+         * @throws \WPML\PHP\Value\InvalidArgumentException
+         *
+         * @psalm-return ($fallback is Internal::THROW_EXCEPTION ? array<R> : T)
+         */
+        public static function arrayOfSameType($value, $validateType, $fallback = \WPML\PHP\Value\Internal::THROW_EXCEPTION)
+        {
+        }
+    }
+}
+namespace WPML\WordPress {
+    class Term
+    {
+        /**
+         * This method is a wrapper for the WordPress `get_term` function. It just
+         * disables WPML's term adjustment feature, which automatically adjusts the
+         * requested term to the current language term (if available).
+         *
+         * @psalm-suppress HookNotFound Legacy hook to disable term adjustment.
+         * @return mixed
+         */
+        public static function get(int $id, string $taxonomy = '', string $output = 'OBJECT')
         {
         }
     }
@@ -76464,8 +72165,56 @@ namespace WPML\FP\System {
     {
     }
 }
+// @codingStandardsIgnoreStart
+namespace WPML\PHP {
+    // @codingStandardsIgnoreEnd
+    /**
+     * @param string[]             $keys
+     * @param array<string, mixed> $array
+     */
+    function array_keys_exists(array $keys, array $array): bool
+    {
+    }
+    /**
+     * @template T
+     * @param array<array-key, T> $array
+     * @param callable(\WPML\PHP\T, array-key): bool $callback
+     *
+     * @return array{0: array<array-key, T>, 1: array<array-key, T>}
+     */
+    function partition(array $array, callable $callback): array
+    {
+    }
+    /**
+     * @template T
+     * @param array<array-key, T|array<array-key, T>> $array
+     *
+     * @return array<array-key, T>
+     */
+    function flatten(array $array): array
+    {
+    }
+}
+namespace WPML\PHP\Logger {
+    /**
+     * @param string $message
+     *
+     * @return void
+     */
+    function error(string $message)
+    {
+    }
+    /**
+     * @param string $message
+     *
+     * @return void
+     */
+    function notice(string $message)
+    {
+    }
+}
 namespace {
-    /** @var \WPML\FP\System\SitePress $this */
+    /** @var \WPML\PHP\Logger\SitePress $this */
     $request = \filter_input(\INPUT_POST, 'icl_ajx_action');
     function user_is_admin_or_exit()
     {
@@ -76481,7 +72230,7 @@ namespace {
     }
     /**
      *
-     * @return \WPML\FP\System\WPML_Redirection
+     * @return \WPML\PHP\Logger\WPML_Redirection
      */
     function _wpml_get_redirect_helper()
     {
@@ -76648,7 +72397,7 @@ namespace {
     {
     }
     /**
-     * @return \WPML\FP\System\WPML_TM_Element_Translations
+     * @return \WPML\PHP\Logger\WPML_TM_Element_Translations
      */
     function wpml_tm_load_element_translations()
     {
@@ -76715,31 +72464,31 @@ namespace {
     {
     }
     /**
-     * @return \WPML\FP\System\WPML_Translation_Proxy_Basket_Networking
+     * @return \WPML\PHP\Logger\WPML_Translation_Proxy_Basket_Networking
      */
     function wpml_tm_load_basket_networking()
     {
     }
     /**
-     * @return \WPML\FP\System\WPML_Translation_Proxy_Networking
+     * @return \WPML\PHP\Logger\WPML_Translation_Proxy_Networking
      */
     function wpml_tm_load_tp_networking()
     {
     }
     /**
-     * @return \WPML\FP\System\WPML_TM_Blog_Translators
+     * @return \WPML\PHP\Logger\WPML_TM_Blog_Translators
      */
     function wpml_tm_load_blog_translators()
     {
     }
     /**
-     * @return \WPML\FP\System\WPML_TM_Translators_Dropdown
+     * @return \WPML\PHP\Logger\WPML_TM_Translators_Dropdown
      */
     function wpml_tm_get_translators_dropdown()
     {
     }
     /**
-     * @return \WPML\FP\System\WPML_TM_Mail_Notification
+     * @return \WPML\PHP\Logger\WPML_TM_Mail_Notification
      */
     function wpml_tm_init_mail_notifications()
     {
@@ -76747,7 +72496,7 @@ namespace {
     /**
      * It returns a single instance of the class.
      *
-     * @return \WPML\FP\System\WPML_Dashboard_Ajax
+     * @return \WPML\PHP\Logger\WPML_Dashboard_Ajax
      */
     function wpml_tm_load_tm_dashboard_ajax()
     {
@@ -76758,7 +72507,7 @@ namespace {
     /**
      * It returns a single instance of the class.
      *
-     * @return \WPML\FP\System\WPML_Translation_Job_Factory
+     * @return \WPML\PHP\Logger\WPML_Translation_Job_Factory
      */
     function wpml_tm_load_job_factory()
     {
@@ -76766,7 +72515,7 @@ namespace {
     /**
      * It returns a single instance of the class.
      *
-     * @return \WPML\FP\System\WPML_TM_XLIFF_Factory
+     * @return \WPML\PHP\Logger\WPML_TM_XLIFF_Factory
      */
     function wpml_tm_xliff_factory()
     {
@@ -76774,7 +72523,7 @@ namespace {
     /**
      * It returns a single instance of the class.
      *
-     * @return \WPML\FP\System\WPML_TM_XLIFF_Shortcodes
+     * @return \WPML\PHP\Logger\WPML_TM_XLIFF_Shortcodes
      */
     function wpml_tm_xliff_shortcodes()
     {
@@ -76793,7 +72542,7 @@ namespace {
     /**
      * It returns an instance of the class.
      *
-     * @return \WPML\FP\System\WPML_TM_Records
+     * @return \WPML\PHP\Logger\WPML_TM_Records
      */
     function wpml_tm_get_records()
     {
@@ -76801,7 +72550,7 @@ namespace {
     /**
      * It returns an instance of the class.
      *
-     * @return \WPML\FP\System\WPML_TM_Xliff_Frontend
+     * @return \WPML\PHP\Logger\WPML_TM_Xliff_Frontend
      */
     function setup_xliff_frontend()
     {
@@ -76812,7 +72561,7 @@ namespace {
      * @param int $job_id The ID of the job.
      * @param bool $applyTranslationMemoryForCompletedJobs
      *
-     * @return \WPML\FP\System\WPML_TM_ATE_Models_Job_Create
+     * @return \WPML\PHP\Logger\WPML_TM_ATE_Models_Job_Create
      */
     function wpml_tm_create_ATE_job_creation_model($job_id, $applyTranslationMemoryForCompletedJobs = \true)
     {
@@ -76894,7 +72643,7 @@ namespace {
     /**
      * It returns an instance of the class.
      *
-     * @return \WPML\FP\System\WPML_TM_ATE_Job_Repository
+     * @return \WPML\PHP\Logger\WPML_TM_ATE_Job_Repository
      */
     function wpml_tm_get_ate_jobs_repository()
     {
@@ -76982,7 +72731,7 @@ namespace {
      * @param string $translation
      * @param bool $finished_state
      *
-     * @return \WPML\FP\System\WPML_TM_Translated_Field
+     * @return \WPML\PHP\Logger\WPML_TM_Translated_Field
      */
     function wpml_tm_create_translated_field($original, $translation, $finished_state)
     {
@@ -77017,7 +72766,7 @@ namespace {
     }
     /**
      * @param string             $req_uri
-     * @param \WPML\FP\System\WPML_URL_Converter $wpml_url_converter
+     * @param \WPML\PHP\Logger\WPML_URL_Converter $wpml_url_converter
      * @param bool               $directory
      *
      * @return string
@@ -77348,7 +73097,7 @@ namespace {
     /**
      * Add settings link to plugin page.
      *
-     * @param \WPML\FP\System\SitePress     $sitepress
+     * @param \WPML\PHP\Logger\SitePress     $sitepress
      * @param array<string> $links
      * @param string        $file
      *
@@ -77539,7 +73288,7 @@ namespace {
     {
     }
     /**
-     * @param \WPML\FP\System\SitePress $sitepress
+     * @param \WPML\PHP\Logger\SitePress $sitepress
      */
     function activate_installer($sitepress = \null)
     {
@@ -77618,7 +73367,7 @@ namespace {
     {
     }
     /**
-     * @return \WPML\FP\System\WP_Filesystem_Direct
+     * @return \WPML\PHP\Logger\WP_Filesystem_Direct
      */
     function wpml_get_filesystem_direct()
     {
@@ -77636,7 +73385,7 @@ namespace {
     /**
      * @param string $group
      *
-     * @return \WPML\FP\System\WPML_WP_Cache
+     * @return \WPML\PHP\Logger\WPML_WP_Cache
      */
     function wpml_get_cache($group = '')
     {
@@ -78128,7 +73877,7 @@ namespace {
      *
      * @param int   $post_id Optional The post id to retrieve information of (post, page, attachment, custom) Defaults to current post ID.
      *
-     * @return array|\WPML\FP\System\WP_Error
+     * @return array|\WPML\PHP\Logger\WP_Error
      * @uses \SitePress::api_hooks
      */
     function wpml_get_language_information($empty_value = \null, $post_id = \null)
@@ -78869,7 +74618,7 @@ namespace {
     {
     }
     /**
-     * @return \WPML\FP\System\WPML_Notices
+     * @return \WPML\PHP\Logger\WPML_Notices
      */
     function wpml_get_admin_notices()
     {
@@ -78910,8 +74659,8 @@ namespace {
      * @param array $navigation_items
      */
     $navigation_items = \apply_filters('wpml_admin_languages_navigation_items', $navigation_items);
-    /** @var \WPML\FP\System\SitePress $sitepress */
-    /** @var \WPML\FP\System\ICLMenusSync $icl_menus_sync */
+    /** @var \WPML\PHP\Logger\SitePress $sitepress */
+    /** @var \WPML\PHP\Logger\ICLMenusSync $icl_menus_sync */
     $active_languages = $sitepress->get_active_languages();
     /** @var \stdClass $res */
     $res = $wpdb->get_row($res_prepared);
@@ -78955,7 +74704,7 @@ namespace {
     \define('ICL_PLUGIN_URL', $icl_plugin_url);
     /** @var \WPML_WP_API $wpml_wp_api */
     $wpml_wp_api = $sitepress->get_wp_api();
-    /** @var \WPML\FP\System\WPML_TF_Settings $tf_settings */
+    /** @var \WPML\PHP\Logger\WPML_TF_Settings $tf_settings */
     $tf_settings = $tf_settings_read->get('WPML_TF_Settings');
     /** @var array $sitepress_settings */
     $sitepress_settings = $sitepress->get_settings();
@@ -78969,7 +74718,7 @@ namespace {
     {
     }
     /**
-     * @param \WPML\FP\System\SitePress $sitepress
+     * @param \WPML\PHP\Logger\SitePress $sitepress
      */
     function wpml_loaded($sitepress)
     {
@@ -78991,7 +74740,7 @@ namespace {
     /**
      * Load plugin.
      *
-     * @param \WPML\FP\System\SitePress $sitepress WPML main plugin instance.
+     * @param \WPML\PHP\Logger\SitePress $sitepress WPML main plugin instance.
      */
     function wpml_tm_load($sitepress = \null)
     {
