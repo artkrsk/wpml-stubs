@@ -65,8 +65,8 @@ $finder = Finder::create()
 	->exclude( array( 'tests', 'docs', 'addons', 'inc/hacks', 'classes/twig-extensions' ) )
 	// Exclude top-level lib/ (third-party libraries like Twig) but not lib/ in vendor packages
 	->notPath( '#^lib/#' )
-	// Exclude third-party vendor packages (but keep libraries WPML extends/uses)
-	// Keep: a5hleyrich (WP_Background_Process - WPML extends it)
+	// Exclude third-party vendor packages (WP_Background_Process provided by woocommerce-stubs)
+	->notPath( '#vendor/a5hleyrich#' )
 	->notPath( '#vendor/composer#' )
 	->notPath( '#vendor/jakeasmith#' )
 	->notPath( '#vendor/psr#' )
@@ -377,7 +377,7 @@ function buildUseStatementsMap( string $wpmlPath ): array {
 		if ( preg_match( '#/(lib|tests|docs|node_modules)/#', $filePath ) ) {
 			continue;
 		}
-		// Skip third-party vendor packages
+		// Skip third-party vendor packages (a5hleyrich provided by woocommerce-stubs)
 		if ( preg_match( '#/vendor/(a5hleyrich|composer|jakeasmith|psr|symfony|yoast)/#', $filePath ) ) {
 			continue;
 		}

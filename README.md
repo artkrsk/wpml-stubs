@@ -7,6 +7,10 @@ PHPStan stubs for WPML Multilingual CMS for local development.
 - PHP 8.0 or higher
 - PHPStan for static analysis
 
+## Dependencies
+
+This package depends on `php-stubs/woocommerce-stubs` to provide `WP_Background_Process` classes that WPML extends. This prevents duplicate class definitions when using both WPML and WooCommerce.
+
 ## Installation
 
 ```bash
