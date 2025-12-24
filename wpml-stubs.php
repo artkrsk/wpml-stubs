@@ -62056,14 +62056,7 @@ namespace WPML\Core\Component\WordsToTranslate\Domain\Calculator {
          * @return array<int, string|array<string,string[]>>
          */
         public function diffArrays(
-            $b,
-            $c,
             // Following parameters are for performance reasons on recursion calls.
-            $bStart = 0,
-            $bEnd = null,
-            $cStart = 0,
-            $cEnd = null,
-            $cValuesAsIndex = null
         )
         {
         }
@@ -62290,16 +62283,12 @@ namespace WPML\Core\Component\WordsToTranslate\Domain {
         // Only languages with specific settings are listed.
         const LANGS = ['ja' => [
             // Japanese
-            self::KEY_WORDS_PER_IDEOGRAM => 0.5,
         ], 'ko' => [
             // Korean
-            self::KEY_WORDS_PER_IDEOGRAM => 0.5,
         ], 'zh-hans' => [
             // Chinese Simplified
-            self::KEY_WORDS_PER_IDEOGRAM => 0.55,
         ], 'zh-hant' => [
             // Chinese Traditional
-            self::KEY_WORDS_PER_IDEOGRAM => 0.55,
         ]];
     }
     class Item
@@ -71835,7 +71824,6 @@ namespace WPML\PHP\Logger {
 }
 namespace {
     /** @var \WPML\PHP\Logger\SitePress $this */
-    $request = \filter_input(\INPUT_POST, 'icl_ajx_action');
     function user_is_admin_or_exit()
     {
     }
@@ -74274,16 +74262,12 @@ namespace {
     {
     }
     /** @var \WPML_Custom_Types_Translation_UI $custom_types_ui */
-    $custom_types_ui = \WPML\Container\make(\WPML_Custom_Types_Translation_UI::class);
     /**
      * @param array $navigation_items
      */
-    $navigation_items = \apply_filters('wpml_admin_languages_navigation_items', $navigation_items);
     /** @var \WPML\PHP\Logger\SitePress $sitepress */
     /** @var \WPML\PHP\Logger\ICLMenusSync $icl_menus_sync */
-    $active_languages = $sitepress->get_active_languages();
     /** @var \stdClass $res */
-    $res = $wpdb->get_row($res_prepared);
     /* DEBUG ACTION */
     /**
      * @param \stdClass $term_object
@@ -74297,7 +74281,6 @@ namespace {
     {
     }
     /** @var \WPML_TM_AMS_ATE_Console_Section|null $ateConsoleSection */
-    $ateConsoleSection = $factory->create();
     \define('ICL_SITEPRESS_VERSION', '4.8.6');
     // Script version, first 3 digits are the same as the plugin version.
     // Increase the last 3 digits by 1 for intermediate packages (i.e. beta, rc, internal).
@@ -74323,11 +74306,8 @@ namespace {
     }
     \define('ICL_PLUGIN_URL', $icl_plugin_url);
     /** @var \WPML_WP_API $wpml_wp_api */
-    $wpml_wp_api = $sitepress->get_wp_api();
     /** @var \WPML\PHP\Logger\WPML_TF_Settings $tf_settings */
-    $tf_settings = $tf_settings_read->get('WPML_TF_Settings');
     /** @var array $sitepress_settings */
-    $sitepress_settings = $sitepress->get_settings();
     function wpml_init_cli()
     {
     }
@@ -74440,7 +74420,6 @@ namespace {
      * If Installer 1.7.0+ is present, unregister Installer from old WPML.
      * Force Installer 1.7.0+ being used over older Installer versions.
      */
-    $installer_171_plus_on = \false;
     /**
      * When all plugins load pick the newest version.
      */
@@ -74484,7 +74463,6 @@ namespace {
     /**
      * OTGS UI version - increase after every major update.
      */
-    $otg_ui_version = 111;
     /**
      * @param string $vendor_path Path to the root of your relative vendor directory housing this repository (no trailing slash).
      * @param string $vendor_url  URL of the root of your relative vendor directory housing this repository, no trailing slash.
@@ -74541,7 +74519,6 @@ namespace {
      * Script to merge all generated markdown documentation files into a single README.md file.
      */
     // Define paths
-    $generatedDir = __DIR__ . '/../docs/generated';
     // Function to extract PHPDoc annotations for methods from a file
     function extractPhpDocMethods($filePath)
     {
@@ -82418,5 +82395,4 @@ namespace {
     /**
      * WARNING: INCREASE THIS LOADER VERSION ON EVERY NEW RELEASE.
      */
-    $wpml_page_builders_version = 31;
 }

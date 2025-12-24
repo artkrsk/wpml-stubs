@@ -207,42 +207,44 @@ function removeComposerInternals( string $content ): string {
  * These are code snippets from WPML source that the stub generator incorrectly includes.
  */
 function removeStrayCodeStatements( string $content ): string {
-	$lines         = explode( "\n", $content );
-	$output        = array();
-	$depth         = 0;
-	$inClassOrFunc = false;
+	$lines                = explode( "\n", $content );
+	$output               = array();
+	$classOrFunctionDepth = null; // null = not in class/function, int = depth when we entered
 
 	foreach ( $lines as $line ) {
 		$trimmed = trim( $line );
 
-		// Track if we're inside a class, interface, trait, or function
+		// Track when we enter a class, interface, trait, or function
 		if ( preg_match( '/^(class|interface|trait|function|abstract\s+class|final\s+class)\s/', $trimmed ) ) {
-			$inClassOrFunc = true;
+			// Count opening braces on this line to set our entry depth
+			$classOrFunctionDepth = substr_count( $line, '{' );
 		}
 
-		// Track brace depth
-		$depth += substr_count( $line, '{' );
-		$depth -= substr_count( $line, '}' );
+		// If we're tracking a class/function, update depth tracking
+		if ( null !== $classOrFunctionDepth ) {
+			$classOrFunctionDepth += substr_count( $line, '{' );
+			$classOrFunctionDepth -= substr_count( $line, '}' );
 
-		// Reset when we exit all blocks
-		if ( 0 === $depth && $inClassOrFunc ) {
-			$inClassOrFunc = false;
+			// Exit when we've closed all braces for this class/function
+			if ( $classOrFunctionDepth <= 0 ) {
+				$classOrFunctionDepth = null;
+			}
 		}
 
 		// Skip stray code statements at namespace level (outside class/function)
-		if ( ! $inClassOrFunc && 0 === $depth ) {
+		if ( null === $classOrFunctionDepth ) {
 			// Skip global variable declarations
-			if ( preg_match( '/^\s*global\s+\$/', $trimmed ) ) {
+			if ( preg_match( '/^global\s+\\\$/', $trimmed ) ) {
 				continue;
 			}
 
-			// Skip variable assignments at top level
-			if ( preg_match( '/^\s*\$\w+\s*=/', $trimmed ) ) {
+			// Skip all variable statements (assignments, method calls, etc.)
+			if ( str_starts_with( $trimmed, '$' ) ) {
 				continue;
 			}
 
 			// Skip standalone function/method calls
-			if ( preg_match( '/^\s*\$?\w+(::|->)/', $trimmed ) && ! str_starts_with( $trimmed, '/*' ) && ! str_starts_with( $trimmed, '//' ) ) {
+			if ( preg_match( '/^\w+(::|->|\()/', $trimmed ) && ! str_starts_with( $trimmed, '/*' ) && ! str_starts_with( $trimmed, '//' ) && ! str_starts_with( $trimmed, '*' ) ) {
 				continue;
 			}
 		}
