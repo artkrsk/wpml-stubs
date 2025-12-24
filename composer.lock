@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1ee089e780ccaf2088df50b065cccce2",
+    "content-hash": "fd532a13a8cb06817a01a026b2f6b167",
     "packages": [
         {
             "name": "php-stubs/woocommerce-stubs",
-            "version": "v9.9.5",
+            "version": "v10.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-stubs/woocommerce-stubs.git",
-                "reference": "3f4d4e14afe6150569bd96cf14e8a17a84812447"
+                "reference": "b1222d510f791a92bf89905708c2995854de85b6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-stubs/woocommerce-stubs/zipball/3f4d4e14afe6150569bd96cf14e8a17a84812447",
-                "reference": "3f4d4e14afe6150569bd96cf14e8a17a84812447",
+                "url": "https://api.github.com/repos/php-stubs/woocommerce-stubs/zipball/b1222d510f791a92bf89905708c2995854de85b6",
+                "reference": "b1222d510f791a92bf89905708c2995854de85b6",
                 "shasum": ""
             },
             "require": {
@@ -46,9 +46,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-stubs/woocommerce-stubs/issues",
-                "source": "https://github.com/php-stubs/woocommerce-stubs/tree/v9.9.5"
+                "source": "https://github.com/php-stubs/woocommerce-stubs/tree/v10.4.2"
             },
-            "time": "2025-07-14T17:12:48+00:00"
+            "time": "2025-12-14T04:41:11+00:00"
         },
         {
             "name": "php-stubs/wordpress-stubs",

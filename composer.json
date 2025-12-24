@@ -24,7 +24,7 @@
   ],
   "require": {
     "php": ">=8.0",
-    "php-stubs/woocommerce-stubs": "^9.0",
+    "php-stubs/woocommerce-stubs": "^10.4",
     "php-stubs/wordpress-stubs": "^6.9",
     "php-stubs/wp-cli-stubs": "^2.12"
   },
