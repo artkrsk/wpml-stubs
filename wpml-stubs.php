@@ -4,7 +4,7 @@
 namespace {
 	// WPML Core constants (path-related constants that might not be in source)
 	if (!defined('ICL_SITEPRESS_VERSION')) {
-		define('ICL_SITEPRESS_VERSION', '4.8.6');
+		define('ICL_SITEPRESS_VERSION', '4.9.2');
 	}
 	if (!defined('WPML_PLUGIN_BASENAME')) {
 		define('WPML_PLUGIN_BASENAME', 'sitepress-multilingual-cms/sitepress.php');
@@ -186,17 +186,6 @@ namespace WPML\TM\API\ATE {
         }
     }
 }
-namespace WPML\TM\API {
-    class Basket
-    {
-        /**
-         * @return bool
-         */
-        public static function shouldUse($currentLanguageCode = null)
-        {
-        }
-    }
-}
 namespace WPML\FP {
     trait Curryable
     {
@@ -287,9 +276,6 @@ namespace WPML\TM\API {
     {
         use \WPML\FP\Curryable;
         public static function init()
-        {
-        }
-        public static function sendPosts(\WPML\TM\Jobs\Dispatch\Messages $messages, $batch, $sendFrom = \WPML\TM\API\Jobs::SENT_VIA_BASKET)
         {
         }
         public static function sendStrings(\WPML\TM\Jobs\Dispatch\Messages $messages, $batch)
@@ -1785,15 +1771,6 @@ namespace WPML\TM\ATE\ClonedSites\Endpoints {
         {
         }
     }
-    class EnableSecondaryDomain implements \WPML\Ajax\IHandler
-    {
-        public function __construct(\WPML\TM\ATE\ClonedSites\Lock $lock, \WPML\TM\ATE\ClonedSites\SecondaryDomains $secondsDomains)
-        {
-        }
-        public function run(\WPML\Collect\Support\Collection $data)
-        {
-        }
-    }
     class GetCredits implements \WPML\Ajax\IHandler
     {
         public function __construct(\WPML\TM\ATE\ClonedSites\Endpoints\GetCredits\AMSAPIFactory $amsAPIFactory)
@@ -1985,6 +1962,9 @@ namespace WPML\TM\ATE\ClonedSites {
         public function getInfo()
         {
         }
+        public function reset()
+        {
+        }
     }
 }
 namespace WPML\TM\ATE\ClonedSites\SetupMigration {
@@ -2093,15 +2073,28 @@ namespace WPML\TM\ATE\ClonedSites\SetupMigration {
     }
 }
 namespace WPML\TM\ATE\API {
+    class ErrorHandler
+    {
+        /**
+         * Creates an error structure with both formatted message and raw response data
+         *
+         * @param array $message Formatted error message with 'header' and 'description' keys.
+         * @param mixed $rawResponse Raw response data (WP_Error, array, or other response data).
+         * @return array Error structure containing both formatted message and raw data
+         */
+        public static function createError($message, $rawResponse = null)
+        {
+        }
+    }
     class ErrorMessages
     {
-        public static function serverUnavailable($uuid)
+        public static function serverUnavailable($uuid, $rawResponse = null)
         {
         }
-        public static function offline($uuid)
+        public static function offline($uuid, $rawResponse = null)
         {
         }
-        public static function invalidResponse($uuid)
+        public static function invalidResponse($uuid, $rawResponse = null)
         {
         }
         public static function respondedWithError()
@@ -2361,8 +2354,6 @@ namespace {
         const TRANSLATED = 6;
         const DELIVERING = 7;
         const NOT_ENOUGH_CREDIT_STATUS = 31;
-        const CANCELLED_STATUS = 20;
-        const SHOULD_HIDE_STATUS = 42;
         /**
          * WPML_TM_ATE_API constructor.
          *
@@ -2671,6 +2662,16 @@ namespace WPML\TM\ATE {
         public function initializeScript($params)
         {
         }
+        /**
+         * Get the URL of the registered ATE Dashboard script
+         * This retrieves the actual URL from WordPress script registry,
+         * regardless of whether it was registered with or without proxy
+         *
+         * @return string|false Returns the script URL if registered, false otherwise
+         */
+        public function getRegisteredScriptUrl()
+        {
+        }
     }
 }
 namespace WPML\TM\ATE\Download {
@@ -2707,6 +2708,18 @@ namespace WPML\TM\ATE\Download {
         public $jobId;
         /** @var int */
         public $status = ICL_TM_IN_PROGRESS;
+        /** @var bool  if true the job is unsolvable and need to be resent */
+        public $isUnsolvable = false;
+        /** @var string  */
+        public $message = '';
+        /** @var string|null  */
+        public $errorType = null;
+        /** @var object|null  */
+        public $errorData = null;
+        /** @var int|null  */
+        public $originalElementId = null;
+        /** @var int|null  */
+        public $elementId = null;
         /**
          * @param \stdClass $item
          *
@@ -2724,9 +2737,109 @@ namespace WPML\TM\ATE\Download {
         {
         }
     }
+    /**
+     * Cleans up orphan posts created during failed ATE translation downloads.
+     *
+     * Uses a counter stored in wp_options to track concurrent download processes
+     * and ensure cleanup only runs when all parallel processes have completed.
+     */
+    class OrphanPostCleaner
+    {
+        const WAIT_INTERVAL_SECONDS = 2;
+        const MAX_WAIT_RETRIES = 10;
+        public function __construct(\WPML\TM\ATE\Download\OrphanPostCleaner\OrphanPostRepository $repository, \WPML\TM\ATE\Download\OrphanPostCleaner\ProcessCounter $counter, \WPML\TM\ATE\Download\OrphanPostCleaner\Sleeper $sleeper)
+        {
+        }
+        public function incrementProcessCounter()
+        {
+        }
+        public function decrementProcessCounter()
+        {
+        }
+        public function recordStateBeforeInsert()
+        {
+        }
+        public function markCleanupNeeded()
+        {
+        }
+        /**
+         * Attempts cleanup if needed, waiting for other parallel processes to complete.
+         */
+        public function tryCleanup()
+        {
+        }
+    }
+}
+namespace WPML\TM\ATE\Download\OrphanPostCleaner {
+    class OrphanPostRepository
+    {
+        public function __construct(\wpdb $wpdb)
+        {
+        }
+        /**
+         * @return int
+         */
+        public function getMaxPostId()
+        {
+        }
+        /**
+         * @param int $afterId
+         *
+         * @return array
+         */
+        public function getOrphanPostIds($afterId)
+        {
+        }
+        /**
+         * @param int $postId
+         */
+        public function deletePost($postId)
+        {
+        }
+    }
+    /**
+     * Thread-safe counter for tracking parallel download processes.
+     *
+     * Uses MySQL advisory locks (GET_LOCK/RELEASE_LOCK) to ensure atomic
+     * increment/decrement operations, preventing race conditions when
+     * multiple PHP processes run concurrently.
+     */
+    class ProcessCounter
+    {
+        const OPTION_NAME = 'wpml_ate_download_process_counter';
+        const LOCK_NAME = 'wpml_ate_process_counter_lock';
+        const LOCK_TIMEOUT_SECONDS = 10;
+        const EXPIRATION_SECONDS = 20;
+        public function __construct(\wpdb $wpdb)
+        {
+        }
+        public function increment()
+        {
+        }
+        public function decrement()
+        {
+        }
+        /**
+         * @return int
+         */
+        public function get()
+        {
+        }
+    }
+    class Sleeper
+    {
+        /**
+         * @param int $seconds
+         */
+        public function sleep($seconds)
+        {
+        }
+    }
+}
+namespace WPML\TM\ATE\Download {
     class Process
     {
-        public function __construct(\WPML\TM\ATE\Download\Consumer $consumer, \WPML_TM_ATE_API $ateApi)
+        public function __construct(\WPML\TM\ATE\Download\Consumer $consumer, \WPML_TM_ATE_API $ateApi, \WPML\TM\ATE\Download\OrphanPostCleaner $orphanPostCleaner)
         {
         }
         /**
@@ -2752,7 +2865,7 @@ namespace WPML\TM\ATE\Hooks {
         {
         }
         /**
-         * @param \WPML_TM_Post_Job_Entity[]|\WPML_TM_Post_Job_Entity  $jobs
+         * @param \WPML_TM_Post_Job_Entity[]|\WPML_TM_Post_Job_Entity|\stdClass[]|\stdClass  $jobs
          *
          * @return void
          */
@@ -2773,6 +2886,9 @@ namespace WPML\TM\ATE\Hooks {
          * @return void
          */
         public function onTranslateEverythingModeChanged($translateEverythingActive, $options = [])
+        {
+        }
+        public function cancelAllAutomaticJobs()
         {
         }
     }
@@ -4580,6 +4696,8 @@ namespace WPML\TM\ATE\Sync {
         public $downloadQueueSize = 0;
         /** @var array[wpmlJobId, wpmlStatus, ateStatus, wpmlJobStatus] */
         public $jobs = [];
+        /** @var stdClass|null $ate */
+        public $eta;
     }
 }
 namespace WPML\TM\ATE {
@@ -5213,7 +5331,8 @@ namespace WPML\TM\ATE\AutoTranslate\Repository {
          *   allCount: int,
          *   allAutomaticCount: int,
          *   automaticWithoutLongstandingCount: int,
-         *   needsReviewCount: int
+         *   needsReviewCount: int,
+         *   unsolvableJobsCount: int
          * }
          */
         public function get(): array
@@ -6168,8 +6287,9 @@ namespace WPML\TM\ATE\Sitekey {
     {
         /**
          * @param \WPML\TM\ATE\Sitekey\SitekeyProvider $sitekeyProvider
+         * @param \WPML\TM\ATE\Sitekey\SitekeyLogger $logger
          */
-        public function __construct(\WPML\TM\ATE\Sitekey\SitekeyProvider $sitekeyProvider)
+        public function __construct(\WPML\TM\ATE\Sitekey\SitekeyProvider $sitekeyProvider, \WPML\TM\ATE\Sitekey\SitekeyLogger $logger)
         {
         }
         /**
@@ -6226,6 +6346,15 @@ namespace WPML\TM\ATE\Sitekey {
         {
         }
         public function confirm(): bool
+        {
+        }
+    }
+    class SitekeyLogger
+    {
+        public function __construct(\WPML\TM\ATE\Sitekey\SitekeyProvider $sitekeyProvider)
+        {
+        }
+        public function logError($message)
         {
         }
     }
@@ -6869,6 +6998,12 @@ namespace {
         {
         }
         /**
+         * Builds the notice shown when the migration is required
+         */
+        public function build_migration_required()
+        {
+        }
+        /**
          * Required by `\WPML_TM_ICL20_Migration_Notices::build_migration_required`
          */
         public function admin_enqueue_scripts()
@@ -6989,9 +7124,46 @@ namespace WPML\Core {
     }
 }
 namespace WPML\PostHog\Event {
+    class AJAXPostHogCaptureEvent
+    {
+        const NONCE = 'wpml_posthog_capture_nonce';
+        public function addActions()
+        {
+        }
+        public function localizeScriptForWpmlEndpoints($handle)
+        {
+        }
+        public function handle()
+        {
+        }
+    }
     class CaptureEvent
     {
-        public static function capture($eventName, $eventProps, $personProps = [])
+        public static function capture(\WPML\Core\Component\PostHog\Domain\Event\EventInterface $event, $personProps = [])
+        {
+        }
+    }
+    class CaptureSetupWizardCompletedEvent
+    {
+        public static function capture(\WPML\Core\Component\PostHog\Domain\Event\EventInterface $event, $personProps = [])
+        {
+        }
+    }
+    class CaptureWizardFirstStepEvent
+    {
+        public static function capture(\WPML\Core\Component\PostHog\Domain\Event\EventInterface $event, $personProps = [])
+        {
+        }
+    }
+    class CaptureWizardStartedEvent
+    {
+        public static function capture(\WPML\Core\Component\PostHog\Domain\Event\EventInterface $event, $personProps = [])
+        {
+        }
+    }
+    class CaptureWizardStepEvent
+    {
+        public static function capture(\WPML\Core\Component\PostHog\Domain\Event\EventInterface $event, $personProps = [])
         {
         }
     }
@@ -7008,6 +7180,17 @@ namespace WPML\PostHog\State {
     class PostHogState
     {
         public static function isEnabled()
+        {
+        }
+    }
+}
+namespace WPML\PostHog\Event {
+    class SendDataToPostHog
+    {
+        public function __construct()
+        {
+        }
+        public function handle_request()
         {
         }
     }
@@ -7031,20 +7214,20 @@ namespace {
         {
         }
         /**
-         * @param \WPML\PostHog\State\WP_REST_Response $response The response object.
-         * @param \WPML\PostHog\State\WP_Post          $post     Post object.
+         * @param \WPML\PostHog\Event\WP_REST_Response $response The response object.
+         * @param \WPML\PostHog\Event\WP_Post          $post     Post object.
          *
-         * @return \WPML\PostHog\State\WP_REST_Response
+         * @return \WPML\PostHog\Event\WP_REST_Response
          */
         public function prepare_post($response, $post)
         {
         }
         /**
-         * @param \WPML\PostHog\State\WP_HTTP_Response|\WPML\PostHog\State\WP_Error $response Result to send to the client. Usually a WP_REST_Response or WP_Error.
+         * @param \WPML\PostHog\Event\WP_HTTP_Response|\WPML\PostHog\Event\WP_Error $response Result to send to the client. Usually a WP_REST_Response or WP_Error.
          * @param array                     $handler  Route handler used for the request.
-         * @param \WPML\PostHog\State\WP_REST_Request           $request  Request used to generate the response.
+         * @param \WPML\PostHog\Event\WP_REST_Request           $request  Request used to generate the response.
          *
-         * @return \WPML\PostHog\State\WP_HTTP_Response|\WPML\PostHog\State\WP_Error
+         * @return \WPML\PostHog\Event\WP_HTTP_Response|\WPML\PostHog\Event\WP_Error
          */
         public function reload_wpml_post_translation($response, array $handler, \WP_REST_Request $request)
         {
@@ -8862,34 +9045,6 @@ namespace {
         abstract public function enqueue_resources($hook_suffix);
         abstract public function register_resources($hook_suffix);
     }
-    class WPML_TM_Service_Activation_AJAX extends \WPML_TM_AJAX_Factory_Obsolete
-    {
-        /**
-         * @param \WPML\BrowserLanguageRedirect\WPML_WP_API                  $wpml_wp_api
-         * @param \WPML\BrowserLanguageRedirect\WPML_Translation_Job_Factory $job_factory
-         */
-        public function __construct(&$wpml_wp_api, &$job_factory)
-        {
-        }
-        public function get_ignore_local_jobs()
-        {
-        }
-        public function set_ignore_local_jobs($value)
-        {
-        }
-        public function cancel_open_local_translators_jobs()
-        {
-        }
-        public function keep_open_local_translators_jobs()
-        {
-        }
-        public function register_resources()
-        {
-        }
-        public function enqueue_resources($hook_suffix)
-        {
-        }
-    }
     class WPML_TM_Translated_Field
     {
         /**
@@ -9397,9 +9552,6 @@ namespace {
         public function settings_page()
         {
         }
-        function dismiss_icl_side_by_site()
-        {
-        }
         function plugin_action_links($links, $file)
         {
         }
@@ -9681,6 +9833,14 @@ namespace WPML\Container {
         }
     }
 }
+namespace WPML\ContentStats {
+    class EditorSwitchServiceFactory
+    {
+        public static function create(): \WPML\Core\Component\ReportContentStats\Application\Service\EditorSwitchService
+        {
+        }
+    }
+}
 namespace {
     /**
      * Class WPML_Cookie_Admin_Scripts
@@ -9704,8 +9864,8 @@ namespace {
         /**
          * WPML_Cookie_Admin_UI constructor.
          *
-         * @param \WPML\Container\WPML_Twig_Template  $template_service
-         * @param \WPML\Container\WPML_Cookie_Setting $cookie_setting
+         * @param \WPML\ContentStats\WPML_Twig_Template  $template_service
+         * @param \WPML\ContentStats\WPML_Cookie_Setting $cookie_setting
          */
         public function __construct(\WPML_Twig_Template $template_service, \WPML_Cookie_Setting $cookie_setting)
         {
@@ -9749,7 +9909,7 @@ namespace {
         /**
          * WPML_Frontend_Cookie_Setting_Ajax constructor.
          *
-         * @param \WPML\Container\WPML_Cookie_Setting $wpml_frontend_cookie_setting
+         * @param \WPML\ContentStats\WPML_Cookie_Setting $wpml_frontend_cookie_setting
          */
         public function __construct(\WPML_Cookie_Setting $wpml_frontend_cookie_setting)
         {
@@ -9770,7 +9930,7 @@ namespace {
         /**
          * WPML_Frontend_Cookie_Setting constructor.
          *
-         * @param \WPML\Container\SitePress $sitepress
+         * @param \WPML\ContentStats\SitePress $sitepress
          */
         public function __construct(\SitePress $sitepress)
         {
@@ -9965,11 +10125,11 @@ namespace {
      */
     abstract class WPML_WPDB_And_SP_User extends \WPML_WPDB_User
     {
-        /** @var \WPML\Container\SitePress $sitepress */
+        /** @var \WPML\ContentStats\SitePress $sitepress */
         protected $sitepress;
         /**
          * @param wpdb      $wpdb
-         * @param \WPML\Container\SitePress $sitepress
+         * @param \WPML\ContentStats\SitePress $sitepress
          */
         public function __construct(&$wpdb, &$sitepress)
         {
@@ -9980,12 +10140,12 @@ namespace {
      */
     abstract class WPML_Full_PT_API extends \WPML_WPDB_And_SP_User
     {
-        /** @var \WPML\Container\WPML_Post_Translation $post_translations */
+        /** @var \WPML\ContentStats\WPML_Post_Translation $post_translations */
         protected $post_translations;
         /**
          * @param wpdb                  $wpdb
-         * @param \WPML\Container\SitePress             $sitepress
-         * @param \WPML\Container\WPML_Post_Translation $post_translations
+         * @param \WPML\ContentStats\SitePress             $sitepress
+         * @param \WPML\ContentStats\WPML_Post_Translation $post_translations
          */
         public function __construct(&$wpdb, &$sitepress, &$post_translations)
         {
@@ -9993,13 +10153,13 @@ namespace {
     }
     class WPML_Full_Translation_API extends \WPML_Full_PT_API
     {
-        /** @var \WPML\Container\WPML_Term_Translation $term_translations */
+        /** @var \WPML\ContentStats\WPML_Term_Translation $term_translations */
         protected $term_translations;
         /**
-         * @param \WPML\Container\SitePress             $sitepress
+         * @param \WPML\ContentStats\SitePress             $sitepress
          * @param wpdb                  $wpdb
-         * @param \WPML\Container\WPML_Post_Translation $post_translations
-         * @param \WPML\Container\WPML_Term_Translation $term_translations
+         * @param \WPML\ContentStats\WPML_Post_Translation $post_translations
+         * @param \WPML\ContentStats\WPML_Term_Translation $term_translations
          */
         function __construct(&$sitepress, &$wpdb, &$post_translations, &$term_translations)
         {
@@ -10032,14 +10192,14 @@ namespace {
         public function clean_cache()
         {
         }
-        public function get_unsynced_elements($element_types, $ref_lang_code = \false)
+        public function get_unsynced_elements($element_types, $ref_lang_code = \false, $element_id = \null)
         {
         }
         /**
          * @param string|array $element_types
          * @param bool         $ref_lang_code
          */
-        public function sync_element_hierarchy($element_types, $ref_lang_code = \false)
+        public function sync_element_hierarchy($element_types, $ref_lang_code = \false, $element_id = \null)
         {
         }
         /**
@@ -10066,14 +10226,23 @@ namespace {
         public function set($el_id, $el_type, $trid, $language_code, $src_language_code = \null, $check_duplicates = \true, $check_null = \false)
         {
         }
+        /**
+         * @param string|int $el_id
+         * @param string     $el_type
+         *
+         * @return array<string, string>
+         */
+        public static function get_cache_ref($el_id, $el_type)
+        {
+        }
     }
     abstract class WPML_SP_And_PT_User extends \WPML_SP_User
     {
-        /** @var \WPML\Container\WPML_Post_Translation $post_translation */
+        /** @var \WPML\ContentStats\WPML_Post_Translation $post_translation */
         protected $post_translation;
         /**
-         * @param \WPML\Container\WPML_Post_Translation $post_translation
-         * @param \WPML\Container\SitePress             $sitepress
+         * @param \WPML\ContentStats\WPML_Post_Translation $post_translation
+         * @param \WPML\ContentStats\SitePress             $sitepress
          */
         public function __construct(&$post_translation, &$sitepress)
         {
@@ -10081,12 +10250,12 @@ namespace {
     }
     class WPML_TM_User
     {
-        /** @var \WPML\Container\TranslationManagement $tm_instance */
+        /** @var \WPML\ContentStats\TranslationManagement $tm_instance */
         protected $tm_instance;
         /**
          * WPML_Custom_Field_Setting_Factory constructor.
          *
-         * @param \WPML\Container\TranslationManagement $tm_instance
+         * @param \WPML\ContentStats\TranslationManagement $tm_instance
          */
         public function __construct(\TranslationManagement $tm_instance)
         {
@@ -10099,7 +10268,7 @@ namespace {
      */
     abstract class WPML_URL_Converter_User
     {
-        /** @var \WPML\Container\WPML_URL_Converter */
+        /** @var \WPML\ContentStats\WPML_URL_Converter */
         protected $url_converter;
         /**
          * @param \WPML_URL_Converter $url_converter
@@ -11402,6 +11571,35 @@ namespace {
         {
         }
     }
+}
+namespace WPML\Hooks {
+    class WpmlSavePostHooks
+    {
+        public function __construct(\SitePress $sitepress, \wpdb $wpdb)
+        {
+        }
+        public function init_hooks()
+        {
+        }
+        public function on_product_save($post)
+        {
+        }
+        public function on_post_save($post_id, $post, $wp_update, $post_before = null)
+        {
+        }
+        public function process_post_save($post, $wp_update, $post_before = null, $is_product = false)
+        {
+        }
+        /**
+         * @param int|string $post_id
+         * @param bool       $update
+         */
+        public function executeOnPostTranslationSave($post_id)
+        {
+        }
+    }
+}
+namespace {
     /**
      * Class WPML_Adjacent_Links_Hooks_Factory
      *
@@ -11409,7 +11607,7 @@ namespace {
      */
     class WPML_Adjacent_Links_Hooks_Factory implements \IWPML_Frontend_Action_Loader, \IWPML_Backend_Action_Loader, \IWPML_AJAX_Action_Loader
     {
-        /** @return \WPML\FullSiteEditing\WPML_Adjacent_Links_Hooks */
+        /** @return \WPML\Hooks\WPML_Adjacent_Links_Hooks */
         public function create()
         {
         }
@@ -11424,9 +11622,9 @@ namespace {
         /**
          * WPML_Adjacent_Links_Hooks constructor.
          *
-         * @param \WPML\FullSiteEditing\SitePress                  $sitepress
+         * @param \WPML\Hooks\SitePress                  $sitepress
          * @param wpdb                       $wpdb
-         * @param \WPML\FullSiteEditing\WPML_Language_Where_Clause $language_where_clause
+         * @param \WPML\Hooks\WPML_Language_Where_Clause $language_where_clause
          */
         public function __construct(\SitePress $sitepress, \wpdb $wpdb, \WPML_Language_Where_Clause $language_where_clause)
         {
@@ -11767,6 +11965,240 @@ namespace {
     }
 }
 namespace WPML\TM\Jobs {
+    class JobLog
+    {
+        /**
+         * Stored request log structure.
+         *
+         * Case A: REST / ATE sync/download request
+         * [
+         *   requestUrl      => string,            // REST or admin URL
+         *   requestParams   => array,             // Parsed input params
+         *   requestDateTime => string (ISO-8601),
+         *   hasErrorLogs    => bool,
+         *   logsByGroup     => [
+         *     [
+         *       groupId => int,
+         *       label   => string,
+         *       logs    => [
+         *         [
+         *           id      => string,             // Log message
+         *           data    => array,              // Arbitrary payload
+         *           trace   => string[],           // Call stack (file:line class/method)
+         *           logType => int,                // LOG_TYPE_*
+         *           ...extra fields (apiCall, type, element_id, etc.)
+         *         ],
+         *         ...
+         *       ],
+         *       data => array                      // Group-level metadata
+         *     ],
+         *     ...
+         *   ],
+         *   logUid => string
+         * ]
+         *
+         * Case B: Admin "Send to translation" request
+         * - Same structure as Case A
+         * - requestParams may include posts, strings, batch info
+         * - logs may include st-batch element_id expansion (string_ids_in_batch)
+         */
+        /**
+         * Option name that enables/disables logging.
+         * @var string
+         */
+        const IS_ENABLED_OPTION_NAME = 'wpml_tm_job_log_is_enabled';
+        /**
+         * Log type: informational.
+         * @var int
+         */
+        const LOG_TYPE_INFO = 0;
+        /**
+         * Log type: error.
+         * @var int
+         */
+        const LOG_TYPE_ERROR = 1;
+        /**
+         * Group ID for sending jobs. Used when we send content for translation in the /inc/translation-management/translation-management.class.php.
+         * @var int
+         */
+        const GROUP_ID_SEND_JOBS = 0;
+        /**
+         * Group ID for syncing jobs. Used when we sync jobs in the /classes/ATE/Sync/Process.php.
+         * @var int
+         */
+        const GROUP_ID_SYNC_JOBS = 1;
+        /**
+         * Group ID for downloading jobs. Used when we download jobs in the /classes/ATE/Download/Process.php.
+         * @var int
+         */
+        const GROUP_ID_DOWNLOAD_JOBS = 2;
+        /**
+         * @param int $groupId
+         * @return bool
+         */
+        public static function isSendJobsLogsGroup($groupId)
+        {
+        }
+        public static function init()
+        {
+        }
+        /**
+         * Checking in wp_options if logging was enabled from the UI by user.
+         * 
+         * @return bool
+         */
+        public static function isEnabled()
+        {
+        }
+        /**
+         * @param bool $isEnabled
+         */
+        public static function setIsEnabled($isEnabled)
+        {
+        }
+        /**
+         * This call should start the logging process and be called before starting any logging.
+         *
+         * @return void
+         */
+        public static function maybeInitRequest()
+        {
+        }
+        /**
+         * Check if request data was initialized.
+         *
+         * @return bool
+         */
+        public static function wasRequestInitialised()
+        {
+        }
+        /**
+         * Start a new logging group.
+         *
+         * @param int    $groupId
+         * @param string $groupLabel
+         * @param array  $groupData
+         */
+        public static function createNewGroup($groupId, $groupLabel = '', $groupData = [])
+        {
+        }
+        public static function finishCurrentGroup()
+        {
+        }
+        /**
+         * Add extra metadata which will be auto appended to all next logs.
+         *
+         * @param string $key
+         * @param mixed  $value
+         * @return void
+         */
+        public static function addExtraLogData($key, $value)
+        {
+        }
+        /**
+         * Remove extra metadata key.
+         *
+         * @param string $key
+         */
+        public static function removeExtraLogData($key)
+        {
+        }
+        /**
+         * Add a log entry to the current log group.
+         *
+         * @param string|int $id
+         * @param mixed      $data
+         * @param int        $logType
+         */
+        public static function add($id, $data = [], $logType = self::LOG_TYPE_INFO)
+        {
+        }
+        /**
+         * Check whether given log entry is an error.
+         *
+         * @return bool
+         */
+        public static function isErrorLog($log)
+        {
+        }
+        /**
+         * Add an error log entry. Error log entries will be displayed in special way in the UX.
+         *
+         * @param string|int $id
+         * @param mixed      $data
+         */
+        public static function addError($id, $data = [])
+        {
+        }
+        public static function getLogsCount()
+        {
+        }
+        /**
+         * Get all stored logs.
+         *
+         * @return array
+         */
+        public static function getLogs()
+        {
+        }
+        /**
+         * Clear all stored logs.
+         * 
+         * @return bool
+         */
+        public static function clearLogs()
+        {
+        }
+        /**
+         * Shutdown handler – persists logs to DB.
+         */
+        public static function shutdown()
+        {
+        }
+        const MAX_DEPTH = 10;
+        const MAX_STRING_LENGTH = 1000;
+        const MAX_ARRAY_ITEMS = 1000;
+    }
+    class FsJobLogStorage
+    {
+        /**
+         * Max number of stored request logs.
+         * Oldest logs are removed first.
+         */
+        const MAX_STORED_REQUESTS_COUNT = 50;
+        /**
+         * Write a single request log to filesystem..
+         *
+         * @param array $requestLog
+         */
+        public static function writeRequestLog(array $requestLog)
+        {
+        }
+        /**
+         * Read all stored request logs.
+         *
+         * @return array<int, array>
+         */
+        public static function getRequestLogs()
+        {
+        }
+        /**
+         * Remove all stored request log files.
+         *
+         * @return bool
+         */
+        public static function clearAllLogs()
+        {
+        }
+        /**
+         * Get number of stored request logs.
+         *
+         * @return int
+         */
+        public static function getLogsCount()
+        {
+        }
+    }
     class Loader implements \IWPML_Backend_Action, \IWPML_DIC_Action
     {
         public function __construct(\WPML\TranslationRoles\Service\AdministratorRoleManager $administratorRoleManager)
@@ -11782,6 +12214,59 @@ namespace WPML\TM\Jobs {
         {
         }
     }
+}
+namespace WPML\TM\Jobs\Log {
+    class Hooks implements \IWPML_Backend_Action, \IWPML_DIC_Action
+    {
+        const SUBMENU_HANDLE = 'wpml-tm-job-log';
+        public function __construct(\WPML\TM\Jobs\Log\ViewFactory $viewFactory)
+        {
+        }
+        public function add_hooks()
+        {
+        }
+        public function addLogSubmenuPage()
+        {
+        }
+        public function renderPage()
+        {
+        }
+        public function enqueueScripts()
+        {
+        }
+        public function handleAjaxToggle()
+        {
+        }
+        public function handleAjaxClear()
+        {
+        }
+        public function handleAjaxDownload()
+        {
+        }
+        public function handleAjaxDownloadLastSend()
+        {
+        }
+    }
+    class View
+    {
+        public function __construct(\WPML\Collect\Support\Collection $logs, $isLoggingEnabled)
+        {
+        }
+        public function renderPage()
+        {
+        }
+        public function renderTableRow($request, $i)
+        {
+        }
+    }
+    class ViewFactory
+    {
+        public function create()
+        {
+        }
+    }
+}
+namespace WPML\TM\Jobs {
     class Manual
     {
         /**
@@ -13286,60 +13771,6 @@ namespace WPML\TM\Jobs\Query {
         {
         }
     }
-    class StringQuery implements \WPML\TM\Jobs\Query\Query
-    {
-        /**
-         * WP database instance
-         *
-         * @var \wpdb
-         */
-        protected $wpdb;
-        /**
-         * Query builder instance
-         *
-         * @var \WPML\TM\Jobs\Query\QueryBuilder
-         */
-        protected $query_builder;
-        /** @var string */
-        protected $batch_name_column = 'batches.batch_name';
-        /**
-         * @param \wpdb         $wpdb          WP database instance.
-         * @param \WPML\TM\Jobs\Query\QueryBuilder $query_builder Query builder instance.
-         */
-        public function __construct(\wpdb $wpdb, \WPML\TM\Jobs\Query\QueryBuilder $query_builder)
-        {
-        }
-        /**
-         * Get data query
-         *
-         * @param \WPML_TM_Jobs_Search_Params $params Job search params.
-         *
-         * @return string
-         */
-        public function get_data_query(\WPML_TM_Jobs_Search_Params $params)
-        {
-        }
-        /**
-         * Get count query
-         *
-         * @param \WPML_TM_Jobs_Search_Params $params Job search params.
-         *
-         * @return int|string
-         */
-        public function get_count_query(\WPML_TM_Jobs_Search_Params $params)
-        {
-        }
-        /**
-         * Check job type.
-         *
-         * @param \WPML_TM_Jobs_Search_Params $params Job search params.
-         *
-         * @return bool
-         */
-        protected function check_job_type(\WPML_TM_Jobs_Search_Params $params)
-        {
-        }
-    }
     class StringsBatchQuery extends \WPML\TM\Jobs\Query\AbstractQuery
     {
         /** @var string */
@@ -13826,49 +14257,55 @@ namespace {
         /**
          * @see wp_setup_nav_menu_item() to decorate the object
          */
+        /** @var mixed The term_id if the menu item represents a taxonomy term. */
         public $ID;
-        // The term_id if the menu item represents a taxonomy term.
+        /** @var mixed The title attribute of the link element for this menu item. */
         public $attr_title;
-        // The title attribute of the link element for this menu item.
+        /** @var mixed The aria-label attribute of the link element for this menu item. */
         public $aria_label;
-        // The aria-label attribute of the link element for this menu item.
-        public $link_role = 'menuitem';
-        // The role attribute for the link element.
-        public $item_role = 'none';
-        // The role attribute for the li element.
+        /** @var mixed The aria-expanded attribute for parent menu items with submenus. */
+        public $aria_expanded;
+        /** @var mixed The aria-controls attribute linking to submenu ID. */
+        public $aria_controls;
+        /** @var string The role attribute for the link element. */
+        public $link_role = '';
+        /** @var string The role attribute for the li element. */
+        public $item_role = '';
+        /** @var array The array of class attribute values for the link element of this menu item. */
         public $classes = array();
-        // The array of class attribute values for the link element of this menu item.
+        /** @var mixed The DB ID of this item as a nav_menu_item object, if it exists (0 if it doesn't exist). */
         public $db_id;
-        // The DB ID of this item as a nav_menu_item object, if it exists (0 if it doesn't exist).
+        /** @var mixed The description of this menu item. */
         public $description;
-        // The description of this menu item.
+        /** @var mixed The DB ID of the nav_menu_item that is this item's menu parent, if any. 0 otherwise. */
         public $menu_item_parent;
-        // The DB ID of the nav_menu_item that is this item's menu parent, if any. 0 otherwise.
+        /** @var string The type of object originally represented, such as "category," "post", or "attachment." */
         public $object = 'wpml_ls_menu_item';
-        // The type of object originally represented, such as "category," "post", or "attachment."
+        /** @var mixed The DB ID of the original object this menu item represents, e.g. ID for posts and term_id for categories. */
         public $object_id;
-        // The DB ID of the original object this menu item represents, e.g. ID for posts and term_id for categories.
+        /** @var mixed The DB ID of the original object's parent object, if any (0 otherwise). */
         public $post_parent;
-        // The DB ID of the original object's parent object, if any (0 otherwise).
+        /** @var mixed A "no title" label if menu item represents a post that lacks a title. */
         public $post_title;
-        // A "no title" label if menu item represents a post that lacks a title.
+        /** @var mixed The target attribute of the link element for this menu item. */
         public $target;
-        // The target attribute of the link element for this menu item.
+        /** @var mixed The title of this menu item. */
         public $title;
-        // The title of this menu item.
+        /** @var string The family of objects originally represented, such as "post_type" or "taxonomy." */
         public $type = 'wpml_ls_menu_item';
-        // The family of objects originally represented, such as "post_type" or "taxonomy."
+        /** @var mixed The singular label used to describe this type of menu item. */
         public $type_label;
-        // The singular label used to describe this type of menu item.
+        /** @var mixed The URL to which this menu item points. */
         public $url;
-        // The URL to which this menu item points.
+        /** @var mixed The XFN relationship expressed in the link of this menu item. */
         public $xfn;
-        // The XFN relationship expressed in the link of this menu item.
+        /** @var bool Whether the menu item represents an object that no longer exists. */
         public $_invalid = \false;
-        // Whether the menu item represents an object that no longer exists.
+        // phpcs:ignore PSR2.Classes.PropertyDeclaration.Underscore
+        /** @var mixed The menu order of this menu item. */
         public $menu_order;
+        /** @var string The post type of this menu item. Extra property => see [wpmlcore-3855]. */
         public $post_type = 'nav_menu_item';
-        // * Extra property => see [wpmlcore-3855]
         /**
          * WPML_LS_Menu_Item constructor.
          *
@@ -14049,6 +14486,9 @@ namespace {
          * @return array Modified attributes
          */
         public function add_menu_link_accessibility_attributes($atts, $item)
+        {
+        }
+        public function add_menu_accessibility_script()
         {
         }
     }
@@ -17156,109 +17596,6 @@ namespace {
         {
         }
     }
-    interface IWPML_TM_Admin_Section
-    {
-        /**
-         * Returns a value which will be used for sorting the sections.
-         *
-         * @return int
-         */
-        public function get_order();
-        /**
-         * Returns the unique slug of the sections which is used to build the URL for opening this section.
-         *
-         * @return string
-         */
-        public function get_slug();
-        /**
-         * Returns one or more capabilities required to display this section.
-         *
-         * @return string|array
-         */
-        public function get_capabilities();
-        /**
-         * Returns the caption to display in the section.
-         *
-         * @return string
-         */
-        public function get_caption();
-        /**
-         * Returns the callback responsible for rendering the content of the section.
-         *
-         * @return callable
-         */
-        public function get_callback();
-        /**
-         * This method is hooked to the `admin_enqueue_scripts` action.
-         *
-         * @param string $hook The current page.
-         */
-        public function admin_enqueue_scripts($hook);
-        /**
-         * Used to extend the logic for displaying/hiding the section.
-         *
-         * @return bool
-         */
-        public function is_visible();
-    }
-    /**
-     * It handles the TM section responsible for displaying the AMS/ATE console.
-     *
-     * This class takes care of the following:
-     * - enqueuing the external script which holds the React APP
-     * - adding the ID to the enqueued script (as it's required by the React APP)
-     * - adding an inline script to initialize the React APP
-     *
-     * @author OnTheGo Systems
-     */
-    class WPML_TM_AMS_Translation_Quality_Console_Section extends \WPML_TM_AMS_Translation_Abstract_Console_Section implements \IWPML_TM_Admin_Section
-    {
-        const ATE_APP_ID = 'eate_widget';
-        const TAB_ORDER = 10001;
-        const CONTAINER_SELECTOR = '#ams-ate-console';
-        const TAB_SELECTOR = '.wpml-tabs .nav-tab.nav-tab-active.nav-tab-ate-ams';
-        const SLUG = 'translation-quality';
-        const SECTION_SLUG = 'translation-quality';
-        /**
-         * Returns the caption to display in the section.
-         *
-         * @return string
-         */
-        public function get_caption()
-        {
-        }
-        /**
-         * It returns true if the current page and tab are the ATE Console.
-         *
-         * @return bool
-         */
-        protected function is_tab()
-        {
-        }
-        public function getCachingManager()
-        {
-        }
-    }
-    interface IWPML_TM_Admin_Section_Factory
-    {
-        /**
-         * Returns an instance of a class implementing \IWPML_TM_Admin_Section.
-         *
-         * @return \IWPML_TM_Admin_Section
-         */
-        public function create();
-    }
-    class WPML_TM_AMS_Translation_Quality_Console_Section_Factory implements \IWPML_TM_Admin_Section_Factory
-    {
-        /**
-         * Returns an instance of a class implementing \IWPML_TM_Admin_Section.
-         *
-         * @return \IWPML_TM_Admin_Section
-         */
-        public function create()
-        {
-        }
-    }
     interface AteSectionCachingManagerInterface
     {
         /**
@@ -17325,13 +17662,14 @@ namespace {
         {
         }
     }
-    class TranslationQualitySectionCachingManager extends \AteSectionCachingManager
+    interface IWPML_TM_Admin_Section_Factory
     {
-        const CACHE_FILE_NAME = 'translation_quality';
-        const CACHE_KEY = self::CACHE_FILE_NAME . '_path';
-        public function __construct()
-        {
-        }
+        /**
+         * Returns an instance of a class implementing \IWPML_TM_Admin_Section.
+         *
+         * @return \IWPML_TM_Admin_Section
+         */
+        public function create();
     }
     class WPML_TM_AMS_ATE_Console_Section_Factory implements \IWPML_TM_Admin_Section_Factory
     {
@@ -17343,6 +17681,51 @@ namespace {
         public function create()
         {
         }
+    }
+    interface IWPML_TM_Admin_Section
+    {
+        /**
+         * Returns a value which will be used for sorting the sections.
+         *
+         * @return int
+         */
+        public function get_order();
+        /**
+         * Returns the unique slug of the sections which is used to build the URL for opening this section.
+         *
+         * @return string
+         */
+        public function get_slug();
+        /**
+         * Returns one or more capabilities required to display this section.
+         *
+         * @return string|array
+         */
+        public function get_capabilities();
+        /**
+         * Returns the caption to display in the section.
+         *
+         * @return string
+         */
+        public function get_caption();
+        /**
+         * Returns the callback responsible for rendering the content of the section.
+         *
+         * @return callable
+         */
+        public function get_callback();
+        /**
+         * This method is hooked to the `admin_enqueue_scripts` action.
+         *
+         * @param string $hook The current page.
+         */
+        public function admin_enqueue_scripts($hook);
+        /**
+         * Used to extend the logic for displaying/hiding the section.
+         *
+         * @return bool
+         */
+        public function is_visible();
     }
     /**
      * It handles the TM section responsible for displaying the AMS/ATE console.
@@ -17368,6 +17751,14 @@ namespace {
          * @return string
          */
         public function get_caption()
+        {
+        }
+        /**
+         * Returns the description to display below the tab.
+         *
+         * @return string
+         */
+        public function get_description()
         {
         }
         /**
@@ -18184,6 +18575,15 @@ namespace {
         {
         }
         /**
+         * Conditionally adds hooks for the Translate Link Targets UI
+         * Only adds the navigation link if there are links that need adjustment
+         *
+         * @return void
+         */
+        public function add_hooks()
+        {
+        }
+        /**
          * @return string
          */
         protected function render_content()
@@ -18717,6 +19117,14 @@ namespace {
          * @return string
          */
         public function get_caption()
+        {
+        }
+        /**
+         * Returns the description to display below the tab.
+         *
+         * @return string
+         */
+        public function get_description()
         {
         }
         /**
@@ -19548,8 +19956,12 @@ namespace {
          * WPML_Notices constructor.
          *
          * @param \WPML\Notices\WPML_Notice_Render $notice_render
+         * @param \SitePress         $sitepress
          */
-        public function __construct(\WPML_Notice_Render $notice_render)
+        public function __construct(\WPML_Notice_Render $notice_render, \SitePress $sitepress)
+        {
+        }
+        public function add_remove_pending_notices()
         {
         }
         public function init_notices()
@@ -19753,7 +20165,7 @@ namespace WPML\Notices\SiteKey {
          *
          * @return bool
          */
-        public function shouldDisplayRegularNotice()
+        public static function shouldDisplayRegularNotice()
         {
         }
         /**
@@ -19762,7 +20174,7 @@ namespace WPML\Notices\SiteKey {
          *
          * @return bool
          */
-        public function shouldDisplayTranslationNotice()
+        public static function shouldDisplayTranslationNotice()
         {
         }
     }
@@ -20517,6 +20929,12 @@ namespace {
         {
         }
         public static function clear_cache()
+        {
+        }
+        public static function clear_page_on_front_cache()
+        {
+        }
+        public static function clear_cache_key($cache_key)
         {
         }
         function fix_trashed_front_or_posts_page_settings($post_id)
@@ -21561,6 +21979,24 @@ namespace {
         {
         }
     }
+}
+namespace WPML\Request {
+    class Hooks implements \IWPML_Backend_Action, \IWPML_DIC_Action
+    {
+        public function add_hooks()
+        {
+        }
+        /**
+         * @param bool $preventAccess
+         *
+         * @return bool
+         */
+        public function checkUserAdminAccess($preventAccess)
+        {
+        }
+    }
+}
+namespace {
     class WPML_Frontend_Redirection_Url
     {
         /**
@@ -21583,10 +22019,10 @@ namespace {
         /**
          * WPML_Frontend_Redirection constructor.
          *
-         * @param \WPML\Posts\SitePress                $sitepress
-         * @param \WPML\Posts\Frontend                 $request_handler
-         * @param \WPML\Posts\WPML_Redirection         $redir_helper
-         * @param \WPML\Posts\WPML_Language_Resolution $lang_resolution
+         * @param \WPML\Request\SitePress                $sitepress
+         * @param \WPML\Request\Frontend                 $request_handler
+         * @param \WPML\Request\WPML_Redirection         $redir_helper
+         * @param \WPML\Request\WPML_Language_Resolution $lang_resolution
          */
         public function __construct(&$sitepress, &$request_handler, &$redir_helper, &$lang_resolution)
         {
@@ -21631,8 +22067,8 @@ namespace {
     {
         const VALIDATE_DOMAIN_KEY = '____icl_validate_domain';
         /**
-         * @param \WPML\Posts\WPML_WP_API $wp_api
-         * @param \WPML\Posts\WP_Http     $http
+         * @param \WPML\Request\WPML_WP_API $wp_api
+         * @param \WPML\Request\WP_Http     $http
          *
          * @throws \InvalidArgumentException
          */
@@ -21674,7 +22110,7 @@ namespace {
         }
         /**
          * @param string  $user_login
-         * @param \WPML\Posts\WP_User $user
+         * @param \WPML\Request\WP_User $user
          */
         public function wp_login_action($user_login, \WP_User $user)
         {
@@ -21682,7 +22118,7 @@ namespace {
         /**
          * @param string           $redirect_to
          * @param string           $requested_redirect_to
-         * @param \WPML\Posts\WP_User|\WPML\Posts\WP_Error $user
+         * @param \WPML\Request\WP_User|\WPML\Request\WP_Error $user
          *
          * @return string
          */
@@ -21739,7 +22175,7 @@ namespace {
     class WPML_REST_Request_Analyze_Factory
     {
         /**
-         * @return \WPML\Posts\WPML_REST_Request_Analyze
+         * @return \WPML\Request\WPML_REST_Request_Analyze
          */
         public static function create()
         {
@@ -21780,14 +22216,14 @@ namespace {
     }
     abstract class WPML_Redirection extends \WPML_URL_Converter_User
     {
-        /** @var \WPML\Posts\WPML_Request $request_handler */
+        /** @var \WPML\Request\WPML_Request $request_handler */
         protected $request_handler;
-        /** @var \WPML\Posts\WPML_Language_Resolution $lang_resolution */
+        /** @var \WPML\Request\WPML_Language_Resolution $lang_resolution */
         protected $lang_resolution;
         /**
-         * @param \WPML\Posts\WPML_URL_Converter       $url_converter
-         * @param \WPML\Posts\WPML_Request             $request_handler
-         * @param \WPML\Posts\WPML_Language_Resolution $lang_resolution
+         * @param \WPML\Request\WPML_URL_Converter       $url_converter
+         * @param \WPML\Request\WPML_Request             $request_handler
+         * @param \WPML\Request\WPML_Language_Resolution $lang_resolution
          */
         function __construct(&$url_converter, &$request_handler, &$lang_resolution)
         {
@@ -21801,10 +22237,10 @@ namespace {
     {
         /**
          * @param array                    $domains
-         * @param \WPML\Posts\WPML_WP_API              $wp_api
-         * @param \WPML\Posts\WPML_URL_Converter       $url_converter
-         * @param \WPML\Posts\WPML_Request             $request_handler
-         * @param \WPML\Posts\WPML_Language_Resolution $lang_resolution
+         * @param \WPML\Request\WPML_WP_API              $wp_api
+         * @param \WPML\Request\WPML_URL_Converter       $url_converter
+         * @param \WPML\Request\WPML_Request             $request_handler
+         * @param \WPML\Request\WPML_Language_Resolution $lang_resolution
          */
         public function __construct($domains, &$wp_api, &$request_handler, &$url_converter, &$lang_resolution)
         {
@@ -21817,10 +22253,10 @@ namespace {
     {
         /**
          * @param array                    $tax_sync_option
-         * @param \WPML\Posts\WPML_URL_Converter       $url_converter
-         * @param \WPML\Posts\WPML_Request             $request_handler
-         * @param \WPML\Posts\WPML_Language_Resolution $lang_resolution
-         * @param \WPML\Posts\SitePress                $sitepress
+         * @param \WPML\Request\WPML_URL_Converter       $url_converter
+         * @param \WPML\Request\WPML_Request             $request_handler
+         * @param \WPML\Request\WPML_Language_Resolution $lang_resolution
+         * @param \WPML\Request\SitePress                $sitepress
          */
         public function __construct($tax_sync_option, &$url_converter, &$request_handler, &$lang_resolution, &$sitepress)
         {
@@ -21854,9 +22290,9 @@ namespace {
     {
         /**
          * @param array                    $urls
-         * @param \WPML\Posts\WPML_Request             $request_handler
-         * @param \WPML\Posts\WPML_URL_Converter       $url_converter
-         * @param \WPML\Posts\WPML_Language_Resolution $lang_resolution
+         * @param \WPML\Request\WPML_Request             $request_handler
+         * @param \WPML\Request\WPML_URL_Converter       $url_converter
+         * @param \WPML\Request\WPML_Language_Resolution $lang_resolution
          */
         public function __construct($urls, &$request_handler, &$url_converter, &$lang_resolution)
         {
@@ -23171,6 +23607,35 @@ namespace WPML\Support {
         }
     }
 }
+namespace WPML\Support\TmJobs {
+    class Hooks implements \IWPML_Backend_Action, \IWPML_DIC_Action
+    {
+        public function __construct(\WPML\Support\TmJobs\ViewFactory $viewFactory)
+        {
+        }
+        public function add_hooks()
+        {
+        }
+        public function renderSupportSection()
+        {
+        }
+    }
+    class View
+    {
+        public function __construct(int $logCount)
+        {
+        }
+        public function renderSupportSection()
+        {
+        }
+    }
+    class ViewFactory
+    {
+        public function create()
+        {
+        }
+    }
+}
 namespace {
     /**
      * @author OnTheGo Systems
@@ -23186,7 +23651,7 @@ namespace {
      */
     class WPML_Support_Info_UI
     {
-        /** @var \WPML\Support\WPML_Support_Info */
+        /** @var \WPML\Support\TmJobs\WPML_Support_Info */
         protected $support_info;
         function __construct(\WPML_Support_Info $support_info, \IWPML_Template_Service $template_service)
         {
@@ -23367,6 +23832,60 @@ namespace {
         }
     }
     /**
+     * Class WPML_Taxonomy_Notice_Display_Validator
+     *
+     * Serializable callback validator for taxonomy translation help notices.
+     *
+     * This class serves as a callable object that can be safely serialized and stored
+     * in the database along with notice data. It stores only the taxonomy ID (string)
+     * and delegates the actual validation logic to static methods in the main notice class.
+     *
+     * Why this approach:
+     * - Closures cannot be serialized in PHP
+     * - Instance method callbacks serialize entire object graphs (including database connections)
+     * - This validator stores only primitive data (taxonomy ID string)
+     * - Implements __invoke() to make the object callable
+     *
+     * Usage:
+     *     $validator = new WPML_Taxonomy_Notice_Display_Validator( 'product_cat' );
+     *     $notice->add_display_callback( $validator );
+     *     // Later, when notice is retrieved from database:
+     *     if ( $validator() ) { // Calls __invoke()
+     *         // Display notice
+     *     }
+     *
+     */
+    class WPML_Taxonomy_Notice_Display_Validator
+    {
+        /**
+         * Constructor
+         *
+         * @param string $taxonomy_id The taxonomy slug (e.g., 'product_cat', 'category').
+         */
+        public function __construct($taxonomy_id)
+        {
+        }
+        /**
+         * Magic method to make this object callable
+         *
+         * This method is invoked when the object is used as a callback.
+         * It validates whether the taxonomy notice should be displayed.
+         *
+         * @return bool True if notice should display, false otherwise
+         */
+        public function __invoke()
+        {
+        }
+        /**
+         * Get the taxonomy ID this validator is for
+         *
+         * @return string
+         */
+        public function get_taxonomy_id()
+        {
+        }
+    }
+    /**
      * Class WPML_Taxonomy_Translation_Help_Notice
      */
     class WPML_Taxonomy_Translation_Help_Notice
@@ -23381,25 +23900,26 @@ namespace {
         public function __construct(\WPML_Notices $wpml_admin_notices, \SitePress $sitepress)
         {
         }
-        public function __sleep()
-        {
-        }
-        public function __wakeup()
-        {
-        }
         public function add_hooks()
-        {
-        }
-        /**
-         * @return bool
-         */
-        public function should_display_help_notice()
         {
         }
         /**
          * Create and add notice.
          */
         public function add_help_notice()
+        {
+        }
+        /**
+         * Validate if a taxonomy notice should be displayed on the current page.
+         *
+         * This static method is called by the validator object during runtime to determine
+         * if the notice should be shown. It checks if we're on a taxonomy term screen and
+         * if the current taxonomy matches the taxonomy ID stored in the notice.
+         *
+         * @param string $taxonomy_id The taxonomy slug to validate (e.g., 'product_cat', 'category').
+         * @return bool True if the notice should be displayed, false otherwise.
+         */
+        public static function validate_display_for_taxonomy($taxonomy_id)
         {
         }
         /**
@@ -25167,6 +25687,12 @@ namespace {
         public function setHowToHandleExisting($howToHandleExisting)
         {
         }
+        /**
+         * @return array
+         */
+        public function toArray()
+        {
+        }
     }
 }
 namespace WPML\TM\TranslationDashboard\EncodedFieldsValidation {
@@ -25203,7 +25729,7 @@ namespace WPML\TM\TranslationDashboard\EncodedFieldsValidation {
     }
     class Validator
     {
-        public function __construct(\WPML_Encoding_Validation $encoding_validation, \WPML_Element_Translation_Package $package_helper, \WPML\TM\TranslationDashboard\SentContentMessages $sentContentMessages, \WPML\TM\TranslationDashboard\EncodedFieldsValidation\FieldTitle $fieldTitle, \WPML_PB_Factory $pbFactory)
+        public function __construct(\WPML_Element_Translation_Package $package_helper, \WPML\TM\TranslationDashboard\SentContentMessages $sentContentMessages, \WPML\TM\TranslationDashboard\EncodedFieldsValidation\FieldTitle $fieldTitle, \WPML_PB_Factory $pbFactory)
         {
         }
         /**
@@ -28247,8 +28773,9 @@ namespace {
          * @param array $translation_package
          * @param int   $job_id
          * @param array $prev_translation
+         * @param bool  $addJobLogs
          */
-        public function save_package_to_job(array $translation_package, $job_id, $prev_translation)
+        public function save_package_to_job(array $translation_package, $job_id, $prev_translation, $addJobLogs = \false)
         {
         }
         /**
@@ -29049,22 +29576,6 @@ namespace {
         {
         }
     }
-    class WPML_TP_String_Job extends \WPML_WPDB_User
-    {
-        /**
-         * WPML_TP_String_Job constructor.
-         *
-         * @param wpdb                         $wpdb
-         * @param \WPML\TranslationMode\Endpoint\WPML_Translation_Basket      $basket
-         * @param \WPML\TranslationMode\Endpoint\WPML_Translation_Job_Factory $job_factory
-         */
-        public function __construct(&$wpdb, &$basket, &$job_factory)
-        {
-        }
-        function send_strings_to_translation_service($string_ids, $target_language, $translator_id)
-        {
-        }
-    }
     /**
      * Class WPML_TP_Translator
      */
@@ -29677,26 +30188,6 @@ namespace {
         {
         }
     }
-    class WPML_TP_Apply_Translation_String_Strategy implements \WPML_TP_Apply_Translation_Strategy
-    {
-        /**
-         * @param \WPML\TM\TranslationProxy\Services\WPML_TP_Jobs_API $jobs_api
-         * @param wpdb             $wpdb
-         */
-        public function __construct(\WPML_TP_Jobs_API $jobs_api, \wpdb $wpdb)
-        {
-        }
-        /**
-         * @param \WPML\TM\TranslationProxy\Services\WPML_TM_Job_Entity             $job
-         * @param \WPML\TM\TranslationProxy\Services\WPML_TP_Translation_Collection $translations
-         *
-         * @return void
-         * @throws \WPML\TM\TranslationProxy\Services\WPML_TP_API_Exception
-         */
-        public function apply(\WPML_TM_Job_Entity $job, \WPML_TP_Translation_Collection $translations)
-        {
-        }
-    }
     class WPML_TP_Apply_Translations
     {
         /**
@@ -29953,6 +30444,20 @@ namespace WPML\TranslationRoles {
     }
 }
 namespace WPML\Translation {
+    class CancelJobsServiceFactory
+    {
+        public static function create(): \WPML\Core\Component\Translation\Application\Service\CancelJobsService
+        {
+        }
+        /**
+         * @param \WPML\Core\Component\Translation\Application\Service\CancelJobsService $instance
+         *
+         * @return void
+         */
+        public static function setService(\WPML\Core\Component\Translation\Application\Service\CancelJobsService $instance)
+        {
+        }
+    }
     class CompletedTranslationServiceFactory
     {
         public static function create(): \WPML\Core\Component\Translation\Application\Service\CompletedTranslationService
@@ -29985,16 +30490,61 @@ namespace WPML\Translation {
         {
         }
     }
-}
-namespace WPML\Translation\TranslationElements {
-    class FieldCompression
+    class TranslateJobErrorServiceFactory
     {
         /**
-         * @param callable|null $functionExistsCallback
+         * @return \WPML\Core\Component\Translation\Application\Service\TranslateJobErrorService
          */
-        public static function setFunctionExistsCallback($functionExistsCallback = null)
+        public static function create(): \WPML\Core\Component\Translation\Application\Service\TranslateJobErrorService
         {
         }
+        /**
+         * Set a custom instance of TranslateJobErrorService. The main purpose it to mock it in the tests
+         *
+         * @param \WPML\Core\Component\Translation\Application\Service\TranslateJobErrorService|null $instance
+         *
+         * @return void
+         */
+        public static function setService($instance)
+        {
+        }
+    }
+}
+namespace WPML\Translation\TranslationElements {
+    /**
+     * Tracks when translation jobs use field compression.
+     * Stores the latest compressed job_id in wp_options for error detection.
+     */
+    class CompressionTracker
+    {
+        const OPTION_NAME = 'wpml_tm_last_compressed_job_id';
+        /**
+         * Record that a job used compression successfully.
+         *
+         * @param int $job_id The job ID that used compression.
+         *
+         * @return bool Whether the option was updated.
+         */
+        public static function recordCompression($job_id)
+        {
+        }
+        /**
+         * Check if a job might have compressed data and gzuncompress is unavailable.
+         *
+         * We recorded the last job which used compression. So if the input job is greater than
+         * the last compressed, then we know that it does not contain compressed data, so there is no need to
+         * display the error notice.
+         *
+         * @param int $job_id The job ID to check.
+         *
+         * @return bool True if we should show the missing zlib error.
+         */
+        public static function shouldShowMissingZlibError($job_id)
+        {
+        }
+    }
+    class FieldCompression
+    {
         /**
          * Checks if the provided data is already compressed with gzcompress and base64 encoded.
          *
@@ -30030,12 +30580,98 @@ namespace WPML\Translation\TranslationElements {
         {
         }
         /**
+         * Compress data and track the job_id if compression succeeds.
+         *
+         * @param string|null $data The data to compress.
+         * @param bool $isAlreadyBase64Compressed Whether the data is already base64 encoded.
+         * @param int|null $job_id Job ID to track if compression succeeds.
+         *
+         * @return string|null The compressed data.
+         */
+        public static function compressAndTrack($data, bool $isAlreadyBase64Compressed = true, $job_id = null)
+        {
+        }
+        /**
          * @param string|null $data
          * @param bool $preserveBase64Encoding
          *
          * @return string|null
          */
         public static function decompress($data, bool $preserveBase64Encoding = false)
+        {
+        }
+    }
+}
+namespace WPML\TM\Translations\TranslationElements {
+    class FilterJobUrlMigration
+    {
+        /**
+         * Filters job elements after site migration to update old URLs to new URLs.
+         *
+         * @param \stdClass $job The translation job object.
+         * @param \SitePress $sitepress The SitePress instance.
+         *
+         * @return \stdClass The filtered translation job object.
+         */
+        public function maybeFilterJobElementsAfterMigration($job, $sitepress)
+        {
+        }
+        /**
+         * Checks if the site has been migrated.
+         *
+         * @param \SitePress $sitepress The SitePress instance.
+         *
+         * @return bool True if the site has been migrated, false otherwise.
+         */
+        public function isSiteMigrated($sitepress)
+        {
+        }
+    }
+}
+namespace WPML\Translation\TranslationElements {
+    /**
+     * Displays an error notice in the Classic Translation Editor when
+     * compressed translation data cannot be decompressed due to missing zlib extension.
+     */
+    class MissingZlibNotice
+    {
+        /**
+         * Check if notice should be displayed and hook it in.
+         *
+         * @param int $job_id The translation job ID.
+         */
+        public static function maybeAddNotice($job_id)
+        {
+        }
+        /**
+         * Display the error notice.
+         */
+        public static function displayNotice()
+        {
+        }
+    }
+    /**
+     * Centralized checker for zlib extension function availability.
+     * Supports wp-config.php constant override for testing scenarios.
+     */
+    class ZlibAvailabilityChecker
+    {
+        /**
+         * Check if gzcompress function is available.
+         * Can be overridden via WPML_SIMULATE_MISSING_ZLIB constant for testing.
+         *
+         * @return bool True if gzcompress can be used
+         */
+        public static function isGzcompressAvailable()
+        {
+        }
+        /**
+         * Check if gzuncompress function is available.
+         * Can be overridden via WPML_SIMULATE_MISSING_ZLIB constant for testing.
+         *
+         * @return bool True if gzuncompress can be used
+         */
+        public static function isGzuncompressAvailable()
         {
         }
     }
@@ -30606,6 +31242,14 @@ namespace {
         {
         }
         function do_json_encode($data)
+        {
+        }
+        /**
+         * Get OPcache status information
+         *
+         * @return array OPcache status details
+         */
+        function get_opcache_info()
         {
         }
     }
@@ -31735,6 +32379,56 @@ namespace WPML\Upgrade\Commands {
         {
         }
     }
+}
+namespace WPML\TM\Upgrade\Commands {
+    class CreateUnsolvableJobsTable implements \IWPML_Upgrade_Command
+    {
+        const TABLE_NAME = 'icl_translate_unsolvable_jobs';
+        public function __construct(array $args)
+        {
+        }
+        /**
+         * @return bool
+         */
+        public function run()
+        {
+        }
+        public static function create_table_if_not_exists($wpdb)
+        {
+        }
+        /**
+         * Runs in admin pages.
+         *
+         * @return bool
+         */
+        public function run_admin()
+        {
+        }
+        /**
+         * Unused.
+         *
+         * @return null
+         */
+        public function run_ajax()
+        {
+        }
+        /**
+         * Unused.
+         *
+         * @return null
+         */
+        public function run_frontend()
+        {
+        }
+        /**
+         * @return bool
+         */
+        public function get_results()
+        {
+        }
+    }
+}
+namespace WPML\Upgrade\Commands {
     abstract class DropIndexFromTable extends \WPML_Upgrade_Run_All
     {
         /**
@@ -32102,25 +32796,6 @@ namespace {
          * @return string
          */
         protected function get_column_definition()
-        {
-        }
-    }
-    class WPML_TM_Add_TP_Revision_And_TS_Status_Columns_To_Core_Status implements \IWPML_Upgrade_Command
-    {
-        public function __construct(array $args)
-        {
-        }
-        public function run_admin()
-        {
-        }
-        public function run_ajax()
-        {
-        }
-        public function run_frontend()
-        {
-        }
-        /** @return bool */
-        public function get_results()
         {
         }
     }
@@ -33323,6 +33998,7 @@ namespace {
     }
     class WPML_URL_Cached_Converter extends \WPML_URL_Converter
     {
+        const CACHE_GROUP = 'convert_url';
         /**
          * @param string      $url
          * @param string|bool $lang_code
@@ -33496,6 +34172,7 @@ namespace {
     }
     class WPML_Tax_Permalink_Filters implements \IWPML_Action
     {
+        const CACHE_GROUP = 'icl_tax_permalink_filter';
         public function __construct(\WPML_URL_Converter $url_converter, \WPML_WP_Cache_Factory $cache_factory, \WPML_Translation_Element_Factory $term_element_factory, \WPML_Get_LS_Languages_Status $ls_language_status)
         {
         }
@@ -34386,6 +35063,14 @@ namespace {
         public function sync_admin_user_language_action($user_id)
         {
         }
+        /**
+         * Clear user admin language cache when wp_update_user is called
+         *
+         * @param int $user_id
+         */
+        public function clear_user_admin_language_cache_on_wp_update_user($user_id)
+        {
+        }
         public function sync_default_admin_user_languages()
         {
         }
@@ -35259,23 +35944,6 @@ namespace {
          * @phpstan-ignore-next-line
          */
         public function __construct($php_version = \null, $limit = 0, $provide_object = \false, $ignore_args = \true, $debug_backtrace_function = \null)
-        {
-        }
-    }
-    class WPML_Encoding_Validation
-    {
-        const MINIMUM_STRING_LENGTH = 100;
-        /**
-         * Checks if data passed is base64 encoded string and if the length of it is more than or equal to $minimumValidStringLength.
-         * Here we check for the length because we had cases were featured image names are passed in a false positive base64 encoding format.,
-         * and this made the whole job to be blocked from sending to translation, while if a real field is encoded the length of it should be way more than how the image name will be.
-         *
-         * @param string $string
-         *
-         * @see https://onthegosystems.myjetbrains.com/youtrack/issue/wpmldev-553
-         * @see https://onthegosystems.myjetbrains.com/youtrack/issue/wpmldev-1793
-         */
-        public function is_base64_with_100_chars_or_more($string)
         {
         }
     }
@@ -37332,7 +38000,7 @@ namespace {
          *
          * @return bool
          */
-        public function error_log($message, $message_type = \null, $destination = \null, $extra_headers = \null)
+        public function error_log($message, $message_type = 0, $destination = \null, $extra_headers = \null)
         {
         }
         public function exit_php()
@@ -39720,6 +40388,11 @@ namespace {
         public function convert_url($url, $lang = \null)
         {
         }
+        /**
+         * @param string $url
+         *
+         * @return bool
+         */
         public function is_home($url)
         {
         }
@@ -39732,7 +40405,7 @@ namespace {
         public function create_translation_package($post)
         {
         }
-        public function add_translation_job($rid, $translator_id, $translation_package, $batch_options = array(), $sendFrom = \null)
+        public function add_translation_job($rid, $translator_id, $translation_package, $batch_options = array(), $sendFrom = \null, $addJobLogs = \false)
         {
         }
         /**
@@ -41189,10 +41862,10 @@ namespace {
         public function __construct(&$wpdb)
         {
         }
-        public function is_need_sync($taxonomy, $ref_lang = \false)
+        public function is_need_sync($taxonomy, $ref_lang = \false, $term_id = \null)
         {
         }
-        public function sync_element_hierarchy($element_types, $ref_lang = \false)
+        public function sync_element_hierarchy($element_types, $ref_lang = \false, $term_id = \null)
         {
         }
         /**
@@ -41680,10 +42353,11 @@ namespace {
          * @param array    $translation_package
          * @param array    $batch_options
          * @param int|null $sendFrom
+         * @param bool     $addJobLogs
          *
          * @return bool|int
          */
-        function add_translation_job($rid, $translator_id, array $translation_package, array $batch_options, $sendFrom = \null)
+        function add_translation_job($rid, $translator_id, array $translation_package, array $batch_options, $sendFrom = \null, $addJobLogs = \false)
         {
         }
         /**
@@ -41741,7 +42415,6 @@ namespace {
         function __construct($job_id, $batch_id = \null, &$blog_translators = \null)
         {
         }
-        abstract public function cancel();
         abstract public function get_original_element_id();
         abstract public function to_array();
         /**
@@ -41929,9 +42602,6 @@ namespace {
         {
         }
         function get_original_fields()
-        {
-        }
-        public function cancel()
         {
         }
         /**
@@ -42156,9 +42826,6 @@ namespace {
         public function get_original_element_id()
         {
         }
-        public function cancel()
-        {
-        }
         protected function load_status()
         {
         }
@@ -42194,12 +42861,6 @@ namespace {
         {
         }
         public function get_batch_meta_array()
-        {
-        }
-        /**
-         * Cancels all translation jobs in this batch
-         */
-        public function cancel_all_jobs()
         {
         }
         // todo: [WPML 3.2.1] This method and other similar methods can likely be removed
@@ -42691,6 +43352,8 @@ namespace {
         /**
          * Add missing language information to entities that don't have this
          * information configured.
+         *
+         * @return bool true if success, false if skipped due to locking mechanism.
          */
         public function add_missing_language_information()
         {
@@ -43571,39 +44234,6 @@ namespace {
         {
         }
         /**
-         *
-         * Cancel translation for given cms_id
-         *
-         * @param $rid
-         * @param $cms_id
-         *
-         * @return bool
-         */
-        function cancel_translation($rid, $cms_id)
-        {
-        }
-        /**
-         *
-         * Downloads translation from TP and updates its document
-         *
-         * @param $translation_proxy_job_id
-         * @param $cms_id
-         *
-         * @return bool|string
-         */
-        function download_and_process_translation($translation_proxy_job_id, $cms_id)
-        {
-        }
-        /**
-         * @param int $translation_id
-         * @param int $translation_proxy_job_id
-         *
-         * @return bool
-         */
-        function add_translated_document($translation_id, $translation_proxy_job_id)
-        {
-        }
-        /**
          * @param int    $element_id
          * @param string $target_lang_code
          * @param string $element_type
@@ -43746,134 +44376,6 @@ namespace {
          * @param array $basket_portion
          */
         public function update_basket($basket_portion = array())
-        {
-        }
-    }
-    /**
-     * Class WPML_Translation_Proxy_Basket_Networking
-     */
-    class WPML_Translation_Proxy_Basket_Networking
-    {
-        /**
-         * @param \WPML\Legacy\Translation\Save\SyncParentPost\WPML_Translation_Basket $basket
-         * @param \WPML\Legacy\Translation\Save\SyncParentPost\TranslationManagement   $tm_instance
-         */
-        function __construct($basket, &$tm_instance)
-        {
-        }
-        /**
-         * @param \WPML\Legacy\Translation\Save\SyncParentPost\WPML_TM_Translation_Batch $batch
-         *
-         * @uses \WPML_Translation_Basket::get_basket Gets the array representation of the translation basket
-         * @uses \WPML_Translation_Proxy_Basket_Networking::generate_batch generates the batch in case no chunk was given for the commit from the basket
-         * @uses \WPML_Translation_Proxy_Basket_Networking::get_batch_name
-         * @uses \WPML_Translation_Proxy_Basket_Networking::send_all_jobs
-         *
-         * @return array
-         */
-        function commit_basket_chunk(\WPML_TM_Translation_Batch $batch)
-        {
-        }
-        /**
-         * Checks if an array of translators has any remote translators in it.
-         *
-         * @param array $translators
-         *
-         * @return bool
-         */
-        function contains_remote_translators(array $translators)
-        {
-        }
-    }
-    class Icl_Stepper
-    {
-        /**
-         * Added dummy element to match number of elements and to cover init action
-         *
-         * @var array
-         */
-        protected $_steps = array(\null);
-        /**
-         * Current step
-         *
-         * @var int
-         */
-        protected $_step;
-        /**
-         * Next step can be forced with Icl_Stepper::setNextStep()
-         *
-         * @var int
-         */
-        protected $_nextStep = \null;
-        /**
-         * Provide current step here
-         *
-         * @param int $step
-         */
-        function __construct($step = 0)
-        {
-        }
-        /**
-         * Register steps (function names)
-         */
-        public function registerSteps()
-        {
-        }
-        /**
-         * Returns current step
-         *
-         * @return int
-         */
-        public function getStep()
-        {
-        }
-        /**
-         * Returns next step
-         *
-         * @return int
-         */
-        public function getNextStep()
-        {
-        }
-        /**
-         * Sets current step
-         *
-         * @param int $num
-         */
-        public function setStep($num)
-        {
-        }
-        /**
-         * Forcing next step
-         *
-         * @param int $num
-         */
-        public function setNextStep($num)
-        {
-        }
-        /**
-         * Calculates bar width
-         *
-         * @return int Should be used as percentage width (%)
-         */
-        public function barWidth()
-        {
-        }
-        /**
-         * Calls current step's function
-         *
-         * @return mixed
-         */
-        public function init()
-        {
-        }
-        /**
-         * Returns initial HTML formatted screen
-         *
-         * @param string $message Message to be displayed
-         * @return string
-         */
-        public function render($message = '')
         {
         }
     }
@@ -45565,6 +46067,9 @@ namespace {
         public function get_option($option_name)
         {
         }
+        public function get_sitekey()
+        {
+        }
         function verify_settings()
         {
         }
@@ -46609,6 +47114,12 @@ namespace {
         public function has_uploaded_media()
         {
         }
+        /**
+         * @param int|string $post_id
+         */
+        public function executeSavePostHookOnPostTranslationSave($post_id)
+        {
+        }
     }
 }
 namespace WPML\Auryn {
@@ -47379,7 +47890,7 @@ namespace OTGS\Installer\AdminNotices\Notices {
          *
          * @return array
          */
-        public static function dismissAccountNotice($dismissed, $data)
+        public static function dismissAccountNotice($dismissed, $data): array
         {
         }
         /**
@@ -47388,7 +47899,7 @@ namespace OTGS\Installer\AdminNotices\Notices {
          *
          * @return array
          */
-        public static function dismissRecommendationNotice($dismissed, $data)
+        public static function dismissRecommendationNotice($dismissed, $data): array
         {
         }
     }
@@ -48188,7 +48699,13 @@ namespace {
     }
     class OTGS_Installer_Plugin_Finder
     {
-        public function __construct(\OTGS_Installer_Plugin_Factory $plugin_factory, array $repositories)
+        /**
+         * OTGS_Installer_Plugin_Finder constructor.
+         *
+         * @param \OTGS\Installer\AdminNotices\Notices\OTGS_Installer_Plugin_Factory $plugin_factory
+         * @param \OTGS\Installer\AdminNotices\Notices\WP_Installer|null              $installer
+         */
+        public function __construct(\OTGS_Installer_Plugin_Factory $plugin_factory, $installer = \null)
         {
         }
         /**
@@ -48378,10 +48895,31 @@ namespace OTGS\Installer {
         public static function load()
         {
         }
-        public static function save($settings)
+        public static function load_subscriptions()
+        {
+        }
+        public static function load_channels()
+        {
+        }
+        public static function load_ts_info()
+        {
+        }
+        public static function is_using_products_fallback($repository_id)
+        {
+        }
+        public static function requires_update()
+        {
+        }
+        public static function save(&$settings)
         {
         }
         public static function is_gz_on()
+        {
+        }
+        public static function read_changelog()
+        {
+        }
+        public static function get_changelog_for_plugin($slug)
         {
         }
     }
@@ -48827,7 +49365,6 @@ namespace {
         const LEGACY_FREE_TYPES_SUBSCRIPTION_ID = 5495;
         const GRACE_TIME = \MONTH_IN_SECONDS;
         protected static $_instance = \null;
-        public $settings = array();
         protected $api_debug = '';
         protected $_plugins_renew_warnings = array();
         /**
@@ -48847,6 +49384,9 @@ namespace {
         {
         }
         public function __construct()
+        {
+        }
+        public function __get($name)
         {
         }
         public function get_repositories()
@@ -48932,10 +49472,13 @@ namespace {
         public function res_url()
         {
         }
-        public function save_settings()
+        public function save_settings($settings = \null)
         {
         }
-        public function get_settings($refresh = \false, $shouldLoadHardcodedSiteKeys = \true)
+        public function get_settings($refresh = \false)
+        {
+        }
+        public function load_hardcoded_site_keys()
         {
         }
         public static function get_repository_hardcoded_site_key($repository_id)
@@ -50069,7 +50612,7 @@ namespace OTGS\Installer\Upgrade {
 namespace {
     class OTGS_Installer_Upgrade_Response
     {
-        public function __construct(array $plugins, \OTGS_Installer_Repositories $repositories, \OTGS_Installer_Source_Factory $source_factory, \OTGS_Installer_Package_Product_Finder $product_finder)
+        public function __construct(\OTGS_Installer_Plugin_Finder $plugin_finder, \OTGS_Installer_Repositories $repositories, \OTGS_Installer_Source_Factory $source_factory, \OTGS_Installer_Package_Product_Finder $product_finder)
         {
         }
         public function add_hooks()
@@ -50954,24 +51497,17 @@ namespace OTGS\Installer\Api {
     class InstallerApiClientFactory
     {
         /**
-         * @param array $installerSettings
          * @param string $repositoryId
          * @param string $repositoryApiUrl
          *
          * @return \OTGS\Installer\Api\InstallerApiClient
          */
-        public static function create(\OTGS_Installer_Logger_Storage $loggerStorage, $installerSettings, $repositoryId, $repositoryApiUrl)
+        public static function create(\OTGS_Installer_Logger_Storage $loggerStorage, $repositoryId, $repositoryApiUrl)
         {
         }
     }
     class SiteUrl
     {
-        /**
-         * @param array $repositoriesSettings
-         */
-        public function __construct($repositoriesSettings)
-        {
-        }
         /**
          * @copied \WP_Installer::get_installer_site_url
          * @copied \OTGS_Installer_Fetch_Subscription::get_installer_site_url
@@ -51036,16 +51572,15 @@ namespace OTGS\Installer\Recommendations {
          * RecommendationsManager constructor.
          *
          * @param \OTGS_Installer_Repositories $repositories
-         * @param array $settings
          * @param \OTGS\Installer\Recommendations\Storage $settings
          */
-        public function __construct(\OTGS_Installer_Repositories $repositories, $settings, \OTGS\Installer\Recommendations\Storage $noticesStorage)
+        public function __construct(\OTGS_Installer_Repositories $repositories, \OTGS\Installer\Recommendations\Storage $noticesStorage)
         {
         }
         public function addHooks()
         {
         }
-        public function activatedPluginRecommendation($plugin)
+        public function checkAllInstalledPluginsForRecommendations($screen = null)
         {
         }
         public function deactivatedPluginRecommendation($plugin)
@@ -51060,7 +51595,7 @@ namespace OTGS\Installer\Recommendations {
         public function getRepositoryPluginsRecommendations()
         {
         }
-        public function getRecommendationStoredNotices($existingNotices)
+        public function getRecommendationNotices($existingNotices)
         {
         }
     }
@@ -51072,6 +51607,18 @@ namespace OTGS\Installer\Recommendations {
          * @param array $data
          */
         public static function save($key, $data)
+        {
+        }
+        public static function exists($pluginSlug, $repositoryId)
+        {
+        }
+        public static function missing($pluginSlug, $repositoryId)
+        {
+        }
+        public static function dismissNotice($pluginSlug, $repositoryId)
+        {
+        }
+        public static function isDismissed($pluginSlug, $repositoryId)
         {
         }
         public static function delete($pluginSlug, $repositoryId)
@@ -51121,7 +51668,7 @@ namespace OTGS\Installer\Subscription {
         /**
          * @param $installerSettings
          */
-        public function __construct($installerSettings)
+        public function __construct()
         {
         }
         public function create($repositoryId, $repositoryApiUrl)
@@ -56809,6 +57356,12 @@ namespace WPML\PHP\Exception {
     class InvalidTypeException extends \InvalidArgumentException
     {
     }
+    class JsonEncodeException extends \WPML\PHP\Exception\Exception
+    {
+    }
+    class RemoteException extends \WPML\PHP\Exception\Exception
+    {
+    }
     class RuntimeException extends \WPML\PHP\Exception\Exception
     {
     }
@@ -57156,7 +57709,7 @@ namespace WPML\Core\Component\ATE\Application\Query\Dto {
     }
     class CreditInfoDto
     {
-        public function __construct(int $freeCreditsAmount, bool $activeSubscription, int $subscriptionUsage, int $availableBalance, int $totalCreditsDeposited, int $totalCreditsSpent, bool $payAsYouGo, int $subscriptionMaxLimit = null)
+        public function __construct(int $freeCreditsAmount, bool $activeSubscription, int $subscriptionUsage, int $availableBalance, int $totalCreditsDeposited, int $totalCreditsSpent, bool $payAsYouGo, int $subscriptionMaxLimit = null, int $subscriptionDebt = 0)
         {
         }
         public function getFreeCreditsAmount(): int
@@ -57184,6 +57737,9 @@ namespace WPML\Core\Component\ATE\Application\Query\Dto {
         {
         }
         public function getPayAsYouGo(): bool
+        {
+        }
+        public function getSubscriptionDebt(): int
         {
         }
     }
@@ -57239,6 +57795,20 @@ namespace WPML\Core\Component\ATE\Application\Query {
          */
         public function getWebsiteContext(): \WPML\Core\Component\ATE\Application\Query\Dto\WebsiteContextDto;
         public function isContextPresent(): bool;
+    }
+}
+namespace WPML\Core\Component\ATE\Application\Service {
+    class CreditsService
+    {
+        public function __construct(\WPML\Core\Component\ATE\Domain\Credits\CreditsInProgress $creditsInProgress)
+        {
+        }
+        /**
+         * @return \WPML\Core\Component\ATE\Domain\Credits\CreditsInProgressDTO
+         */
+        public function getCreditsInProgress()
+        {
+        }
     }
 }
 namespace WPML\Core\Component\ATE\Application\Service\Dto\Engine {
@@ -57432,6 +58002,87 @@ namespace WPML\Core\Component\ATE\Application\Service {
          * @return void
          */
         public function flushCache();
+    }
+}
+namespace WPML\Core\Component\ATE\Domain\Credits {
+    class CreditsInProgress
+    {
+        public function __construct(\WPML\Core\Component\ATE\Domain\Credits\Repository\CreditsInProgressRepositoryInterface $creditsInProgressRepository)
+        {
+        }
+        /**
+         * @return \WPML\Core\Component\ATE\Domain\Credits\CreditsInProgressDTO
+         */
+        public function getCount()
+        {
+        }
+    }
+    class CreditsInProgressDTO
+    {
+        public function __construct(int $count)
+        {
+        }
+        public function getCount(): int
+        {
+        }
+    }
+}
+namespace WPML\Core\Component\ATE\Domain\Credits\Repository {
+    interface CreditsInProgressRepositoryInterface
+    {
+        /**
+         * @param int[] $statusesInProgress
+         *
+         * @return int
+         */
+        public function getCreditsInProgressCount($statusesInProgress);
+    }
+}
+namespace WPML\Core\Component\Base64Detection\Application\Service {
+    class Base64DetectionService
+    {
+        public function __construct(\WPML\Core\Component\Base64Detection\Domain\Detector $base64Detector)
+        {
+        }
+        public function isBase64EncodedText(string $content): bool
+        {
+        }
+        public function containsBase64EncodedText(string $content): bool
+        {
+        }
+    }
+}
+namespace WPML\Core\Component\Base64Detection\Domain {
+    /**
+     * Detects base64 encoded content in various formats
+     */
+    class Detector
+    {
+        /**
+         * Minimum length for base64 strings to reduce false positives
+         */
+        const MINIMUM_BASE64_LENGTH = 100;
+        /**
+         * Detects if the content is base64 encoded.
+         *
+         * @param string $content
+         *
+         * @return bool
+         */
+        public function isBase64EncodedText(string $content): bool
+        {
+        }
+        /**
+         * Checks if content contains embedded base64 strings within text
+         * Decodes content first if it's base64, then searches for base64 patterns
+         *
+         * @param string $content The content to check
+         *
+         * @return bool True if embedded base64 is found
+         */
+        public function containsBase64EncodedText(string $content): bool
+        {
+        }
     }
 }
 namespace WPML\Core\Component\Communication\Application\Query {
@@ -58803,18 +59454,182 @@ namespace WPML\Core\Component\PostHog\Application\Service\Config {
 namespace WPML\Core\Component\PostHog\Application\Service\Event {
     class CaptureEventService
     {
-        public function __construct(\WPML\Core\Component\PostHog\Application\Repository\PostHogStateRepositoryInterface $postHogStateRepository, \WPML\Core\Component\PostHog\Application\Cookies\CookiesInterface $cookies, \WPML\Core\Component\PostHog\Domain\Event\CaptureInterface $captureEvent)
+        public function __construct(\WPML\Core\Component\PostHog\Application\Repository\PostHogStateRepositoryInterface $postHogStateRepository, \WPML\Core\Component\PostHog\Application\Cookies\CookiesInterface $cookies, \WPML\Core\Component\PostHog\Domain\Event\CaptureInterface $captureEvent, \WPML\Core\SharedKernel\Component\User\Application\Query\UserQueryInterface $userQuery, \WPML\Core\SharedKernel\Component\Installer\Application\Query\WpmlSiteKeyQueryInterface $siteKeyQuery, \WPML\Core\SharedKernel\Component\Site\Application\Query\SiteUrlQueryInterface $siteUrlQuery)
         {
         }
         /**
          * @param \WPML\Core\Component\PostHog\Domain\Config\Config $config
-         * @param string $eventName
-         * @param array<string, mixed> $eventProperties
+         * @param \WPML\Core\Component\PostHog\Domain\Event\EventInterface $event
          * @param array<string, mixed> $personProperties
          *
          * @return bool
+         * @throws \WPML\PHP\Exception\RemoteException
          */
-        public function capture(\WPML\Core\Component\PostHog\Domain\Config\Config $config, string $eventName, array $eventProperties, array $personProperties = []): bool
+        public function capture(\WPML\Core\Component\PostHog\Domain\Config\Config $config, \WPML\Core\Component\PostHog\Domain\Event\EventInterface $event, array $personProperties = []): bool
+        {
+        }
+    }
+    class EventInstanceService
+    {
+        /**
+         * @param string $name
+         * @param array<string,mixed> $props
+         *
+         * @return \WPML\Core\Component\PostHog\Domain\Event\Custom\Event
+         */
+        public function getCustomEvent(string $name, array $props): \WPML\Core\Component\PostHog\Domain\Event\Custom\Event
+        {
+        }
+        /**
+         * @param array<string,mixed> $props
+         *
+         * @return \WPML\Core\Component\PostHog\Domain\Event\WPMLSettings\AutomaticTranslationSettingsSaved\Event
+         */
+        public function getAutomaticTranslationSettingsSavedEvent(array $props): \WPML\Core\Component\PostHog\Domain\Event\WPMLSettings\AutomaticTranslationSettingsSaved\Event
+        {
+        }
+        /**
+         * @param array<string,mixed> $props
+         *
+         * @return \WPML\Core\Component\PostHog\Domain\Event\WPMLLanguages\RootPageSaved\Event
+         */
+        public function getRootPageSavedEvent(array $props): \WPML\Core\Component\PostHog\Domain\Event\WPMLLanguages\RootPageSaved\Event
+        {
+        }
+        /**
+         * @param array<string,mixed> $props
+         *
+         * @return \WPML\Core\Component\PostHog\Domain\Event\WPMLLanguages\SetLanguageUrlFormat\Event
+         */
+        public function getSetLanguageUrlFormatEvent(array $props): \WPML\Core\Component\PostHog\Domain\Event\WPMLLanguages\SetLanguageUrlFormat\Event
+        {
+        }
+        /**
+         * @param array<string,mixed> $props
+         *
+         * @return \WPML\Core\Component\PostHog\Domain\Event\WPMLLanguages\SetLanguageUrlFormatFailed\Event
+         */
+        public function getSetLanguageUrlFormatFailedEvent(array $props): \WPML\Core\Component\PostHog\Domain\Event\WPMLLanguages\SetLanguageUrlFormatFailed\Event
+        {
+        }
+        /**
+         * @param array<string,mixed> $props
+         *
+         * @return \WPML\Core\Component\PostHog\Domain\Event\WPMLLanguages\EditLanguagesFormSubmitted\Event
+         */
+        public function getEditLanguagesFormSubmittedEvent(array $props): \WPML\Core\Component\PostHog\Domain\Event\WPMLLanguages\EditLanguagesFormSubmitted\Event
+        {
+        }
+        /**
+         * @param array<string,mixed> $props
+         *
+         * @return \WPML\Core\Component\PostHog\Domain\Event\WPMLLanguages\FooterLanguageSwitcherToggled\Event
+         */
+        public function getFooterLanguageSwitcherToggledEvent(array $props): \WPML\Core\Component\PostHog\Domain\Event\WPMLLanguages\FooterLanguageSwitcherToggled\Event
+        {
+        }
+        /**
+         * @param array<string,mixed> $props
+         *
+         * @return \WPML\Core\Component\PostHog\Domain\Event\TaxonomyTranslation\TaxonomyHierarchySyncNoticeDisplayed\Event
+         */
+        public function getTaxonomyHierarchySyncNoticeDisplayedEvent(array $props): \WPML\Core\Component\PostHog\Domain\Event\TaxonomyTranslation\TaxonomyHierarchySyncNoticeDisplayed\Event
+        {
+        }
+        /**
+         * @param array<string,mixed> $props
+         *
+         * @return \WPML\Core\Component\PostHog\Domain\Event\TaxonomyTranslation\TaxonomyHierarchySyncNoticeLinkClicked\Event
+         */
+        public function getTaxonomyHierarchySyncLinkClickedEvent(array $props): \WPML\Core\Component\PostHog\Domain\Event\TaxonomyTranslation\TaxonomyHierarchySyncNoticeLinkClicked\Event
+        {
+        }
+        /**
+         * @param array<string,mixed> $props
+         *
+         * @return \WPML\Core\Component\PostHog\Domain\Event\TaxonomyTranslation\TaxonomyHierarchySyncCompleted\Event
+         */
+        public function getTaxonomyHierarchySyncCompletedEvent(array $props): \WPML\Core\Component\PostHog\Domain\Event\TaxonomyTranslation\TaxonomyHierarchySyncCompleted\Event
+        {
+        }
+        /**
+         * @param array<string,mixed> $props
+         *
+         * @return \WPML\Core\Component\PostHog\Domain\Event\TaxonomyTranslation\TaxonomyTermTranslationSaved\Event
+         */
+        public function getTaxonomyTermTranslationSavedEvent(array $props): \WPML\Core\Component\PostHog\Domain\Event\TaxonomyTranslation\TaxonomyTermTranslationSaved\Event
+        {
+        }
+        /**
+         * @param array<string,mixed> $props
+         *
+         * @return \WPML\Core\Component\PostHog\Domain\Event\WPMLSettings\TranslationEditorSwitched\Event
+         */
+        public function getTranslationEditorSwitchedEvent(array $props): \WPML\Core\Component\PostHog\Domain\Event\WPMLSettings\TranslationEditorSwitched\Event
+        {
+        }
+        /**
+         * @param array<string,mixed> $props
+         *
+         * @return \WPML\Core\Component\PostHog\Domain\Event\WPMLSettings\PostTypeUnlocked\Event
+         */
+        public function getPostTypeUnlockedEvent(array $props): \WPML\Core\Component\PostHog\Domain\Event\WPMLSettings\PostTypeUnlocked\Event
+        {
+        }
+        /**
+         * @param array<string,mixed> $props
+         *
+         * @return \WPML\Core\Component\PostHog\Domain\Event\WPMLSettings\TaxonomyUnlocked\Event
+         */
+        public function getTaxonomyUnlockedEvent(array $props): \WPML\Core\Component\PostHog\Domain\Event\WPMLSettings\TaxonomyUnlocked\Event
+        {
+        }
+        /**
+         * @param array<string,mixed> $props
+         *
+         * @return \WPML\Core\Component\PostHog\Domain\Event\WPMLSettings\ATEForOldTranslationsEnabled\Event
+         */
+        public function getATEForOldTranslationsEnabledEvent(array $props): \WPML\Core\Component\PostHog\Domain\Event\WPMLSettings\ATEForOldTranslationsEnabled\Event
+        {
+        }
+        /**
+         * @param array<string,mixed> $props
+         *
+         * @return \WPML\Core\Component\PostHog\Domain\Event\OpenTranslationEditor\Event
+         */
+        public function getOpenTranslationEditorEvent(array $props): \WPML\Core\Component\PostHog\Domain\Event\OpenTranslationEditor\Event
+        {
+        }
+        /**
+         * @param array<string,mixed> $props
+         *
+         * @return \WPML\Core\Component\PostHog\Domain\Event\SetupWizard\WizardStarted\Event
+         */
+        public function getWizardStartedEvent(array $props): \WPML\Core\Component\PostHog\Domain\Event\SetupWizard\WizardStarted\Event
+        {
+        }
+        /**
+         * @param array<string,mixed> $props
+         *
+         * @return \WPML\Core\Component\PostHog\Domain\Event\SetupWizard\WizardCompleted\Event
+         */
+        public function getWizardCompletedEvent(array $props): \WPML\Core\Component\PostHog\Domain\Event\SetupWizard\WizardCompleted\Event
+        {
+        }
+        /**
+         * @param array<string,mixed> $props
+         *
+         * @return \WPML\Core\Component\PostHog\Domain\Event\SetupWizard\WizardFirstStepCompleted\Event
+         */
+        public function getWizardFirstStepCompletedEvent(array $props): \WPML\Core\Component\PostHog\Domain\Event\SetupWizard\WizardFirstStepCompleted\Event
+        {
+        }
+        /**
+         * @param array<string,mixed> $props
+         *
+         * @return \WPML\Core\Component\PostHog\Domain\Event\SetupWizard\WizardStepCompleted\Event
+         */
+        public function getWizardStepCompletedEvent(array $props): \WPML\Core\Component\PostHog\Domain\Event\SetupWizard\WizardStepCompleted\Event
         {
         }
     }
@@ -58931,13 +59746,279 @@ namespace WPML\Core\Component\PostHog\Domain\Event {
          * @param string $apiKey
          * @param string $host
          * @param string $distinctId
-         * @param string $eventName
-         * @param array<string, mixed> $eventProperties
+         * @param string $sessionId
+         * @param \WPML\Core\Component\PostHog\Domain\Event\EventInterface $event
          * @param array<string,mixed> $personProperties
          *
          * @return bool
+         * @throws \WPML\PHP\Exception\RemoteException
          */
-        public function capture(string $apiKey, string $host, string $distinctId, string $eventName, array $eventProperties, array $personProperties = []): bool;
+        public function capture(string $apiKey, string $host, string $distinctId, string $sessionId, \WPML\Core\Component\PostHog\Domain\Event\EventInterface $event, array $personProperties = []): bool;
+    }
+    interface EventInterface
+    {
+        public function getName(): string;
+        /** @return array<string, mixed> */
+        public function getProperties(): array;
+        /**
+         * @param array<string,mixed> $properties
+         *
+         * @return void
+         */
+        public function addProperties(array $properties);
+    }
+}
+namespace WPML\Core\Component\PostHog\Domain\Event\Custom {
+    class Event implements \WPML\Core\Component\PostHog\Domain\Event\EventInterface
+    {
+        /**
+         * @param string $name
+         * @param array<string,mixed> $properties
+         *
+         * @return void
+         */
+        public function __construct(string $name, array $properties)
+        {
+        }
+        public function getName(): string
+        {
+        }
+        /** @return array<string,mixed> */
+        public function getProperties(): array
+        {
+        }
+        /**
+         * @param array<string,mixed> $properties
+         *
+         * @return void
+         */
+        public function addProperties(array $properties)
+        {
+        }
+    }
+}
+namespace WPML\Core\Component\PostHog\Domain\Event {
+    abstract class Event implements \WPML\Core\Component\PostHog\Domain\Event\EventInterface
+    {
+        /** @var array<string, mixed> */
+        protected $properties;
+        /**
+         * @param array<string,mixed> $properties
+         *
+         * @return void
+         */
+        public function __construct(array $properties)
+        {
+        }
+        abstract public function getName(): string;
+        public function getProperties(): array
+        {
+        }
+        /**
+         * @param array<string,mixed> $properties
+         *
+         * @return void
+         */
+        public function addProperties(array $properties)
+        {
+        }
+    }
+}
+namespace WPML\Core\Component\PostHog\Domain\Event\OpenTranslationEditor {
+    class Event extends \WPML\Core\Component\PostHog\Domain\Event\Event
+    {
+        public function getName(): string
+        {
+        }
+    }
+}
+namespace WPML\Core\Component\PostHog\Domain\Event\SetupWizard {
+    class Event extends \WPML\Core\Component\PostHog\Domain\Event\Event
+    {
+        public function getName(): string
+        {
+        }
+    }
+    interface SetupWizardUUIDInterface
+    {
+        public function create(): string;
+    }
+}
+namespace WPML\Core\Component\PostHog\Domain\Event\SetupWizard\WizardCompleted {
+    class Event extends \WPML\Core\Component\PostHog\Domain\Event\Event
+    {
+        public function getName(): string
+        {
+        }
+    }
+}
+namespace WPML\Core\Component\PostHog\Domain\Event\SetupWizard\WizardFirstStepCompleted {
+    class Event extends \WPML\Core\Component\PostHog\Domain\Event\Event
+    {
+        public function getName(): string
+        {
+        }
+    }
+}
+namespace WPML\Core\Component\PostHog\Domain\Event\SetupWizard\WizardStarted {
+    class Event extends \WPML\Core\Component\PostHog\Domain\Event\Event
+    {
+        public function getName(): string
+        {
+        }
+    }
+}
+namespace WPML\Core\Component\PostHog\Domain\Event\SetupWizard\WizardStepCompleted {
+    class Event extends \WPML\Core\Component\PostHog\Domain\Event\Event
+    {
+        public function getName(): string
+        {
+        }
+    }
+}
+namespace WPML\Core\Component\PostHog\Domain\Event\TaxonomyTranslation\TaxonomyHierarchySyncCompleted {
+    class Event extends \WPML\Core\Component\PostHog\Domain\Event\Event
+    {
+        public function getName(): string
+        {
+        }
+    }
+}
+namespace WPML\Core\Component\PostHog\Domain\Event\TaxonomyTranslation\TaxonomyHierarchySyncNoticeDisplayed {
+    class Event extends \WPML\Core\Component\PostHog\Domain\Event\Event
+    {
+        public function getName(): string
+        {
+        }
+    }
+}
+namespace WPML\Core\Component\PostHog\Domain\Event\TaxonomyTranslation\TaxonomyHierarchySyncNoticeLinkClicked {
+    class Event extends \WPML\Core\Component\PostHog\Domain\Event\Event
+    {
+        public function getName(): string
+        {
+        }
+    }
+}
+namespace WPML\Core\Component\PostHog\Domain\Event\TaxonomyTranslation\TaxonomyTermTranslationSaved {
+    class Event extends \WPML\Core\Component\PostHog\Domain\Event\Event
+    {
+        public function getName(): string
+        {
+        }
+    }
+}
+namespace WPML\Core\Component\PostHog\Domain\Event\WPMLLanguages\EditLanguagesFormSubmitted {
+    class Event extends \WPML\Core\Component\PostHog\Domain\Event\Event
+    {
+        public function getName(): string
+        {
+        }
+    }
+}
+namespace WPML\Core\Component\PostHog\Domain\Event\WPMLLanguages\FooterLanguageSwitcherToggled {
+    class Event extends \WPML\Core\Component\PostHog\Domain\Event\Event
+    {
+        public function getName(): string
+        {
+        }
+    }
+}
+namespace WPML\Core\Component\PostHog\Domain\Event\WPMLLanguages\RootPageSaved {
+    class Event extends \WPML\Core\Component\PostHog\Domain\Event\Event
+    {
+        public function getName(): string
+        {
+        }
+    }
+}
+namespace WPML\Core\Component\PostHog\Domain\Event\WPMLLanguages\SetLanguageUrlFormat {
+    class Event extends \WPML\Core\Component\PostHog\Domain\Event\Event
+    {
+        public function getName(): string
+        {
+        }
+    }
+}
+namespace WPML\Core\Component\PostHog\Domain\Event\WPMLLanguages\SetLanguageUrlFormatFailed {
+    class Event extends \WPML\Core\Component\PostHog\Domain\Event\Event
+    {
+        public function getName(): string
+        {
+        }
+    }
+}
+namespace WPML\Core\Component\PostHog\Domain\Event\WPMLSettings\ATEForOldTranslationsEnabled {
+    class Event extends \WPML\Core\Component\PostHog\Domain\Event\Event
+    {
+        public function getName(): string
+        {
+        }
+    }
+}
+namespace WPML\Core\Component\PostHog\Domain\Event\WPMLSettings\AutomaticTranslationSettingsSaved {
+    class Event extends \WPML\Core\Component\PostHog\Domain\Event\Event
+    {
+        public function getName(): string
+        {
+        }
+    }
+}
+namespace WPML\Core\Component\PostHog\Domain\Event\WPMLSettings\PostTypeUnlocked {
+    class Event extends \WPML\Core\Component\PostHog\Domain\Event\Event
+    {
+        public function getName(): string
+        {
+        }
+    }
+}
+namespace WPML\Core\Component\PostHog\Domain\Event\WPMLSettings\TaxonomyUnlocked {
+    class Event extends \WPML\Core\Component\PostHog\Domain\Event\Event
+    {
+        public function getName(): string
+        {
+        }
+    }
+}
+namespace WPML\Core\Component\PostHog\Domain\Event\WPMLSettings\TranslationEditorSwitched {
+    class Event extends \WPML\Core\Component\PostHog\Domain\Event\Event
+    {
+        public function getName(): string
+        {
+        }
+    }
+}
+namespace WPML\Core\Component\PostHog\Domain\Repository {
+    interface SetupWizardLastStepSubmissionTimeRepositoryInterface
+    {
+        /** @return int|false */
+        public function get();
+        /**
+         * @param int $timestamp
+         *
+         * @return void
+         */
+        public function save(int $timestamp);
+    }
+    interface SetupWizardStartTimeRepositoryInterface
+    {
+        /** @return void */
+        public function save(string $wizardUUID, int $timestamp);
+        /** @return int|false */
+        public function get(string $wizardUUID);
+    }
+    interface SetupWizardUUIDRepositoryInterface
+    {
+        /**
+         * @param string $uuid
+         *
+         * @return void
+         */
+        public function save(string $uuid);
+        /**
+         * @return string|false
+         */
+        public function get();
     }
 }
 namespace WPML\Core\Component\PostHog\Domain {
@@ -58967,6 +60048,17 @@ namespace WPML\Core\Component\ReportContentStats\Application\Query {
     interface CanCollectStatsQueryInterface
     {
         public function get(): bool;
+    }
+    class CanCollectStatsQuery implements \WPML\Core\Component\ReportContentStats\Application\Query\CanCollectStatsQueryInterface
+    {
+        const REPO_NAME = 'wpml';
+        const OPTION_KEY = 'otgs_share_local_components';
+        public function __construct(\WPML\Core\Port\Persistence\OptionsInterface $options)
+        {
+        }
+        public function get(): bool
+        {
+        }
     }
 }
 namespace WPML\Core\SharedKernel\Component\Post\Application\Query {
@@ -59017,6 +60109,38 @@ namespace WPML\Core\Component\ReportContentStats\Application\Service {
     class ContentStatsServiceException extends \WPML\PHP\Exception\Exception
     {
     }
+    class EditorSwitchService
+    {
+        const SECONDS_IN_DAY = 86400;
+        const TRIGGER_DAYS_OFFSET = 29;
+        public function __construct(\WPML\Core\Component\ReportContentStats\Domain\Repository\LastSentRepositoryInterface $lastSentRepository, \WPML\Core\Component\ReportContentStats\Domain\Repository\EventReasonRepositoryInterface $eventReasonRepository)
+        {
+        }
+        /**
+         * @return void
+         */
+        public function handleEditorSwitch()
+        {
+        }
+    }
+    class EventReasonService
+    {
+        const REASON_INITIAL = 'initial';
+        const REASON_SCHEDULED = 'scheduled';
+        const REASON_EDITOR_SWITCH = 'editor_switch';
+        public function __construct(\WPML\Core\Component\ReportContentStats\Domain\Repository\EventReasonRepositoryInterface $eventReasonRepository, \WPML\Core\Component\ReportContentStats\Application\Service\LastSentService $lastSentService)
+        {
+        }
+        public function getOrDetermine(): string
+        {
+        }
+        /**
+         * @return void
+         */
+        public function clear()
+        {
+        }
+    }
     class LastSentService
     {
         public function __construct(\WPML\Core\Component\ReportContentStats\Domain\Repository\LastSentRepositoryInterface $lastSentRepository)
@@ -59043,6 +60167,56 @@ namespace WPML\Core\Component\ReportContentStats\Application\Service {
     class MissingSiteKeyException extends \WPML\Core\Component\ReportContentStats\Application\Service\ContentStatsServiceException
     {
     }
+    class ProcessingLockService
+    {
+        public function __construct(\WPML\Core\Component\ReportContentStats\Domain\Repository\ProcessingLockRepositoryInterface $lockRepository)
+        {
+        }
+        /**
+         * Check if processing is currently locked by any user
+         *
+         * @return bool
+         */
+        public function isLocked(): bool
+        {
+        }
+        /**
+         * Check if processing is locked by a different owner
+         *
+         * @param string|null $ownerId
+         *
+         * @return bool
+         */
+        public function isLockedByOthers($ownerId): bool
+        {
+        }
+        /**
+         * Attempt to acquire lock
+         *
+         * @return string|null Owner ID on success, null on failure
+         */
+        public function acquire()
+        {
+        }
+        /**
+         * Release lock
+         *
+         * @return void
+         */
+        public function release()
+        {
+        }
+        /**
+         * Refresh lock to extend timeout by another 30 seconds
+         *
+         * @param string|null $ownerId
+         *
+         * @return bool True if refreshed successfully, false if not owned or doesn't exist
+         */
+        public function refresh($ownerId): bool
+        {
+        }
+    }
 }
 namespace WPML\Core\Component\ReportContentStats\Application\Service\ReportPreparer {
     /**
@@ -59051,7 +60225,7 @@ namespace WPML\Core\Component\ReportContentStats\Application\Service\ReportPrepa
      */
     class ReportPreparerService
     {
-        public function __construct(\WPML\Core\SharedKernel\Component\Language\Application\Query\LanguagesQueryInterface $languagesQuery, \WPML\Core\SharedKernel\Component\Installer\Application\Query\WpmlSiteKeyQueryInterface $siteKeyQuery, \WPML\Core\Component\Translation\Application\Repository\SettingsRepository $settingsRepository, \WPML\Core\SharedKernel\Component\Site\Application\Query\SiteUrlQueryInterface $siteUrlQuery, \WPML\Core\SharedKernel\Component\ATE\Application\Query\SiteIDQueryInterface $siteIdQuery, \WPML\Core\SharedKernel\Component\ATE\Application\Query\SiteSharedKeyQueryInterface $siteSharedKeyQuery, \WPML\Core\Component\ReportContentStats\Domain\Repository\PostTypesStatsRepositoryInterface $contentStatsRepository)
+        public function __construct(\WPML\Core\SharedKernel\Component\Language\Application\Query\LanguagesQueryInterface $languagesQuery, \WPML\Core\SharedKernel\Component\Installer\Application\Query\WpmlSiteKeyQueryInterface $siteKeyQuery, \WPML\Core\Component\Translation\Application\Repository\SettingsRepository $settingsRepository, \WPML\Core\SharedKernel\Component\Site\Application\Query\SiteUrlQueryInterface $siteUrlQuery, \WPML\Core\SharedKernel\Component\ATE\Application\Query\SiteIDQueryInterface $siteIdQuery, \WPML\Core\SharedKernel\Component\ATE\Application\Query\SiteSharedKeyQueryInterface $siteSharedKeyQuery, \WPML\Core\Component\ReportContentStats\Domain\Repository\PostTypesStatsRepositoryInterface $contentStatsRepository, \WPML\Core\Component\ReportContentStats\Application\Service\EventReasonService $eventReasonService)
         {
         }
         public function prepare(): \WPML\Core\Component\ReportContentStats\Domain\ContentStatsReport
@@ -59145,12 +60319,13 @@ namespace WPML\Core\Component\ReportContentStats\Domain {
          * @param string $currentTranslationEditor
          * @param string|null $siteUUID
          * @param string|null $siteSharedKey
+         * @param string $eventReason
          *
          * @phpstan-param LanguageInfo $defaultLanguage
          * @phpstan-param LanguageInfo[] $translationLanguages
          * @phpstan-param ContentStatsArray $contentStats
          */
-        public function __construct($siteKey, string $siteUrl, string $currentTranslationEditor, array $defaultLanguage, array $translationLanguages, $siteUUID, $siteSharedKey, array $contentStats)
+        public function __construct($siteKey, string $siteUrl, string $currentTranslationEditor, array $defaultLanguage, array $translationLanguages, $siteUUID, $siteSharedKey, array $contentStats, string $eventReason)
         {
         }
         /**
@@ -59158,6 +60333,7 @@ namespace WPML\Core\Component\ReportContentStats\Domain {
          *   siteKey: string|false,
          *   siteUrl: string,
          *   currentTranslationEditor: string,
+         *   eventReason: string,
          *   defaultLanguage: LanguageInfo,
          *   translationLanguages: LanguageInfo[],
          *   siteUUID: string|null,
@@ -59203,6 +60379,9 @@ namespace WPML\Core\Component\ReportContentStats\Domain {
          * @phpstan-return ContentStatsArray
          */
         public function getContentStats(): array
+        {
+        }
+        public function getEventReason(): string
         {
         }
     }
@@ -59262,6 +60441,75 @@ namespace WPML\Core\Component\ReportContentStats\Domain {
         {
         }
     }
+    class ProcessingLock
+    {
+        const LOCK_TIMEOUT_SECONDS = 30;
+        /**
+         * @param int|null $acquiredAt
+         * @param string|null $ownerId
+         */
+        public function __construct($acquiredAt = null, $ownerId = null)
+        {
+        }
+        /**
+         * Create a new lock with unique owner ID
+         *
+         * @return \WPML\Core\Component\ReportContentStats\Domain\ProcessingLock
+         */
+        public static function create(): \WPML\Core\Component\ReportContentStats\Domain\ProcessingLock
+        {
+        }
+        /**
+         * Check if lock is currently active (not expired)
+         *
+         * @return bool
+         */
+        public function isActive(): bool
+        {
+        }
+        /**
+         * Check if lock has expired
+         *
+         * @return bool
+         */
+        public function hasExpired(): bool
+        {
+        }
+        /**
+         * Extend lock timeout (refresh timestamp) keeping same owner
+         *
+         * @return \WPML\Core\Component\ReportContentStats\Domain\ProcessingLock
+         */
+        public function extend(): \WPML\Core\Component\ReportContentStats\Domain\ProcessingLock
+        {
+        }
+        /**
+         * Get acquired timestamp
+         *
+         * @return int|null
+         */
+        public function getAcquiredAt()
+        {
+        }
+        /**
+         * Get owner ID
+         *
+         * @return string|null
+         */
+        public function getOwnerId()
+        {
+        }
+        /**
+         * Check if this lock is owned by given owner ID
+         *
+         * @param string $ownerId
+         *
+         * @return bool
+         */
+        public function isOwnedBy(string $ownerId): bool
+        {
+        }
+    }
 }
 namespace WPML\Core\Component\ReportContentStats\Domain\Query {
     interface OriginalContentStatsQueryInterface
@@ -59292,6 +60540,21 @@ namespace WPML\Core\Component\ReportContentStats\Domain {
     }
 }
 namespace WPML\Core\Component\ReportContentStats\Domain\Repository {
+    interface EventReasonRepositoryInterface
+    {
+        /**
+         * @return string|null
+         */
+        public function get();
+        /**
+         * @return void
+         */
+        public function set(string $reason);
+        /**
+         * @return void
+         */
+        public function clear();
+    }
     interface LastSentRepositoryInterface
     {
         /** @return int|null */
@@ -59322,6 +60585,35 @@ namespace WPML\Core\Component\ReportContentStats\Domain\Repository {
         public function removePostType(string $postTypeName);
         /** @return void */
         public function delete();
+    }
+    interface ProcessingLockRepositoryInterface
+    {
+        /**
+         * Attempt to acquire a lock atomically
+         *
+         * @return bool True if lock was acquired, false if already locked
+         */
+        public function acquire(): bool;
+        /**
+         * Get current lock if exists
+         *
+         * @return \WPML\Core\Component\ReportContentStats\Domain\ProcessingLock|null
+         */
+        public function get();
+        /**
+         * Release the lock
+         *
+         * @return void
+         */
+        public function release();
+        /**
+         * Update existing lock (extend timeout)
+         *
+         * @param \WPML\Core\Component\ReportContentStats\Domain\ProcessingLock $lock
+         *
+         * @return void
+         */
+        public function update(\WPML\Core\Component\ReportContentStats\Domain\ProcessingLock $lock);
     }
     interface RetryRepositoryInterface
     {
@@ -59411,6 +60703,43 @@ namespace WPML\Core\Component\StringPackage\Application\Query {
          * @return string[]
          */
         public function getNamesList(): array;
+    }
+}
+namespace WPML\Core\Port\Event {
+    abstract class Event
+    {
+        /**
+         * @param string $name
+         * @param mixed[] $payload
+         */
+        public function __construct(string $name, array $payload = [])
+        {
+        }
+        public function getName(): string
+        {
+        }
+        /**
+         * @return mixed[]
+         */
+        public function getPayload(): array
+        {
+        }
+    }
+}
+namespace WPML\Core\Component\Translation\Application\Event {
+    /**
+     * Event triggered when translation jobs are cancelled.
+     *
+     * Contains minimal data needed for external integrations (e.g., ATE) to process cancellations.
+     */
+    class JobsCancelledEvent extends \WPML\Core\Port\Event\Event
+    {
+        /**
+         * @param array<object> $jobData Array of job data objects with job_id, editor, editor_job_id
+         */
+        public function __construct(array $jobData)
+        {
+        }
     }
 }
 namespace WPML\Core\Port\Event {
@@ -59580,6 +60909,12 @@ namespace WPML\Core\Component\Translation\Application\Query {
          * @return \WPML\Core\Component\Translation\Domain\Translation[]
          */
         public function getManyByElementIds(\WPML\Core\Component\Translation\Domain\TranslationType $translationType, array $elementIds): array;
+        /**
+         * @param int $batchId
+         *
+         * @return int[]
+         */
+        public function getJobIdsByBatchId(int $batchId): array;
     }
     interface TranslationStatusQueryInterface
     {
@@ -59592,6 +60927,29 @@ namespace WPML\Core\Component\Translation\Application\Query {
          * @return \WPML\Core\Component\Translation\Application\Query\Dto\TranslationStatusDto[]
          */
         public function getByJobIds(array $jobIds, bool $mapStringBatchesOnIndividualStrings = false): array;
+    }
+    /**
+     * @phpstan-type UnsolvableJobRow array{
+     *    jobId: int,
+     *    ateJobId: int,
+     *    ateStatus: int,
+     *    status: int,
+     *    isUnsolvable: bool,
+     *    message: string,
+     *    errorType: string,
+     *    errorData: string|null
+     * }
+     */
+    interface UnsolvableJobsQueryInterface
+    {
+        /**
+         * Get jobs marked as unsolvable from the error table.
+         * Returns jobs in the same format as the sync endpoint.
+         *
+         * @phpstan-return UnsolvableJobRow[]
+         * @return array Array of jobs in sync endpoint format
+         */
+        public function getUnsolvableJobs(): array;
     }
 }
 namespace WPML\Core\Component\Translation\Application\Repository\Command {
@@ -59617,7 +60975,7 @@ namespace WPML\Core\Component\Translation\Application\Repository {
         const SETUP_OPTIONS = 'WPML(setup)';
         const SITEPRESS_OPTIONS = 'icl_sitepress_settings';
         const AUTOMATIC_PER_POST_TYPE = 'WPML(post-type)';
-        public function __construct(\WPML\Core\Port\Persistence\OptionsInterface $options)
+        public function __construct(\WPML\Core\Port\Persistence\OptionsInterface $options, \WPML\Core\SharedKernel\Component\Setting\Application\Query\TranslationEditorQueryInterface $settingTranslationEditorService)
         {
         }
         /**
@@ -59688,6 +61046,7 @@ namespace WPML\Core\Component\Translation\Application\Repository {
          * @return void
          */
         public function saveElementLanguage(\WPML\Core\Component\Translation\Domain\TranslationType $itemType, string $elementType, int $elementId, string $languageCode, string $sourceLanguageCode = null, int $trid = null);
+        public function setCancelledStatus(int $translationId): int;
     }
     interface TranslatorNoteRepositoryInterface
     {
@@ -59700,6 +61059,59 @@ namespace WPML\Core\Component\Translation\Application\Repository {
     }
 }
 namespace WPML\Core\Component\Translation\Application\Service {
+    /**
+     * Service for canceling translation jobs.
+     *
+     * Handles three scenarios:
+     * 1. Orphan translations (element_id IS NULL): Set status to cancelled (0)
+     * 2. Existing translations (element_id exists): Restore previous state
+     * 3. String batch translations: Clean up string-specific records (string_translations, string_status, string_batches)
+     */
+    class CancelJobsService
+    {
+        /**
+         * Constructor.
+         *
+         * @param \WPML\Core\Component\Translation\Application\Query\TranslationQueryInterface      $translationQuery
+         * @param \WPML\Core\Component\Translation\Application\Repository\TranslationRepositoryInterface $translationRepository
+         * @param \WPML\Core\Component\Translation\Application\Service\PreviousState\PreviousStateService           $previousStateService
+         * @param \WPML\Core\Port\Event\DispatcherInterface            $eventDispatcher
+         * @param \WPML\Core\SharedKernel\Component\String\Application\Service\StringBatchCleanupService      $stringBatchCleanupService
+         */
+        public function __construct(\WPML\Core\Component\Translation\Application\Query\TranslationQueryInterface $translationQuery, \WPML\Core\Component\Translation\Application\Repository\TranslationRepositoryInterface $translationRepository, \WPML\Core\Component\Translation\Application\Service\PreviousState\PreviousStateService $previousStateService, \WPML\Core\Port\Event\DispatcherInterface $eventDispatcher, \WPML\Core\SharedKernel\Component\String\Application\Service\StringBatchCleanupService $stringBatchCleanupService)
+        {
+        }
+        /**
+         * Cancel jobs.
+         *
+         * Cancellation flow:
+         * 1. Retrieve Translation entity by job ID
+         * 2. Get previous state to determine if orphan or existing translation
+         * 3a. If no previous state (orphan): Set status to cancelled (0)
+         * 3b. If previous state exists: Restore previous state using PreviousStateService
+         * 3c. If translation type is STRING_BATCH: Clean up string-specific records
+         * 4. Trigger JobsCancelledEvent for ATE cancellation
+         *
+         * @param int[] $jobIds Array of job IDs (job_id from icl_translate_job)
+         *
+         * @return array{cancelledJobIds: int[], restoredStatuses: array<int, int>} Array with cancelled job IDs and their restored statuses
+         * @throws \WPML\PHP\Exception\InvalidItemIdException
+         */
+        public function cancelJobs(array $jobIds): array
+        {
+        }
+        /**
+         * Cancel all jobs in a batch.
+         *
+         * @param int $batchId Batch ID from icl_translation_status.batch_id
+         *
+         * @return array{cancelledJobIds: int[], restoredStatuses: array<int, int>}
+         * @throws \WPML\PHP\Exception\InvalidItemIdException
+         */
+        public function cancelJobsInBatch(int $batchId): array
+        {
+        }
+    }
     class CompletedTranslationService
     {
         public function __construct(\WPML\Core\Component\Translation\Domain\CompletedTranslationDetector $completedTranslationDetector, \WPML\Core\Component\Translation\Application\Query\TranslationQueryInterface $translationsQuery)
@@ -59891,28 +61303,13 @@ namespace WPML\Core\Component\Translation\Application\Service\Dto {
         }
     }
 }
-namespace WPML\Core\Port\Event {
-    abstract class Event
+namespace WPML\Core\Component\Translation\Application\Service\Event {
+    class CancelAllAutomaticJobsEvent extends \WPML\Core\Port\Event\Event
     {
-        /**
-         * @param string $name
-         * @param mixed[] $payload
-         */
-        public function __construct(string $name, array $payload = [])
-        {
-        }
-        public function getName(): string
-        {
-        }
-        /**
-         * @return mixed[]
-         */
-        public function getPayload(): array
+        public function __construct()
         {
         }
     }
-}
-namespace WPML\Core\Component\Translation\Application\Service\Event {
     class SetTranslateEverythingEvent extends \WPML\Core\Port\Event\Event
     {
         /**
@@ -60024,7 +61421,141 @@ namespace WPML\Core\Component\Translation\Application\Service\PreviousState {
         }
     }
 }
+namespace WPML\Core\Component\Translation\Application\Service\ResendUnsolvableJobs\DtoCollectionBuilder {
+    class BatchStringIdExtractor
+    {
+        /**
+         * Constructor.
+         *
+         * @param \WPML\Core\Component\Translation\Application\String\Query\StringsFromBatchQueryInterface $stringsFromBatchQuery Query for getting string IDs from batch ID.
+         */
+        public function __construct(\WPML\Core\Component\Translation\Application\String\Query\StringsFromBatchQueryInterface $stringsFromBatchQuery)
+        {
+        }
+        /**
+         * Extract string IDs from batch translations.
+         *
+         * @param \WPML\Core\Component\Translation\Domain\Translation[] $translations Array of translations to process.
+         *
+         * @return array<int, int[]> Map of batch_id/string_id => string_ids[]
+         */
+        public function extract(array $translations): array
+        {
+        }
+    }
+    /**
+     * Builds SendToTranslationDto from grouped translations.
+     */
+    class SendToTranslationDtoBuilder
+    {
+        /**
+         * Build SendToTranslationDto from translations.
+         *
+         * @param string            $batchName The batch name for the translation.
+         * @param string            $sourceLanguage The source language code.
+         * @param \WPML\Core\Component\Translation\Domain\Translation[]     $translations Array of translations to process.
+         * @param array<int, int[]> $batchIdToStringIdsMap Pre-fetched map of batch_id/string_id => string_ids[]
+         *
+         * @return \WPML\Core\Component\Translation\Application\Service\Dto\SendToTranslationDto
+         * @throws \WPML\PHP\Exception\Exception
+         */
+        public function build(string $batchName, string $sourceLanguage, array $translations, array $batchIdToStringIdsMap): \WPML\Core\Component\Translation\Application\Service\Dto\SendToTranslationDto
+        {
+        }
+    }
+    class TranslationGrouper
+    {
+        /**
+         * Group translations by source language code.
+         *
+         * @param \WPML\Core\Component\Translation\Domain\Translation[] $translations Array of translations to group.
+         *
+         * @return array<string, Translation[]> Map of source_language_code => Translation[]
+         */
+        public function groupBySourceLanguage(array $translations): array
+        {
+        }
+    }
+}
+namespace WPML\Core\Component\Translation\Application\Service\ResendUnsolvableJobs {
+    /**
+     * Builds a collection of SendToTranslationDto objects from translations.
+     *
+     * Encapsulates the complete DTO preparation logic that must happen BEFORE job cancellation:
+     * 1. Extracts string IDs from batches (requires DB access)
+     * 2. Groups translations by source language
+     * 3. Builds DTOs for each language group
+     */
+    class SendToTranslationDtoCollectionBuilder
+    {
+        public function __construct(\WPML\Core\Component\Translation\Application\Service\ResendUnsolvableJobs\DtoCollectionBuilder\BatchStringIdExtractor $batchStringIdExtractor, \WPML\Core\Component\Translation\Application\Service\ResendUnsolvableJobs\DtoCollectionBuilder\TranslationGrouper $translationGrouper, \WPML\Core\Component\Translation\Application\Service\ResendUnsolvableJobs\DtoCollectionBuilder\SendToTranslationDtoBuilder $dtoBuilder)
+        {
+        }
+        /**
+         * Build a collection of DTOs grouped by source language.
+         *
+         * This method must be called BEFORE job cancellation because it needs to access
+         * the icl_string_batches records that will be deleted during cancellation.
+         *
+         * @param string        $batchName The batch name for all translations.
+         * @param \WPML\Core\Component\Translation\Domain\Translation[] $translations Array of translations to process.
+         *
+         * @return array<string, SendToTranslationDto> Map of source_language_code => SendToTranslationDto
+         * @throws \WPML\PHP\Exception\Exception If DTO building fails.
+         */
+        public function buildCollection(string $batchName, array $translations): array
+        {
+        }
+    }
+    /**
+     * Generates batch names using timestamp prefix.
+     */
+    class TimestampBatchNameGenerator
+    {
+        /**
+         * Generate a batch name with timestamp.
+         *
+         * @return string Batch name in format "Resend-{timestamp}"
+         */
+        public function generate(): string
+        {
+        }
+    }
+}
 namespace WPML\Core\Component\Translation\Application\Service {
+    /**
+     * Service for resending unsolvable translation jobs.
+     *
+     * Orchestrates the complete flow:
+     * 1. Retrieves translations by job IDs
+     * 2. Prepares DTOs (before cancellation - requires DB access)
+     * 3. Cancels existing jobs
+     * 4. Sends prepared DTOs to translation service
+     *
+     * @phpstan-import-type ResultDtoArray from \WPML\Core\Component\Translation\Application\Service\TranslationService\Dto\ResultDto
+     */
+    class ResendUnsolvableJobsService
+    {
+        public function __construct(\WPML\Core\Component\Translation\Application\Query\TranslationQueryInterface $translationQuery, \WPML\Core\Component\Translation\Application\Service\CancelJobsService $cancelJobsService, \WPML\Core\Component\Translation\Application\Service\TranslationService $translationService, \WPML\Core\Component\Translation\Application\Service\ResendUnsolvableJobs\SendToTranslationDtoCollectionBuilder $dtoCollectionBuilder, \WPML\Core\Component\Translation\Application\Service\ResendUnsolvableJobs\TimestampBatchNameGenerator $batchNameGenerator)
+        {
+        }
+        /**
+         * Resend unsolvable jobs.
+         *
+         * @param int[] $jobIds Array of job IDs to resend.
+         * @param string|null $batchName Optional batch name to use for all jobs.
+         *
+         * @phpstan-return array{batchName: string, results: array<string, ResultDtoArray>}
+         *
+         * @throws \WPML\PHP\Exception\Exception If building DTO fails.
+         * @throws \WPML\Core\Component\Translation\Application\Service\TranslationService\TranslationServiceException If sending to translation fails.
+         * @throws \WPML\PHP\Exception\InvalidArgumentException If DTO validation fails.
+         * @throws \WPML\PHP\Exception\InvalidItemIdException If cancelling jobs fails.
+         */
+        public function resend(array $jobIds, $batchName = null): array
+        {
+        }
+    }
     class SettingsService
     {
         public function __construct(\WPML\Core\Component\Translation\Application\Repository\SettingsRepository $translationSettingsRepository, \WPML\Core\Port\Event\DispatcherInterface $eventDispatcher)
@@ -60076,6 +61607,43 @@ namespace WPML\Core\Component\Translation\Application\Service {
         {
         }
     }
+    class TranslateJobErrorService
+    {
+        public function __construct(\WPML\Core\Component\Translation\Domain\Repository\JobErrorRepositoryInterface $repository)
+        {
+        }
+        /**
+         *
+         * @param int    $jobId        The translation job ID.
+         * @param int    $ateJobId     The ATE job ID.
+         * @param string $errorType    The error type.
+         * @param string $errorMessage The error message.
+         * @param array<string, mixed> $errorData The error data.
+         *
+         * @return void
+         */
+        public function logError(int $jobId, int $ateJobId, string $errorType, string $errorMessage, array $errorData = [])
+        {
+        }
+        /**
+         * Deletes a translation job error.
+         *
+         * @param int $jobId The translation job ID.
+         *
+         * @return void
+         */
+        public function deleteError(int $jobId)
+        {
+        }
+        /**
+         * Get the count of all job errors.
+         *
+         * @return int
+         */
+        public function getCount(): int
+        {
+        }
+    }
 }
 namespace WPML\Core\Component\Translation\Application\Service\TranslationBatchService {
     class BatchNamePreparer
@@ -60102,6 +61670,12 @@ namespace WPML\Core\Component\Translation\Application\Service {
          * @throws \WPML\PHP\Exception\InvalidArgumentException
          */
         public function send(\WPML\Core\Component\Translation\Application\Service\Dto\SendToTranslationDto $sendToTranslationDto): \WPML\Core\Component\Translation\Application\Service\TranslationService\Dto\ResultDto
+        {
+        }
+        /**
+         * @return void
+         */
+        public function cancelAllAutomaticJobs()
         {
         }
     }
@@ -60502,6 +62076,45 @@ namespace WPML\Core\Component\Translation\Domain {
         {
         }
     }
+}
+namespace WPML\Core\Component\Translation\Domain\Entity {
+    class JobError
+    {
+        /**
+         * @param int $jobId
+         * @param int $ateJobId
+         * @param string $errorType
+         * @param string $errorMessage
+         * @param array<string, mixed> $errorData
+         * @param int $counter
+         */
+        public function __construct(int $jobId, int $ateJobId, string $errorType, string $errorMessage, array $errorData = [], int $counter = 1)
+        {
+        }
+        public function getJobId(): int
+        {
+        }
+        public function getAteJobId(): int
+        {
+        }
+        public function getErrorType(): string
+        {
+        }
+        public function getErrorMessage(): string
+        {
+        }
+        /**
+         * @return array<string, mixed>
+         */
+        public function getErrorData(): array
+        {
+        }
+        public function getCounter(): int
+        {
+        }
+    }
+}
+namespace WPML\Core\Component\Translation\Domain {
     class HowToHandleExistingTranslationType
     {
         const HANDLE_EXISTING_LEAVE = 'leave';
@@ -60826,6 +62439,48 @@ namespace WPML\Core\Component\Translation\Domain\PreviousState {
         public function restoreState(int $translationId, \WPML\Core\Component\Translation\Domain\PreviousState\PreviousState $previousState);
     }
 }
+namespace WPML\Core\Component\Translation\Domain\Repository {
+    interface JobErrorRepositoryInterface
+    {
+        /**
+         * Find a job error by job ID.
+         *
+         * @param int $jobId Job ID.
+         *
+         * @return \WPML\Core\Component\Translation\Domain\Entity\JobError|null
+         */
+        public function findByJobId(int $jobId);
+        /**
+         * Insert a new job error.
+         *
+         * @param \WPML\Core\Component\Translation\Domain\Entity\JobError $jobError
+         * @return void
+         */
+        public function insert(\WPML\Core\Component\Translation\Domain\Entity\JobError $jobError);
+        /**
+         * Increment the counter for a job error by its ID.
+         *
+         * @param int $jobId Job error ID.
+         *
+         * @return void
+         */
+        public function incrementCounter(int $jobId);
+        /**
+         * Delete a job error by job ID.
+         *
+         * @param int $jobId Job ID.
+         *
+         * @return void
+         */
+        public function delete(int $jobId);
+        /**
+         * Count all job errors.
+         *
+         * @return int
+         */
+        public function count(): int;
+    }
+}
 namespace WPML\Core\Component\Translation\Domain\Sender {
     interface DuplicationSenderInterface
     {
@@ -60874,7 +62529,7 @@ namespace WPML\Core\Component\Translation\Domain\Settings {
     }
     class Settings
     {
-        public function __construct(bool $isTMAllowed, \WPML\Core\Component\Translation\Domain\Settings\TranslateEverything $translateEverything, \WPML\Core\Component\Translation\Domain\Settings\TranslateAutomaticallyPerPostType $translateAutomaticallyPerPostType, \WPML\Core\Component\Translation\Domain\Settings\ReviewMode $reviewMode = null, \WPML\Core\SharedKernel\Component\Translation\Domain\TranslationEditorSetting $translationEditor = null)
+        public function __construct(bool $isTMAllowed, \WPML\Core\Component\Translation\Domain\Settings\TranslateEverything $translateEverything, \WPML\Core\Component\Translation\Domain\Settings\TranslateAutomaticallyPerPostType $translateAutomaticallyPerPostType, \WPML\Core\Component\Translation\Domain\Settings\ReviewMode $reviewMode = null, \WPML\Core\SharedKernel\Component\Setting\Domain\TranslationEditorSetting $translationEditor = null)
         {
         }
         public function isTMAllowed(): bool
@@ -60887,7 +62542,7 @@ namespace WPML\Core\Component\Translation\Domain\Settings {
         {
         }
         /**
-         * @return \WPML\Core\SharedKernel\Component\Translation\Domain\TranslationEditorSetting|null
+         * @return \WPML\Core\SharedKernel\Component\Setting\Domain\TranslationEditorSetting|null
          */
         public function getTranslationEditor()
         {
@@ -60900,12 +62555,12 @@ namespace WPML\Core\Component\Translation\Domain\Settings {
         }
         /**
          * @param \WPML\Core\Component\Translation\Domain\Settings\ReviewMode|null               $reviewMode
-         * @param \WPML\Core\SharedKernel\Component\Translation\Domain\TranslationEditorSetting|null $translationEditor
+         * @param \WPML\Core\SharedKernel\Component\Setting\Domain\TranslationEditorSetting|null $translationEditor
          *
          * @return \WPML\Core\Component\Translation\Domain\Settings\Settings
          * @throws \WPML\Core\Component\Translation\Domain\Settings\SettingsException
          */
-        public function enableTranslateEverything(\WPML\Core\Component\Translation\Domain\Settings\ReviewMode $reviewMode = null, \WPML\Core\SharedKernel\Component\Translation\Domain\TranslationEditorSetting $translationEditor = null): self
+        public function enableTranslateEverything(\WPML\Core\Component\Translation\Domain\Settings\ReviewMode $reviewMode = null, \WPML\Core\SharedKernel\Component\Setting\Domain\TranslationEditorSetting $translationEditor = null): self
         {
         }
         public function disableTranslateEverything(): self
@@ -61336,7 +62991,19 @@ namespace WPML\Core\Component\Translation\Domain\TranslationEditor {
     }
     class AteEditor implements \WPML\Core\Component\Translation\Domain\TranslationEditor\EditorInterface
     {
+        /**
+         * @param int|null $editorJobId
+         */
+        public function __construct($editorJobId = null)
+        {
+        }
         public function get(): string
+        {
+        }
+        /**
+         * @return int|null
+         */
+        public function getEditorJobId()
         {
         }
     }
@@ -61443,7 +63110,7 @@ namespace WPML\Core\Component\Translation\Domain\TranslationMethod\Validator {
     }
     class TranslationEditorTypeValidator
     {
-        public function __construct(\WPML\Core\SharedKernel\Component\Translation\Domain\TranslationEditorSetting $translationEditorSetting = null)
+        public function __construct(\WPML\Core\SharedKernel\Component\Setting\Domain\TranslationEditorSetting $translationEditorSetting = null)
         {
         }
         /**
@@ -63294,6 +64961,14 @@ namespace WPML\Core\Port\Persistence {
          * @throws \WPML\Core\Port\Persistence\Exception\DatabaseErrorException
          */
         public function update(string $table, array $entityData, array $whereData): int;
+        /**
+         * @param string               $table
+         * @param array<string, mixed> $whereData
+         *
+         * @return int
+         * @throws \WPML\Core\Port\Persistence\Exception\DatabaseErrorException
+         */
+        public function delete(string $table, array $whereData): int;
     }
 }
 namespace WPML\Core\Port\Persistence\Exception {
@@ -63346,6 +65021,16 @@ namespace WPML\Core\Port\Persistence {
          * @return void
          */
         public function delete(string $optionName);
+        /**
+         * Add option atomically (only if it doesn't exist)
+         *
+         * @param string $optionName
+         * @param mixed  $value
+         * @param bool   $autoload
+         *
+         * @return bool True if option was added, false if it already exists
+         */
+        public function add(string $optionName, $value, bool $autoload = true): bool;
     }
     /**
      * QueryHandlerInterface provides only read access to the database.
@@ -63511,6 +65196,32 @@ namespace WPML\Core\Port {
         public function getAMSHost(): string;
     }
 }
+namespace WPML\Core\Port\Remote {
+    interface RemoteInterface
+    {
+        /**
+         * @param string $url
+         * @param array<string, mixed> $data
+         * @param bool $asJson
+         * @param bool $blocking
+         * @param int $timeout
+         * @param array<string, string> $headers
+         *
+         * @return mixed
+         *
+         * @throws \WPML\PHP\Exception\RemoteException
+         */
+        public function post($url, $data, $asJson = true, $blocking = false, $timeout = 1, $headers = []);
+        /**
+         * @param array<string, mixed> $data
+         *
+         * @return string
+         *
+         * @throws \WPML\PHP\Exception\JsonEncodeException
+         */
+        public function jsonEncode($data);
+    }
+}
 namespace WPML\Core\SharedKernel\Component\ATE\Application\Query {
     interface SiteIDQueryInterface
     {
@@ -63553,7 +65264,10 @@ namespace WPML\Core\SharedKernel\Component\Installer\Application\Query {
 namespace WPML\Core\SharedKernel\Component\Item\Application\Query\Dto {
     class UntranslatedTypeCountDto
     {
-        public function __construct(string $namePlural, string $nameSingular, int $count)
+        /**
+         * @param 'post'|'package'|'string' $kind
+         */
+        public function __construct(string $namePlural, string $nameSingular, int $count, $kind, string $type = '')
         {
         }
         public function getNamePlural(): string
@@ -63566,7 +65280,7 @@ namespace WPML\Core\SharedKernel\Component\Item\Application\Query\Dto {
         {
         }
         /**
-         * @return array{namePlural: string, nameSingular: string, count: int}
+         * @return array{namePlural: string, nameSingular: string, count: int, kind:string, type: string}
          */
         public function toArray(): array
         {
@@ -63576,6 +65290,11 @@ namespace WPML\Core\SharedKernel\Component\Item\Application\Query\Dto {
 namespace WPML\Core\SharedKernel\Component\Item\Application\Query {
     interface UntranslatedTypesCountQueryInterface
     {
+        const KIND_POST = 'post';
+        const KIND_PACKAGE = 'package';
+        const KIND_STRING = 'string';
+        /** @return self::KIND_* */
+        public function forKind();
         /**
          * @phpstan-param array{
          *    nativeEditorGlobalSetting?: bool,
@@ -63585,6 +65304,42 @@ namespace WPML\Core\SharedKernel\Component\Item\Application\Query {
          * @return \WPML\Core\SharedKernel\Component\Item\Application\Query\Dto\UntranslatedTypeCountDto[]
          */
         public function get(array $queryData = []): array;
+        /**
+         * @param int $numberOfIdsToFetch
+         * @param int $offset
+         * @param string $type
+         *
+         * @return int[]
+         */
+        public function getSomeIds($numberOfIdsToFetch, $offset, $type);
+    }
+}
+namespace WPML\Core\SharedKernel\Component\Item\Application\Service {
+    class UntranslatedService
+    {
+        /**
+         * @param \WPML\Core\SharedKernel\Component\Item\Application\Query\UntranslatedTypesCountQueryInterface[] $queries
+         */
+        public function __construct(array $queries, \WPML\Core\SharedKernel\Component\Setting\Application\Service\TranslationEditorService $settingTranslationEditorService)
+        {
+        }
+        /**
+         * @return \WPML\Core\SharedKernel\Component\Item\Application\Query\Dto\UntranslatedTypeCountDto[]
+         */
+        public function getUntranslatedTypesCounts()
+        {
+        }
+        /**
+         * @param int $numberOfIdsToFetch
+         * @param int $offset
+         * @param string $kind
+         * @param string $type
+         *
+         * @return int[]
+         */
+        public function getSomeUntranslatedIds($numberOfIdsToFetch, $offset, $kind, $type)
+        {
+        }
     }
 }
 namespace WPML\Core\SharedKernel\Component\Language\Application\Query\Dto {
@@ -63901,6 +65656,71 @@ namespace WPML\Core\SharedKernel\Component\Server\Domain\Service {
         }
     }
 }
+namespace WPML\Core\SharedKernel\Component\Setting\Application\Query {
+    interface TranslationEditorQueryInterface
+    {
+        /**
+         * @return \WPML\Core\SharedKernel\Component\Setting\Domain\TranslationEditorSetting|null
+         */
+        public function getTranslationEditorSetting();
+    }
+}
+namespace WPML\Core\SharedKernel\Component\Setting\Application\Service {
+    class TranslationEditorService
+    {
+        public function __construct(\WPML\Core\SharedKernel\Component\Setting\Application\Query\TranslationEditorQueryInterface $translationEditorQuery)
+        {
+        }
+        /** @return \WPML\Core\SharedKernel\Component\Setting\Domain\TranslationEditorSetting|null */
+        public function getTranslationEditorSetting()
+        {
+        }
+    }
+}
+namespace WPML\Core\SharedKernel\Component\Setting\Domain {
+    class TranslationEditorSetting
+    {
+        const ATE = 'ATE';
+        const CLASSIC = 'CTE';
+        const MANUAL = 'MANUAL';
+        const PRO = 'PRO';
+        /**
+         * @param string                    $value
+         * @param mixed                     $useNativeEditorGlobally
+         * @param array<string, bool>|mixed $useNativeEditorPerPostType
+         */
+        public function __construct(string $value, $useNativeEditorGlobally = false, $useNativeEditorPerPostType = [])
+        {
+        }
+        /**
+         * @return string[]
+         */
+        public function getAll(): array
+        {
+        }
+        public function getValue(): string
+        {
+        }
+        public function useAteForOldTranslationsCreatedWithCte(): bool
+        {
+        }
+        public function setUseAteForOldTranslationsCreatedWithCte(bool $useAteForOldTranslationsCreatedWithCte): self
+        {
+        }
+        public static function createDefault(): self
+        {
+        }
+        public function useNativeEditorForAllPostTypes(): bool
+        {
+        }
+        /**
+         * @return array<string, bool>
+         */
+        public function getPostTypesUsingNativeEditor(): array
+        {
+        }
+    }
+}
 namespace WPML\Core\SharedKernel\Component\Site\Application\Query {
     interface SiteMigrationLockQueryInterface
     {
@@ -63920,6 +65740,50 @@ namespace WPML\Core\SharedKernel\Component\String\Application\Query {
          * @return array<int, string> [stringId => language]
          */
         public function getStringLanguages(array $strings): array;
+    }
+}
+namespace WPML\Core\SharedKernel\Component\String\Application\Repository {
+    interface StringBatchRepositoryInterface
+    {
+        /**
+         * @param int    $batchId
+         * @param string $targetLanguage
+         *
+         * @return \WPML\Core\SharedKernel\Component\String\Domain\StringTranslation[]
+         */
+        public function getStringTranslationsByBatch(int $batchId, string $targetLanguage): array;
+        /**
+         * @param int[] $translationIds
+         *
+         * @return int
+         */
+        public function deleteStringTranslationsByIds(array $translationIds): int;
+        /**
+         * @param int[] $translationIds
+         * @param int   $status
+         *
+         * @return int
+         */
+        public function updateStringTranslationsStatus(array $translationIds, int $status): int;
+        public function deleteStringBatch(int $batchId): int;
+    }
+}
+namespace WPML\Core\SharedKernel\Component\String\Application\Service {
+    class StringBatchCleanupService
+    {
+        public function __construct(\WPML\Core\SharedKernel\Component\String\Application\Repository\StringBatchRepositoryInterface $stringBatchRepository)
+        {
+        }
+        /**
+         * Cleanup logic:
+         * - Untranslated strings (no value, no mo_string) → DELETE
+         * - Translated strings (has value or mo_string) → UPDATE status to COMPLETE
+         *
+         * @return void
+         */
+        public function cleanupBatch(int $batchId, string $targetLanguage)
+        {
+        }
     }
 }
 namespace WPML\Core\SharedKernel\Component\String\Domain\Repository {
@@ -63977,6 +65841,43 @@ namespace WPML\Core\SharedKernel\Component\String\Domain {
         {
         }
     }
+    class StringTranslation
+    {
+        /**
+         * @param int         $id
+         * @param int         $stringId
+         * @param string|null $value
+         * @param string|null $moString
+         * @param string      $language
+         */
+        public function __construct(int $id, int $stringId, $value, $moString, string $language)
+        {
+        }
+        public function getId(): int
+        {
+        }
+        public function getStringId(): int
+        {
+        }
+        /**
+         * @return string|null
+         */
+        public function getValue()
+        {
+        }
+        /**
+         * @return string|null
+         */
+        public function getMoString()
+        {
+        }
+        public function getLanguage(): string
+        {
+        }
+        public function isUntranslated(): bool
+        {
+        }
+    }
 }
 namespace WPML\Core\SharedKernel\Component\StringPackage\Domain\Repository {
     interface RepositoryInterface
@@ -64003,48 +65904,6 @@ namespace WPML\Core\SharedKernel\Component\Translation\Domain {
         }
         /** @return self::* */
         public function getValue()
-        {
-        }
-    }
-    class TranslationEditorSetting
-    {
-        const ATE = 'ATE';
-        const CLASSIC = 'CTE';
-        const MANUAL = 'MANUAL';
-        const PRO = 'PRO';
-        /**
-         * @param string                    $value
-         * @param mixed                     $useNativeEditorGlobally
-         * @param array<string, bool>|mixed $useNativeEditorPerPostType
-         */
-        public function __construct(string $value, $useNativeEditorGlobally = false, $useNativeEditorPerPostType = [])
-        {
-        }
-        /**
-         * @return string[]
-         */
-        public function getAll(): array
-        {
-        }
-        public function getValue(): string
-        {
-        }
-        public function useAteForOldTranslationsCreatedWithCte(): bool
-        {
-        }
-        public function setUseAteForOldTranslationsCreatedWithCte(bool $useAteForOldTranslationsCreatedWithCte): self
-        {
-        }
-        public static function createDefault(): self
-        {
-        }
-        public function useNativeEditorForAllPostTypes(): bool
-        {
-        }
-        /**
-         * @return array<string, bool>
-         */
-        public function getPostTypesUsingNativeEditor(): array
         {
         }
     }
@@ -64860,6 +66719,20 @@ namespace WPML\Infrastructure {
         }
     }
 }
+namespace WPML\Infrastructure\WordPress\Component\ATE\Domain\Credits\Repository {
+    class CreditsInProgressRepository implements \WPML\Core\Component\ATE\Domain\Credits\Repository\CreditsInProgressRepositoryInterface
+    {
+        const OPTION_LOWEST_RELEVANT_JOB_ID = '_wpml_credits_in_progress_lowest_job_id';
+        /**
+         * @param int[] $statusesInProgress
+         *
+         * @return int
+         */
+        public function getCreditsInProgressCount($statusesInProgress)
+        {
+        }
+    }
+}
 namespace WPML\Infrastructure\WordPress\Component\Communication\Domain {
     class DismissedNoticesStorage implements \WPML\Core\Component\Communication\Domain\DismissedNoticesStorageInterface
     {
@@ -64930,7 +66803,7 @@ namespace WPML\Infrastructure\WordPress\Component\Item\Application\Query {
      *    post_status:string,
      *    post_date:string,
      *    post_type:string,
-     *    word_count:string,
+     *    word_count:string|null,
      *    translator_note:string,
      *    use_native_editor:string
      * }
@@ -64969,7 +66842,7 @@ namespace WPML\Infrastructure\WordPress\Component\Item\Application\Query\SearchQ
      */
     class ItemWithTranslationStatusDtoMapper
     {
-        const REQUIRED_RAW_KEYS = ['ID', 'post_title', 'post_status', 'post_date', 'post_type', 'word_count', 'translator_note', 'use_native_editor'];
+        const REQUIRED_RAW_KEYS = ['ID', 'post_title', 'post_status', 'post_date', 'post_type', 'translator_note', 'use_native_editor'];
         public function __construct(\WPML\Core\Component\Translation\Application\Service\CompletedTranslationService $completedTranslationService)
         {
         }
@@ -65062,7 +66935,6 @@ namespace WPML\Infrastructure\WordPress\Component\Item\Application\Query\SearchQ
     class SearchQueryBuilder implements \WPML\Infrastructure\WordPress\Component\Item\Application\Query\SearchQuery\QueryBuilder\SearchQueryBuilderInterface
     {
         use \WPML\Infrastructure\WordPress\Component\Item\Application\Query\SearchQuery\QueryBuilder\ManyLanguagesStrategy\SearchQueryBuilderTrait;
-        const WORD_COUNT_META_KEY = '_wpml_word_count';
         const TRANSLATOR_NOTE_META_KEY = '_icl_translator_note';
         const USE_NATIVE_EDITOR_META_KEY = '_wpml_post_translation_editor_native';
         const POST_COLUMNS = "\n    p.ID,\n    p.post_title,\n    p.post_status,\n    p.post_date,\n    p.post_type\n  ";
@@ -65133,7 +67005,6 @@ namespace WPML\Infrastructure\WordPress\Component\Item\Application\Query\SearchQ
     class SearchQueryBuilder implements \WPML\Infrastructure\WordPress\Component\Item\Application\Query\SearchQuery\QueryBuilder\SearchQueryBuilderInterface
     {
         use \WPML\Infrastructure\WordPress\Component\Item\Application\Query\SearchQuery\QueryBuilder\MultiJoinStrategy\SearchQueryBuilderTrait;
-        const WORD_COUNT_META_KEY = '_wpml_word_count';
         const TRANSLATOR_NOTE_META_KEY = '_icl_translator_note';
         const USE_NATIVE_EDITOR_META_KEY = '_wpml_post_translation_editor_native';
         const POST_COLUMNS = "\n    p.ID,\n    p.post_title,\n    p.post_status,\n    p.post_date,\n    p.post_type\n  ";
@@ -65245,6 +67116,9 @@ namespace WPML\Infrastructure\WordPress\Component\Item\Application\Query {
         public function __construct(\WPML\Core\Port\Persistence\QueryHandlerInterface $queryHandler, \WPML\Core\Port\Persistence\QueryPrepareInterface $queryPrepare, \WPML\Core\SharedKernel\Component\Post\Application\Query\TranslatableTypesQueryInterface $translatableTypesQuery, \WPML\Core\SharedKernel\Component\Language\Application\Query\LanguagesQueryInterface $languagesQuery)
         {
         }
+        public function forKind()
+        {
+        }
         /**
          * @phpstan-param array{
          *    nativeEditorGlobalSetting?: bool,
@@ -65254,6 +67128,16 @@ namespace WPML\Infrastructure\WordPress\Component\Item\Application\Query {
          * @return \WPML\Core\SharedKernel\Component\Item\Application\Query\Dto\UntranslatedTypeCountDto[]
          */
         public function get(array $queryData = []): array
+        {
+        }
+        /**
+         * @param int $numberOfIdsToFetch
+         * @param int $offset
+         * @param string $type
+         *
+         * @return int[]
+         */
+        public function getSomeIds($numberOfIdsToFetch, $offset, $type)
         {
         }
     }
@@ -65377,7 +67261,9 @@ namespace WPML\Infrastructure\WordPress\Component\PostHog\Domain\Event {
     class Capture implements \WPML\Core\Component\PostHog\Domain\Event\CaptureInterface
     {
         const POSTHOG_CAPTURE_ENDPOINT = '/i/v0/e/';
-        public function __construct(\WPML\Core\Component\PostHog\Application\Repository\PostHogStateRepositoryInterface $postHogStateRepository)
+        /** @var \WPML\Core\Component\PostHog\Application\Repository\PostHogStateRepositoryInterface */
+        protected $postHogStateRepository;
+        public function __construct(\WPML\Core\Component\PostHog\Application\Repository\PostHogStateRepositoryInterface $postHogStateRepository, \WPML\Core\Port\Remote\RemoteInterface $remote)
         {
         }
         /**
@@ -65387,38 +67273,14 @@ namespace WPML\Infrastructure\WordPress\Component\PostHog\Domain\Event {
          * @param string $apiKey
          * @param string $host
          * @param string $distinctId
-         * @param string $eventName
-         * @param array<string, mixed> $eventProperties
+         * @param string $sessionId
+         * @param \WPML\Core\Component\PostHog\Domain\Event\EventInterface $event
          * @param array<string, mixed> $personProperties
          *
          * @return bool
+         * @throws \WPML\PHP\Exception\RemoteException
          */
-        public function capture(string $apiKey, string $host, string $distinctId, string $eventName, array $eventProperties, array $personProperties = []): bool
-        {
-        }
-        /**
-         * Wrapper for wp_json_encode to make testing easier
-         *
-         * @param mixed $payload
-         * @return string|false
-         */
-        protected function wpJsonEncode($payload)
-        {
-        }
-        /**
-         * Wrapper for wp_remote_post to make testing easier
-         *
-         * @param string $url
-         * @param array{
-         *   headers: array<string, string>,
-         *   body: string,
-         *   blocking: bool,
-         *   timeout: int,
-         *   data_format: string
-         * } $args
-         * @return mixed
-         */
-        protected function wpRemotePost($url, $args)
+        public function capture(string $apiKey, string $host, string $distinctId, string $sessionId, \WPML\Core\Component\PostHog\Domain\Event\EventInterface $event, array $personProperties = []): bool
         {
         }
         /**
@@ -65429,17 +67291,127 @@ namespace WPML\Infrastructure\WordPress\Component\PostHog\Domain\Event {
         protected function getCurrentTimestamp()
         {
         }
+        /**
+         * Get the current URL
+         *
+         * @return string
+         */
+        protected function getCurrentUrl()
+        {
+        }
     }
 }
-namespace WPML\Infrastructure\WordPress\Component\ReportContentStats\Application\Query {
-    class CanCollectStatsQuery implements \WPML\Core\Component\ReportContentStats\Application\Query\CanCollectStatsQueryInterface
+namespace WPML\Infrastructure\WordPress\Component\PostHog\Domain\Event\SetupWizard\Capture {
+    class CaptureWizardCompleted extends \WPML\Infrastructure\WordPress\Component\PostHog\Domain\Event\Capture
     {
-        const REPO_NAME = 'wpml';
-        const OPTION_KEY = 'otgs_share_local_components';
+        public function __construct(\WPML\Core\Component\PostHog\Application\Repository\PostHogStateRepositoryInterface $postHogStateRepository, \WPML\Core\Component\PostHog\Domain\Repository\SetupWizardUUIDRepositoryInterface $wizardUUIDRepository, \WPML\Core\Component\PostHog\Domain\Repository\SetupWizardStartTimeRepositoryInterface $wizardStartTimeRepository, \WPML\Core\Port\Remote\RemoteInterface $remote)
+        {
+        }
+        public function capture(string $apiKey, string $host, string $distinctId, string $sessionId, \WPML\Core\Component\PostHog\Domain\Event\EventInterface $event, array $personProperties = []): bool
+        {
+        }
+    }
+    class CaptureWizardFirstStep extends \WPML\Infrastructure\WordPress\Component\PostHog\Domain\Event\Capture
+    {
+        const FIRST_STEP_NAME = 'languages';
+        public function __construct(\WPML\Core\Component\PostHog\Application\Repository\PostHogStateRepositoryInterface $postHogStateRepository, \WPML\Core\Component\PostHog\Domain\Repository\SetupWizardUUIDRepositoryInterface $wizardUUIDRepository, \WPML\Core\Component\PostHog\Domain\Repository\SetupWizardStartTimeRepositoryInterface $wizardStartTimeRepository, \WPML\Core\Component\PostHog\Domain\Repository\SetupWizardLastStepSubmissionTimeRepositoryInterface $wizardLastStepSubmissionTimeRepository, \WPML\Core\Port\Remote\RemoteInterface $remote)
+        {
+        }
+        public function capture(string $apiKey, string $host, string $distinctId, string $sessionId, \WPML\Core\Component\PostHog\Domain\Event\EventInterface $event, array $personProperties = []): bool
+        {
+        }
+    }
+    class CaptureWizardStarted extends \WPML\Infrastructure\WordPress\Component\PostHog\Domain\Event\Capture
+    {
+        public function __construct(\WPML\Core\Component\PostHog\Application\Repository\PostHogStateRepositoryInterface $postHogStateRepository, \WPML\Core\Component\PostHog\Domain\Event\SetupWizard\SetupWizardUUIDInterface $wizardUUID, \WPML\Core\Component\PostHog\Domain\Repository\SetupWizardStartTimeRepositoryInterface $wizardStartTimeRepository, \WPML\Core\Port\Remote\RemoteInterface $remote)
+        {
+        }
+        public function capture(string $apiKey, string $host, string $distinctId, string $sessionId, \WPML\Core\Component\PostHog\Domain\Event\EventInterface $event, array $personProperties = []): bool
+        {
+        }
+    }
+    class CaptureWizardStep extends \WPML\Infrastructure\WordPress\Component\PostHog\Domain\Event\Capture
+    {
+        public function __construct(\WPML\Core\Component\PostHog\Application\Repository\PostHogStateRepositoryInterface $postHogStateRepository, \WPML\Core\Component\PostHog\Domain\Repository\SetupWizardUUIDRepositoryInterface $wizardUUIDRepository, \WPML\Core\Component\PostHog\Domain\Repository\SetupWizardLastStepSubmissionTimeRepositoryInterface $wizardStepSubmissionTimeRepository, \WPML\Core\Port\Remote\RemoteInterface $remote)
+        {
+        }
+        public function capture(string $apiKey, string $host, string $distinctId, string $sessionId, \WPML\Core\Component\PostHog\Domain\Event\EventInterface $event, array $personProperties = []): bool
+        {
+        }
+    }
+}
+namespace WPML\Infrastructure\WordPress\Component\PostHog\Domain\Event\SetupWizard {
+    class SetupWizardUUID implements \WPML\Core\Component\PostHog\Domain\Event\SetupWizard\SetupWizardUUIDInterface
+    {
+        public function __construct(\WPML\Core\Component\PostHog\Domain\Repository\SetupWizardUUIDRepositoryInterface $uuidRepository)
+        {
+        }
+        public function create(): string
+        {
+        }
+        /**
+         * Wrapper for WordPress wp_generate_uuid4 function.
+         *
+         * @return string
+         */
+        protected function generateUUID4(): string
+        {
+        }
+    }
+}
+namespace WPML\Infrastructure\WordPress\Component\PostHog\Domain\Repository {
+    class SetupWizardLastStepSubmissionTimeRepository implements \WPML\Core\Component\PostHog\Domain\Repository\SetupWizardLastStepSubmissionTimeRepositoryInterface
+    {
+        const OPTION_NAME = 'wpml_ph_wizard_last_step_submission_time';
         public function __construct(\WPML\Core\Port\Persistence\OptionsInterface $options)
         {
         }
-        public function get(): bool
+        /** @return int|false */
+        public function get()
+        {
+        }
+        /**
+         * @param int $timestamp
+         *
+         * @return void
+         */
+        public function save(int $timestamp)
+        {
+        }
+    }
+    class SetupWizardStartTimeRepository implements \WPML\Core\Component\PostHog\Domain\Repository\SetupWizardStartTimeRepositoryInterface
+    {
+        const OPTION_NAME = 'wpml_ph_wizard_start_time';
+        public function __construct(\WPML\Core\Port\Persistence\OptionsInterface $options)
+        {
+        }
+        /** @return void */
+        public function save(string $wizardUUID, int $timestamp)
+        {
+        }
+        /** @return int|false */
+        public function get(string $wizardUUID)
+        {
+        }
+    }
+    class SetupWizardUUIDRepository implements \WPML\Core\Component\PostHog\Domain\Repository\SetupWizardUUIDRepositoryInterface
+    {
+        const OPTION_NAME = 'wpml_ph_wizard_uuid';
+        public function __construct(\WPML\Core\Port\Persistence\OptionsInterface $options)
+        {
+        }
+        /**
+         * @param string $uuid
+         *
+         * @return void
+         */
+        public function save(string $uuid)
+        {
+        }
+        /**
+         * @return string|false
+         */
+        public function get()
         {
         }
     }
@@ -65524,6 +67496,31 @@ namespace WPML\Infrastructure\WordPress\Component\ReportContentStats\Domain\Quer
     }
 }
 namespace WPML\Infrastructure\WordPress\Component\ReportContentStats\Domain\Repository {
+    class EventReasonRepository implements \WPML\Core\Component\ReportContentStats\Domain\Repository\EventReasonRepositoryInterface
+    {
+        const OPTION_KEY = 'wpml-stats-event-reason';
+        public function __construct(\WPML\Infrastructure\WordPress\Port\Persistence\Options $options)
+        {
+        }
+        /**
+         * @return string|null
+         */
+        public function get()
+        {
+        }
+        /**
+         * @return void
+         */
+        public function set(string $reason)
+        {
+        }
+        /**
+         * @return void
+         */
+        public function clear()
+        {
+        }
+    }
     class LastSentRepository implements \WPML\Core\Component\ReportContentStats\Domain\Repository\LastSentRepositoryInterface
     {
         const OPTION_KEY = 'wpml-stats-last-sent';
@@ -65587,6 +67584,47 @@ namespace WPML\Infrastructure\WordPress\Component\ReportContentStats\Domain\Repo
         {
         }
         public function delete()
+        {
+        }
+    }
+    class ProcessingLockRepository implements \WPML\Core\Component\ReportContentStats\Domain\Repository\ProcessingLockRepositoryInterface
+    {
+        const LOCK_OPTION_KEY = 'wpml-content-stats-processing-lock';
+        public function __construct(\WPML\Core\Port\Persistence\OptionsInterface $options)
+        {
+        }
+        /**
+         * Attempt to acquire lock using atomic add_option
+         *
+         * @return bool
+         */
+        public function acquire(): bool
+        {
+        }
+        /**
+         * Get current lock
+         *
+         * @return \WPML\Core\Component\ReportContentStats\Domain\ProcessingLock|null
+         */
+        public function get()
+        {
+        }
+        /**
+         * Release the lock
+         *
+         * @return void
+         */
+        public function release()
+        {
+        }
+        /**
+         * Update lock (extend timeout)
+         *
+         * @param \WPML\Core\Component\ReportContentStats\Domain\ProcessingLock $lock
+         *
+         * @return void
+         */
+        public function update(\WPML\Core\Component\ReportContentStats\Domain\ProcessingLock $lock)
         {
         }
     }
@@ -65661,8 +67699,21 @@ namespace WPML\Infrastructure\WordPress\Component\String\Application\Query {
         public function __construct(\WPML\Core\Port\Persistence\QueryHandlerInterface $queryHandler, \WPML\Core\Port\Persistence\QueryPrepareInterface $queryPrepare, \WPML\Core\SharedKernel\Component\Language\Application\Query\LanguagesQueryInterface $languagesQuery)
         {
         }
+        public function forKind()
+        {
+        }
         /** @return \WPML\Core\SharedKernel\Component\Item\Application\Query\Dto\UntranslatedTypeCountDto[] */
         public function get(array $queryData = []): array
+        {
+        }
+        /**
+         * @param int $numberOfIdsToFetch
+         * @param int $offset
+         * @param string $type
+         *
+         * @return int[]
+         */
+        public function getSomeIds($numberOfIdsToFetch, $offset, $type = '')
         {
         }
     }
@@ -65714,6 +67765,54 @@ namespace WPML\Infrastructure\WordPress\Component\String\Domain\Repository {
         }
     }
 }
+namespace WPML\Infrastructure\WordPress\Component\String\Repository {
+    class StringBatchRepository implements \WPML\Core\SharedKernel\Component\String\Application\Repository\StringBatchRepositoryInterface
+    {
+        /**
+         * @param \WPML\Core\Port\Persistence\DatabaseWriteInterface            $databaseWrite
+         * @param \WPML\Core\Port\Persistence\QueryHandlerInterface<int, mixed> $queryHandler
+         * @param \WPML\Core\Port\Persistence\QueryPrepareInterface             $queryPrepare
+         */
+        public function __construct(\WPML\Core\Port\Persistence\DatabaseWriteInterface $databaseWrite, \WPML\Core\Port\Persistence\QueryHandlerInterface $queryHandler, \WPML\Core\Port\Persistence\QueryPrepareInterface $queryPrepare)
+        {
+        }
+        /**
+         * @param int    $batchId
+         * @param string $targetLanguage
+         *
+         * @return \WPML\Core\SharedKernel\Component\String\Domain\StringTranslation[]
+         * @throws \WPML\Core\Port\Persistence\Exception\DatabaseErrorException
+         */
+        public function getStringTranslationsByBatch(int $batchId, string $targetLanguage): array
+        {
+        }
+        /**
+         * @param int[] $translationIds
+         *
+         * @return int
+         * @throws \WPML\Core\Port\Persistence\Exception\DatabaseErrorException
+         */
+        public function deleteStringTranslationsByIds(array $translationIds): int
+        {
+        }
+        /**
+         * @param int[] $translationIds
+         * @param int   $status
+         *
+         * @return int
+         * @throws \WPML\Core\Port\Persistence\Exception\DatabaseErrorException
+         */
+        public function updateStringTranslationsStatus(array $translationIds, int $status): int
+        {
+        }
+        /**
+         * @throws \WPML\Core\Port\Persistence\Exception\DatabaseErrorException
+         */
+        public function deleteStringBatch(int $batchId): int
+        {
+        }
+    }
+}
 namespace WPML\Infrastructure\WordPress\Component\StringPackage\Application\Query {
     class PackageDefinitionQuery implements \WPML\Core\Component\StringPackage\Application\Query\PackageDefinitionQueryInterface
     {
@@ -65751,8 +67850,21 @@ namespace WPML\Infrastructure\WordPress\Component\StringPackage\Application\Quer
         public function __construct(\WPML\Core\Port\Persistence\QueryHandlerInterface $queryHandler, \WPML\Core\Port\Persistence\QueryPrepareInterface $queryPrepare, \WPML\Core\SharedKernel\Component\Language\Application\Query\LanguagesQueryInterface $languagesQuery, \WPML\Core\Component\StringPackage\Application\Query\PackageDefinitionQueryInterface $packageDefinitionRepository)
         {
         }
+        public function forKind()
+        {
+        }
         /** @return \WPML\Core\SharedKernel\Component\Item\Application\Query\Dto\UntranslatedTypeCountDto[] */
         public function get(array $queryData = []): array
+        {
+        }
+        /**
+         * @param int $numberOfIdsToFetch
+         * @param int $offset
+         * @param string $type
+         *
+         * @return int[]
+         */
+        public function getSomeIds($numberOfIdsToFetch, $offset, $type)
         {
         }
     }
@@ -65939,6 +68051,9 @@ namespace WPML\Infrastructure\WordPress\Component\Translation\Application\Query 
         public function getManyByElementIds(\WPML\Core\Component\Translation\Domain\TranslationType $translationType, array $elementIds): array
         {
         }
+        public function getJobIdsByBatchId(int $batchId): array
+        {
+        }
     }
     class StringLanguageQuery implements \WPML\Core\Component\Translation\Application\Query\ItemLanguageQueryInterface
     {
@@ -66018,6 +68133,7 @@ namespace WPML\Infrastructure\WordPress\Component\Translation\Application\Query 
      *    job_id: int|null,
      *    automatic: int|null,
      *    editor: string|null,
+     *    editor_job_id: int|null,
      *    job_completed: int|null,
      *    status: int,
      *    batch_id: int|null,
@@ -66056,6 +68172,9 @@ namespace WPML\Infrastructure\WordPress\Component\Translation\Application\Query 
         public function getManyByElementIds(\WPML\Core\Component\Translation\Domain\TranslationType $translationType, array $elementIds): array
         {
         }
+        public function getJobIdsByBatchId(int $batchId): array
+        {
+        }
     }
     /**
      * @phpstan-import-type TranslationRow from TranslationQuery
@@ -66087,6 +68206,29 @@ namespace WPML\Infrastructure\WordPress\Component\Translation\Application\Query 
          * @return \WPML\Core\Component\Translation\Application\Query\Dto\TranslationStatusDto[]
          */
         public function getByJobIds(array $jobIds, bool $mapStringBatchesOnIndividualStrings = false): array
+        {
+        }
+    }
+    /**
+     * @phpstan-import-type UnsolvableJobRow from UnsolvableJobsQueryInterface
+     */
+    class UnsolvableJobsQuery implements \WPML\Core\Component\Translation\Application\Query\UnsolvableJobsQueryInterface
+    {
+        /**
+         * @phpstan-param QueryHandlerInterface<int, array<string, mixed>> $queryHandler
+         *
+         * @param \WPML\Core\Port\Persistence\QueryPrepareInterface                                    $queryPrepare
+         */
+        public function __construct(\WPML\Core\Port\Persistence\QueryHandlerInterface $queryHandler, \WPML\Core\Port\Persistence\QueryPrepareInterface $queryPrepare)
+        {
+        }
+        /**
+         * Get jobs marked as unsolvable from the error table.
+         *
+         * @phpstan-return UnsolvableJobRow[]
+         * @return array Array of jobs in sync endpoint format
+         */
+        public function getUnsolvableJobs(): array
         {
         }
     }
@@ -66296,6 +68438,74 @@ namespace WPML\Infrastructure\WordPress\Component\Translation\Domain\PreviousSta
          * @throws \WPML\PHP\Exception\InvalidItemIdException
          */
         public function restoreState(int $translationId, \WPML\Core\Component\Translation\Domain\PreviousState\PreviousState $previousState)
+        {
+        }
+    }
+}
+namespace WPML\Infrastructure\WordPress\Component\Translation\Domain\Repository {
+    class JobErrorRepository implements \WPML\Core\Component\Translation\Domain\Repository\JobErrorRepositoryInterface
+    {
+        const TABLE_NAME = 'icl_translate_unsolvable_jobs';
+        /**
+         * @phpstan-param QueryHandlerInterface<int, array<string, mixed>|null> $queryHandler
+         */
+        public function __construct(\WPML\Core\Port\Persistence\QueryHandlerInterface $queryHandler, \WPML\Core\Port\Persistence\QueryPrepareInterface $queryPrepare, \WPML\Core\Port\Persistence\DatabaseWriteInterface $dbWriter)
+        {
+        }
+        /**
+         * Find a job error by job ID.
+         *
+         * @param int $jobId Job ID.
+         *
+         * @return \WPML\Core\Component\Translation\Domain\Entity\JobError|null
+         * @throws \WPML\Core\Port\Persistence\Exception\DatabaseErrorException
+         */
+        public function findByJobId(int $jobId)
+        {
+        }
+        /**
+         * Insert a new job error into the database.
+         *
+         * @param \WPML\Core\Component\Translation\Domain\Entity\JobError $jobError
+         * @return void
+         * @throws \WPML\Core\Port\Persistence\Exception\DatabaseErrorException
+         */
+        public function insert(\WPML\Core\Component\Translation\Domain\Entity\JobError $jobError)
+        {
+        }
+        /**
+         * Increment the counter for a job error by its ID.
+         *
+         * @param int $jobId Job error ID.
+         *
+         * @return void
+         * @throws \WPML\Core\Port\Persistence\Exception\DatabaseErrorException
+         */
+        public function incrementCounter(int $jobId)
+        {
+        }
+        /**
+         * Delete a job error by job ID.
+         *
+         * @param int $jobId Job ID.
+         *
+         * @return void
+         * @throws \WPML\Core\Port\Persistence\Exception\DatabaseErrorException
+         */
+        public function delete(int $jobId)
+        {
+        }
+        /**
+         * Count job errors for jobs that are not resolved or declined.
+         * Only counts:
+         * - SyncError (any counter value)
+         * - DownloadError when counter >= 3
+         * - Jobs with status IN (1, 2) - waiting for translator or in progress
+         *
+         * @return int
+         * @throws \WPML\Core\Port\Persistence\Exception\DatabaseErrorException
+         */
+        public function count(): int
         {
         }
     }
@@ -67023,6 +69233,16 @@ namespace WPML\Infrastructure\WordPress\Port\Persistence {
         public function update(string $table, array $entityData, array $whereData): int
         {
         }
+        /**
+         * @param string               $table
+         * @param array<string, mixed> $whereData
+         *
+         * @return int
+         * @throws \WPML\Core\Port\Persistence\Exception\DatabaseErrorException
+         */
+        public function delete(string $table, array $whereData): int
+        {
+        }
     }
     class Options implements \WPML\Core\Port\Persistence\OptionsInterface
     {
@@ -67045,6 +69265,16 @@ namespace WPML\Infrastructure\WordPress\Port\Persistence {
          * @return void
          */
         public function delete(string $optionName)
+        {
+        }
+        /**
+         * @param string $optionName
+         * @param mixed  $value
+         * @param bool   $autoload
+         *
+         * @return bool
+         */
+        public function add(string $optionName, $value, bool $autoload = true): bool
         {
         }
     }
@@ -67171,6 +69401,35 @@ namespace WPML\Infrastructure\WordPress\Port\Persistence {
         {
         }
         public function escString($text)
+        {
+        }
+    }
+}
+namespace WPML\Infrastructure\WordPress\Port\Remote {
+    class Remote implements \WPML\Core\Port\Remote\RemoteInterface
+    {
+        /**
+         * @param string $url
+         * @param array<string, mixed> $data
+         * @param bool $asJson
+         * @param bool $blocking
+         * @param int $timeout
+         * @param array<string, string> $headers
+         *
+         * @return mixed
+         *
+         * @throws \WPML\PHP\Exception\RemoteException
+         */
+        public function post($url, $data, $asJson = true, $blocking = false, $timeout = 1, $headers = [])
+        {
+        }
+        /**
+         * @param array<string, mixed> $data
+         * @return string
+         *
+         * @throws \WPML\PHP\Exception\JsonEncodeException
+         */
+        public function jsonEncode($data)
         {
         }
     }
@@ -67360,6 +69619,9 @@ namespace WPML\Legacy\Component\ATE\Application\Query {
         /**
          * @return \WPML\Core\Component\ATE\Application\Query\Dto\CreditInfoDto
          * @throws \WPML\Core\Component\ATE\Application\Query\AccountException
+         *
+         * Disable cyclomatic complexity check as it's just caused by ?? usages.
+         * phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh
          */
         public function getCredits(): \WPML\Core\Component\ATE\Application\Query\Dto\CreditInfoDto
         {
@@ -67408,7 +69670,7 @@ namespace WPML\Legacy\Component\ATE\Application\Query {
     }
     /**
      * @phpstan-type WebsiteContextArray array{
-     *    context_present: bool,
+     *    context_present?: bool,
      *    last_sync?: string|null,
      *    context?: string|null,
      *    language_iso?: string|null,
@@ -67665,6 +69927,21 @@ namespace WPML\Legacy\Component\ReportContentStats\Domain {
         }
     }
 }
+namespace WPML\Legacy\Component\Setting\Application\Query {
+    class TranslationEditorQuery implements \WPML\Core\SharedKernel\Component\Setting\Application\Query\TranslationEditorQueryInterface
+    {
+        const SITEPRESS_OPTIONS = 'icl_sitepress_settings';
+        public function __construct(\WPML\Core\Port\Persistence\OptionsInterface $options)
+        {
+        }
+        /**
+         * @return \WPML\Core\SharedKernel\Component\Setting\Domain\TranslationEditorSetting|null
+         */
+        public function getTranslationEditorSetting()
+        {
+        }
+    }
+}
 namespace WPML\Legacy\Component\Translation\Application\Repository {
     /**
      * @phpstan-type TranslationRow array{
@@ -67695,7 +69972,7 @@ namespace WPML\Legacy\Component\Translation\Application\Repository {
          * @param \WPML\Core\Port\Persistence\QueryPrepareInterface                              $queryPrepare
          * @param \SitePress                                         $sitepress Type only defined here to allow injecting.
          */
-        public function __construct(\WPML\Core\Port\Persistence\QueryHandlerInterface $queryHandler, \WPML\Core\Port\Persistence\QueryPrepareInterface $queryPrepare, \WPML\Legacy\Component\Translation\Application\Repository\TranslationResultMapper $resultMapper, $sitepress)
+        public function __construct(\WPML\Core\Port\Persistence\QueryHandlerInterface $queryHandler, \WPML\Core\Port\Persistence\QueryPrepareInterface $queryPrepare, \WPML\Legacy\Component\Translation\Application\Repository\TranslationResultMapper $resultMapper, \WPML\Core\Port\Persistence\DatabaseWriteInterface $dbWriter, $sitepress)
         {
         }
         public function get(\WPML\Core\Component\Translation\Domain\TranslationType $itemType, string $elementType, int $elementId): \WPML\Core\Component\Translation\Domain\Translation
@@ -67712,6 +69989,9 @@ namespace WPML\Legacy\Component\Translation\Application\Repository {
          * @return void
          */
         public function saveElementLanguage(\WPML\Core\Component\Translation\Domain\TranslationType $itemType, string $elementType, int $elementId, string $languageCode, string $sourceLanguageCode = null, int $trid = null)
+        {
+        }
+        public function setCancelledStatus(int $translationId): int
         {
         }
     }
@@ -67859,6 +70139,22 @@ namespace WPML\Legacy\Component\Translation\Sender\ErrorMapper {
     {
         /**
          * @param array{id?: string, type?: string, text?: string}[] $errors
+         *
+         * @return string|null
+         */
+        public function map(array $errors)
+        {
+        }
+    }
+    class TranslationServiceUnavailable implements \WPML\Legacy\Component\Translation\Sender\ErrorMapper\StrategyInterface
+    {
+        /**
+         * The expected error message should have following structure:
+         * "(34) hub staging 03 does not accept new translation jobs at this moment<br />Please contact hub staging 03 support to get more information and assistance."
+         * For each row in $errors, we must check if the error message matches the expected structure.
+         * If it does, we must extract the service name and return a user-friendly message.
+         *
+         * @param array{type?: string, text?: string}[] $errors
          *
          * @return string|null
          */
@@ -68444,7 +70740,7 @@ namespace WPML\UserInterface\Web\Core\Component\Communication\Application\Endpoi
 namespace WPML\UserInterface\Web\Core\Component\ContentStats\Application\Endpoint\CalculateContentStats {
     class ProcessContentStatsController implements \WPML\Core\Port\Endpoint\EndpointInterface
     {
-        public function __construct(\WPML\Core\Component\ReportContentStats\Application\Service\ContentStatsService $contentStatsService, \WPML\Core\Component\ReportContentStats\Application\Service\LastSentService $lastSentService, \WPML\Core\Component\ReportContentStats\Application\Service\ReportPreparer\ReportPreparerService $reportPreparerService, \WPML\Core\Component\ReportContentStats\Application\Service\ReportSender\ReportSenderService $reportSenderService, \WPML\Core\Component\ReportContentStats\Application\Service\RetryService $retryService)
+        public function __construct(\WPML\Core\Component\ReportContentStats\Application\Service\ContentStatsService $contentStatsService, \WPML\Core\Component\ReportContentStats\Application\Service\LastSentService $lastSentService, \WPML\Core\Component\ReportContentStats\Application\Service\ReportPreparer\ReportPreparerService $reportPreparerService, \WPML\Core\Component\ReportContentStats\Application\Service\ReportSender\ReportSenderService $reportSenderService, \WPML\Core\Component\ReportContentStats\Application\Service\RetryService $retryService, \WPML\Core\Component\ReportContentStats\Application\Service\ProcessingLockService $processingLockService, \WPML\Core\Component\ReportContentStats\Application\Service\EventReasonService $eventReasonService)
         {
         }
         public function handle($requestData = null): array
@@ -68519,7 +70815,7 @@ namespace WPML\UserInterface\Web\Core\Component\Dashboard\Application {
      */
     class DashboardController implements \WPML\UserInterface\Web\Core\SharedKernel\Config\PageRenderInterface, \WPML\UserInterface\Web\Core\SharedKernel\Config\PageConfigUserInterface, \WPML\UserInterface\Web\Core\Port\Script\ScriptPrerequisitesInterface, \WPML\UserInterface\Web\Core\Port\Script\ScriptDataProviderInterface
     {
-        public function __construct(\WPML\UserInterface\Web\Core\Component\Dashboard\Application\DashboardTabsInterface $dashboardTabs, \WPML\UserInterface\Web\Core\Component\Dashboard\Application\Query\DashboardTranslatableTypesQueryInterface $translatableItems, \WPML\Core\Component\Translation\Application\Query\JobQueryInterface $jobQuery, \WPML\Core\Component\Post\Application\Query\PublicationStatusQueryInterface $publicationStatusQuery, \WPML\Core\SharedKernel\Component\Translator\Application\Service\TranslatorsService $translatorsService, \WPML\UserInterface\Web\Core\Component\Dashboard\Application\Hook\DashboardPublicationStatusFilterInterface $dashboardPublicationStatusFilter, \WPML\UserInterface\Web\Core\Component\Dashboard\Application\Hook\DashboardItemSectionsFilterInterface $dashboardItemSectionsFilter, \WPML\UserInterface\Web\Infrastructure\WordPress\Endpoint\StringItemEndpointData $stringItemEndpointData, \WPML\UserInterface\Web\Core\Component\Dashboard\Application\Endpoint\GetTranslationBatchDefaultName\GetTranslationBatchDefaultName $getTranslationBatchDefaultName, \WPML\Core\Component\Translation\Application\Repository\SettingsRepository $translationSettingsRepository, \WPML\Core\Component\TranslationProxy\Application\Service\RemoteTranslationService $remoteTranslationServiceService, \WPML\Core\Component\TranslationProxy\Application\Service\LastPickedUpDateServiceInterface $lastPickedUpDateService, \WPML\Core\Component\TranslationProxy\Application\Query\RemoteJobsQueryInterface $remoteJobsQuery, \WPML\Core\Component\TranslationProxy\Application\Service\TranslationProxyServiceInterface $translationProxyService, \WPML\Core\SharedKernel\Component\User\Application\Query\UserQueryInterface $userQuery, \WPML\UserInterface\Web\Core\Component\Preferences\Application\LanguagePreferencesLoader $languagePreferencesLoader, \WPML\Core\Component\Translation\Application\Query\TranslationBatchesQueryInterface $translationBatchesQuery, \WPML\Core\Component\ATE\Application\Query\WebsiteContextQueryInterface $websiteContextQuery)
+        public function __construct(\WPML\UserInterface\Web\Core\Component\Dashboard\Application\DashboardTabsInterface $dashboardTabs, \WPML\UserInterface\Web\Core\Component\Dashboard\Application\Query\DashboardTranslatableTypesQueryInterface $translatableItems, \WPML\Core\Component\Translation\Application\Query\JobQueryInterface $jobQuery, \WPML\Core\Component\Post\Application\Query\PublicationStatusQueryInterface $publicationStatusQuery, \WPML\Core\SharedKernel\Component\Translator\Application\Service\TranslatorsService $translatorsService, \WPML\UserInterface\Web\Core\Component\Dashboard\Application\Hook\DashboardPublicationStatusFilterInterface $dashboardPublicationStatusFilter, \WPML\UserInterface\Web\Core\Component\Dashboard\Application\Hook\DashboardItemSectionsFilterInterface $dashboardItemSectionsFilter, \WPML\UserInterface\Web\Infrastructure\WordPress\Endpoint\StringItemEndpointData $stringItemEndpointData, \WPML\UserInterface\Web\Core\Component\Dashboard\Application\Endpoint\GetTranslationBatchDefaultName\GetTranslationBatchDefaultName $getTranslationBatchDefaultName, \WPML\Core\Component\Translation\Application\Repository\SettingsRepository $translationSettingsRepository, \WPML\Core\Component\TranslationProxy\Application\Service\RemoteTranslationService $remoteTranslationServiceService, \WPML\Core\Component\TranslationProxy\Application\Service\LastPickedUpDateServiceInterface $lastPickedUpDateService, \WPML\Core\Component\TranslationProxy\Application\Query\RemoteJobsQueryInterface $remoteJobsQuery, \WPML\Core\Component\TranslationProxy\Application\Service\TranslationProxyServiceInterface $translationProxyService, \WPML\Core\SharedKernel\Component\User\Application\Query\UserQueryInterface $userQuery, \WPML\UserInterface\Web\Core\Component\Preferences\Application\LanguagePreferencesLoader $languagePreferencesLoader, \WPML\Core\Component\Translation\Application\Query\TranslationBatchesQueryInterface $translationBatchesQuery, \WPML\Core\Component\ATE\Application\Query\WebsiteContextQueryInterface $websiteContextQuery, \WPML\Core\Port\PluginInterface $plugin)
         {
         }
         public function jsWindowKey(): string
@@ -68572,10 +70868,53 @@ namespace WPML\UserInterface\Web\Core\Component\Dashboard\Application {
         public function wrapTabsAroundContent(string $content): string;
     }
 }
+namespace WPML\UserInterface\Web\Core\Component\Dashboard\Application\Endpoint\AutomaticTranslation {
+    class CancelAllAutomaticJobsController implements \WPML\Core\Port\Endpoint\EndpointInterface
+    {
+        public function __construct(\WPML\Core\Component\Translation\Application\Service\TranslationService $settingsService)
+        {
+        }
+        public function handle($requestData = null): array
+        {
+        }
+    }
+}
+namespace WPML\UserInterface\Web\Core\Component\Dashboard\Application\Endpoint\CancelJobs {
+    /**
+     * Endpoint controller for canceling translation jobs.
+     *
+     * Handles HTTP requests to cancel jobs that couldn't be completed due to
+     * unexpected errors.
+     */
+    class CancelJobsController implements \WPML\Core\Port\Endpoint\EndpointInterface
+    {
+        /**
+         * Constructor.
+         *
+         * @param \WPML\Core\Component\Translation\Application\Service\CancelJobsService $cancelJobsService Service for canceling jobs.
+         */
+        public function __construct(\WPML\Core\Component\Translation\Application\Service\CancelJobsService $cancelJobsService)
+        {
+        }
+        /**
+         * Handle the request to cancel unsolvable jobs.
+         *
+         * @param array<mixed> $requestData Expected format: ['jobIds' => [int, ...]]
+         *
+         * @return array{success: bool, data: array{cancelledJobIds: array<int>, restoredStatuses: array<int, int>}} Response format: ['success' => bool, 'data' => ['cancelledJobIds' => [...], 'restoredStatuses' => [jobId => status, ...]]]
+         *
+         * @throws \WPML\PHP\Exception\InvalidArgumentException If the request data is invalid.
+         * @throws \WPML\PHP\Exception\InvalidItemIdException If cancelling jobs fails.
+         */
+        public function handle($requestData = null): array
+        {
+        }
+    }
+}
 namespace WPML\UserInterface\Web\Core\Component\Dashboard\Application\Endpoint\GetCredits {
     class GetCreditsController implements \WPML\Core\Port\Endpoint\EndpointInterface
     {
-        public function __construct(\WPML\Core\Component\ATE\Application\Query\AccountInterface $ateAccount)
+        public function __construct(\WPML\Core\Component\ATE\Application\Query\AccountInterface $ateAccount, \WPML\Core\Component\ATE\Application\Service\CreditsService $creditsService)
         {
         }
         /**
@@ -68879,13 +71218,31 @@ namespace WPML\UserInterface\Web\Core\Component\Dashboard\Application\Endpoint\G
         }
     }
 }
+namespace WPML\UserInterface\Web\Core\Component\Dashboard\Application\Endpoint\GetUnsolvableJobs {
+    /**
+     * @phpstan-import-type UnsolvableJobRow from UnsolvableJobsQueryInterface
+     */
+    class GetUnsolvableJobsController implements \WPML\Core\Port\Endpoint\EndpointInterface
+    {
+        public function __construct(\WPML\Core\Component\Translation\Application\Query\UnsolvableJobsQueryInterface $query)
+        {
+        }
+        /**
+         * Handle the request to get unsolvable jobs.
+         *
+         * @param mixed $requestData
+         * @phpstan-return array{jobs: UnsolvableJobRow[]}
+         * @return array
+         */
+        public function handle($requestData = null): array
+        {
+        }
+    }
+}
 namespace WPML\UserInterface\Web\Core\Component\Dashboard\Application\Endpoint\GetUntranslatedTypesCount {
     class GetUntranslatedTypesCountController implements \WPML\Core\Port\Endpoint\EndpointInterface
     {
-        /**
-         * @param \WPML\Core\SharedKernel\Component\Item\Application\Query\UntranslatedTypesCountQueryInterface[] $queries
-         */
-        public function __construct(array $queries, \WPML\Core\Component\Translation\Application\Repository\SettingsRepository $translationSettingsRepository)
+        public function __construct(\WPML\Core\SharedKernel\Component\Item\Application\Service\UntranslatedService $service)
         {
         }
         public function handle($requestData = null): array
@@ -68912,9 +71269,23 @@ namespace WPML\UserInterface\Web\Core\Component\Dashboard\Application\Endpoint\G
         {
         }
     }
-    class GetWordsToTranslateController implements \WPML\Core\Port\Endpoint\EndpointInterface
+    class GetWordsToTranslateForItemsController implements \WPML\Core\Port\Endpoint\EndpointInterface
     {
         public function __construct(\WPML\Core\Component\WordsToTranslate\Application\Service\WordsToTranslateService $wordsToTranslateServices)
+        {
+        }
+        /**
+         * Handles the request to get words to translate for a specific item.
+         *
+         * @throws \WPML\PHP\Exception\InvalidArgumentException If the request data is invalid or if the item kind is not recognized.
+         */
+        public function handle($requestData = null): array
+        {
+        }
+    }
+    class GetWordsToTranslateForTypesController implements \WPML\Core\Port\Endpoint\EndpointInterface
+    {
+        public function __construct(\WPML\Core\SharedKernel\Component\Item\Application\Service\UntranslatedService $untranslatedService, \WPML\Core\Component\WordsToTranslate\Application\Service\WordsToTranslateService $wordsToTranslateServices)
         {
         }
         /**
@@ -68933,6 +71304,39 @@ namespace WPML\UserInterface\Web\Core\Component\Dashboard\Application\Endpoint\H
         public function __construct(\WPML\Core\Component\Translation\Application\Repository\SettingsRepository $translationSettingsRepository, \WPML\Core\SharedKernel\Component\Post\Application\Query\TranslatableTypesQueryInterface $translatableTypesQuery, \WPML\Core\Component\Translation\Application\Query\HasPostsUsingNativeEditorQueryInterface $query)
         {
         }
+        public function handle($requestData = null): array
+        {
+        }
+    }
+}
+namespace WPML\UserInterface\Web\Core\Component\Dashboard\Application\Endpoint\ResendUnsolvableJobs {
+    /**
+     * Endpoint controller for resending unsolvable translation jobs.
+     *
+     * Delegates business logic to ResendUnsolvableJobsService.
+     *
+     * @phpstan-import-type ResultDtoArray from \WPML\Core\Component\Translation\Application\Service\TranslationService\Dto\ResultDto
+     */
+    class ResendUnsolvableJobsController implements \WPML\Core\Port\Endpoint\EndpointInterface
+    {
+        /**
+         * Constructor.
+         *
+         * @param \WPML\Core\Component\Translation\Application\Service\ResendUnsolvableJobsService $resendService Service for resending jobs.
+         */
+        public function __construct(\WPML\Core\Component\Translation\Application\Service\ResendUnsolvableJobsService $resendService)
+        {
+        }
+        /**
+         * Handle the request to resend unsolvable jobs.
+         *
+         * @param array<mixed> $requestData Expected format: ['jobIds' => [int, int, ...], 'batchName' => string]
+         *
+         * @phpstan-return array{success: bool, data: array{batchName: string, results: array<string, ResultDtoArray>}|string}
+         *
+         * @throws \WPML\PHP\Exception\InvalidArgumentException If the request data is invalid.
+         * @throws \WPML\PHP\Exception\InvalidItemIdException If cancelling jobs fails.
+         */
         public function handle($requestData = null): array
         {
         }
@@ -69418,7 +71822,7 @@ namespace WPML\UserInterface\Web\Core\Component\Notices\WarningTranslationEdit\A
 namespace WPML\UserInterface\Web\Core\Component\PostHog\Application\Endpoint\Event\Capture {
     class PostHogCaptureEventController implements \WPML\Core\Port\Endpoint\EndpointInterface
     {
-        public function __construct(\WPML\Core\Component\PostHog\Application\Service\Config\ConfigService $configService, \WPML\Core\Component\PostHog\Application\Service\Event\CaptureEventService $captureEventService)
+        public function __construct(\WPML\Core\Component\PostHog\Application\Service\Config\ConfigService $configService, \WPML\Core\Component\PostHog\Application\Service\Event\CaptureEventService $captureEventService, \WPML\Core\Component\PostHog\Application\Service\Event\EventInstanceService $eventInstanceService)
         {
         }
         /**
@@ -69439,12 +71843,35 @@ namespace WPML\UserInterface\Web\Core\Component\PostHog\Application\Endpoint\Eve
         {
         }
     }
+    class ProxyCaptureEventController implements \WPML\Core\Port\Endpoint\EndpointInterface
+    {
+        public function __construct(\WPML\Core\Component\PostHog\Application\Service\Config\ConfigService $configService, \WPML\Core\Component\PostHog\Application\Service\Event\EventInstanceService $eventInstanceService, \WPML\Core\Component\PostHog\Application\Service\Event\CaptureEventService $captureEventService)
+        {
+        }
+        /**
+         * @psalm-suppress MoreSpecificImplementedParamType
+         *
+         * @param array{
+         *   distinctId: string,
+         *   eventName: string,
+         *   eventData: array<string, mixed>,
+         * }|null $requestData
+         *
+         * @return array{
+         *   success: bool,
+         *   message: string,
+         * }
+         */
+        public function handle($requestData = null): array
+        {
+        }
+    }
 }
 namespace WPML\UserInterface\Web\Core\Component\PostHog\Application {
     class PostHogController implements \WPML\UserInterface\Web\Core\Port\Script\ScriptPrerequisitesInterface, \WPML\UserInterface\Web\Core\Port\Script\ScriptDataProviderInterface
     {
         const JS_WINDOW_KEY = 'wpmlPostHog';
-        public function __construct(\WPML\Core\Component\PostHog\Application\Service\Config\ConfigService $configService, \WPML\Core\Component\PostHog\Application\Repository\PostHogStateRepositoryInterface $posthogStateRepository, \WPML\Core\SharedKernel\Component\Installer\Application\Query\WpmlSiteKeyQueryInterface $siteKeyQuery, \WPML\Core\SharedKernel\Component\User\Application\Query\UserQueryInterface $userQuery, \WPML\Core\SharedKernel\Component\Site\Application\Query\SiteUrlQueryInterface $siteUrlQuery, \WPML\Core\Component\PostHog\Application\Query\PageAllowedForRecordingQueryInterface $pageAllowedForRecordingQuery, \WPML\Core\SharedKernel\Component\Installer\Application\Query\WpmlActivePluginsQueryInterface $wpmlActivePluginsQuery)
+        public function __construct(\WPML\Core\Component\PostHog\Application\Service\Config\ConfigService $configService, \WPML\Core\Component\PostHog\Application\Repository\PostHogStateRepositoryInterface $posthogStateRepository, \WPML\Core\SharedKernel\Component\Installer\Application\Query\WpmlSiteKeyQueryInterface $siteKeyQuery, \WPML\Core\SharedKernel\Component\User\Application\Query\UserQueryInterface $userQuery, \WPML\Core\SharedKernel\Component\Site\Application\Query\SiteUrlQueryInterface $siteUrlQuery, \WPML\Core\Component\PostHog\Application\Query\PageAllowedForRecordingQueryInterface $pageAllowedForRecordingQuery, \WPML\Core\SharedKernel\Component\Installer\Application\Query\WpmlActivePluginsQueryInterface $wpmlActivePluginsQuery, \WPML\Core\Component\Translation\Application\Repository\SettingsRepository $settingsRepository)
         {
         }
         public function jsWindowKey(): string
@@ -69554,7 +71981,7 @@ namespace WPML\UserInterface\Web\Core\Component\Preferences\Application\Endpoint
      */
     class SaveAutomaticTranslationsSettingsController implements \WPML\Core\Port\Endpoint\EndpointInterface
     {
-        public function __construct(\WPML\Core\Component\Translation\Application\Repository\SettingsRepository $settingsRepository, \WPML\Core\Component\Translation\Application\Service\SettingsService $settingsService, \WPML\Core\Component\ATE\Application\Service\EnginesServiceInterface $engineService, \WPML\UserInterface\Web\Core\Component\Preferences\Application\Endpoint\SaveAutomaticTranslationsSettings\EnginesBuilder $enginesBuilder)
+        public function __construct(\WPML\Core\Component\Translation\Application\Repository\SettingsRepository $settingsRepository, \WPML\Core\Component\Translation\Application\Service\SettingsService $settingsService, \WPML\Core\Component\ATE\Application\Service\EnginesServiceInterface $engineService, \WPML\UserInterface\Web\Core\Component\Preferences\Application\Endpoint\SaveAutomaticTranslationsSettings\EnginesBuilder $enginesBuilder, \WPML\Core\Component\PostHog\Application\Service\Config\ConfigService $configService, \WPML\Core\Component\PostHog\Application\Service\Event\CaptureEventService $captureEventService, \WPML\Core\Component\PostHog\Application\Service\Event\EventInstanceService $eventInstanceService)
         {
         }
         /**
@@ -69593,6 +72020,24 @@ namespace WPML\UserInterface\Web\Core\Component\Preferences\Application {
     }
 }
 namespace WPML\UserInterface\Web\Core\Component\Troubleshooting\Application\Endpoint {
+    class EnableAliasDomainController implements \WPML\Core\Port\Endpoint\EndpointInterface
+    {
+        public function __construct(\WPML\TM\ATE\ClonedSites\Lock $lock, \WPML\TM\ATE\ClonedSites\SecondaryDomains $secondaryDomains)
+        {
+        }
+        public function handle($requestData = null): array
+        {
+        }
+    }
+    class ResetAliasDomainController implements \WPML\Core\Port\Endpoint\EndpointInterface
+    {
+        public function __construct(\WPML\TM\ATE\ClonedSites\SecondaryDomains $secondaryDomains)
+        {
+        }
+        public function handle($requestData = null): array
+        {
+        }
+    }
     class UpdatePostHogStateController implements \WPML\Core\Port\Endpoint\EndpointInterface
     {
         public function __construct(\WPML\Core\Component\PostHog\Application\Repository\PostHogStateRepositoryInterface $posthogStateRepository, \WPML\Core\SharedKernel\Component\WpmlOrgClient\Application\Service\PostHogRecording\PostHogRecordingService $postHogRecordingService)
@@ -69619,7 +72064,7 @@ namespace WPML\UserInterface\Web\Core\Component\Troubleshooting\Application\Endp
 namespace WPML\UserInterface\Web\Core\Component\Troubleshooting\Application {
     class TroubleshootingController implements \WPML\UserInterface\Web\Core\Port\Script\ScriptDataProviderInterface, \WPML\UserInterface\Web\Core\SharedKernel\Config\PageRequirementsInterface, \WPML\UserInterface\Web\Core\Port\Script\ScriptPrerequisitesInterface
     {
-        public function __construct(\WPML\Core\Component\PostHog\Application\Service\Config\ConfigService $configService, \WPML\Core\Component\PostHog\Application\Repository\PostHogStateRepositoryInterface $posthogStateRepository, \WPML\Core\SharedKernel\Component\Installer\Application\Query\WpmlSiteKeyQueryInterface $siteKeyQuery, \WPML\Core\SharedKernel\Component\User\Application\Query\UserQueryInterface $userQuery, \WPML\Core\SharedKernel\Component\Site\Application\Query\SiteUrlQueryInterface $siteUrlQuery)
+        public function __construct(\WPML\Core\Component\PostHog\Application\Service\Config\ConfigService $configService, \WPML\Core\Component\PostHog\Application\Repository\PostHogStateRepositoryInterface $posthogStateRepository, \WPML\Core\SharedKernel\Component\Installer\Application\Query\WpmlSiteKeyQueryInterface $siteKeyQuery, \WPML\Core\SharedKernel\Component\User\Application\Query\UserQueryInterface $userQuery, \WPML\Core\SharedKernel\Component\Site\Application\Query\SiteUrlQueryInterface $siteUrlQuery, \WPML\Core\SharedKernel\Component\Installer\Application\Query\WpmlActivePluginsQueryInterface $wpmlActivePluginsQuery, \WPML\Core\Component\Translation\Application\Repository\SettingsRepository $settingsRepository, \WPML\TM\ATE\ClonedSites\SecondaryDomains $secondaryDomains)
         {
         }
         /**
@@ -69757,6 +72202,17 @@ namespace WPML\UserInterface\Web\Core\Port\Asset {
     }
 }
 namespace WPML\UserInterface\Web\Core\SharedKernel\Config {
+    interface AssetInterface
+    {
+        public function id(): string;
+        /** @return ?string */
+        public function src();
+        /**
+         * @return array<string>
+         */
+        public function dependencies(): array;
+        public function supportsHMR(): bool;
+    }
     class Config
     {
         /** @return array<\WPML\UserInterface\Web\Core\SharedKernel\Config\Page> */
@@ -70142,7 +72598,7 @@ namespace WPML\UserInterface\Web\Core\SharedKernel\Config {
         {
         }
     }
-    class Script
+    class Script implements \WPML\UserInterface\Web\Core\SharedKernel\Config\AssetInterface
     {
         const USED_ON_ADMIN = 'admin';
         const USED_ON_FRONT = 'front';
@@ -70248,8 +72704,14 @@ namespace WPML\UserInterface\Web\Core\SharedKernel\Config {
         public function setInFooter(bool $inFooter): self
         {
         }
+        public function supportsHMR(): bool
+        {
+        }
+        public function setSupportsHMR(bool $supportsHMR): self
+        {
+        }
     }
-    class Style
+    class Style implements \WPML\UserInterface\Web\Core\SharedKernel\Config\AssetInterface
     {
         public function __construct(string $id)
         {
@@ -70276,6 +72738,9 @@ namespace WPML\UserInterface\Web\Core\SharedKernel\Config {
          * @return static
          */
         public function setDependencies($dependencies)
+        {
+        }
+        public function supportsHMR(): bool
         {
         }
     }
@@ -70437,7 +72902,7 @@ namespace WPML\UserInterface\Web\Infrastructure\CompositionRoot\Config {
 namespace WPML\UserInterface\Web\Infrastructure\CompositionRoot\Config\ContentStats {
     class Controller implements \WPML\UserInterface\Web\Core\Port\Script\ScriptPrerequisitesInterface, \WPML\UserInterface\Web\Core\Port\Script\ScriptDataProviderInterface
     {
-        public function __construct(\WPML\UserInterface\Web\Infrastructure\CompositionRoot\Config\ApiInterface $api, \WPML\Core\Component\ReportContentStats\Application\Service\ContentStatsService $contentStatsService, \WPML\Core\SharedKernel\Component\Site\Application\Query\SiteMigrationLockQueryInterface $siteMigrationLockQuery, \WPML\Core\SharedKernel\Component\Installer\Application\Query\WpmlSiteKeyQueryInterface $siteKeyQuery)
+        public function __construct(\WPML\UserInterface\Web\Infrastructure\CompositionRoot\Config\ApiInterface $api, \WPML\Core\Component\ReportContentStats\Application\Service\ContentStatsService $contentStatsService, \WPML\Core\SharedKernel\Component\Site\Application\Query\SiteMigrationLockQueryInterface $siteMigrationLockQuery, \WPML\Core\SharedKernel\Component\Installer\Application\Query\WpmlSiteKeyQueryInterface $siteKeyQuery, \WPML\Core\Component\ReportContentStats\Application\Service\ProcessingLockService $processingLockService)
         {
         }
         public function scriptPrerequisitesMet(): bool
@@ -71956,12 +74421,6 @@ namespace {
     {
     }
     /**
-     * @return \WPML\PHP\Logger\WPML_Translation_Proxy_Basket_Networking
-     */
-    function wpml_tm_load_basket_networking()
-    {
-    }
-    /**
      * @return \WPML\PHP\Logger\WPML_Translation_Proxy_Networking
      */
     function wpml_tm_load_tp_networking()
@@ -72121,12 +74580,11 @@ namespace {
      * It returns a single instance of the class.
      *
      * @param bool $forceReload
-     * @param bool $loadObsoleteStringQuery
      * @param bool $dontCache
      *
      * @return \WPML_TM_Jobs_Repository
      */
-    function wpml_tm_get_jobs_repository($forceReload = \false, $loadObsoleteStringQuery = \true, $dontCache = \false)
+    function wpml_tm_get_jobs_repository($forceReload = \false, $dontCache = \false)
     {
     }
     function wpml_tm_reload_jobs_repository()
@@ -72905,6 +75363,25 @@ namespace {
     {
     }
     function wpml_is_st_loaded(): bool
+    {
+    }
+    /**
+     * Triggers a user-level error/warning/notice message with WordPress 6.0+ compatibility.
+     *
+     * This function provides a backward-compatible wrapper for wp_trigger_error() (introduced in WP 6.4).
+     * On WordPress 6.4+, it uses wp_trigger_error() which respects WP_DEBUG settings.
+     * On older WordPress versions (6.0-6.3), it falls back to trigger_error().
+     *
+     * @since 4.6.13
+     *
+     * @param string $function_name The function name where the error occurred.
+     * @param string $message       The error message to display.
+     * @param int    $error_level   Optional. The error level. Default E_USER_NOTICE.
+     *                              Accepts E_USER_ERROR, E_USER_WARNING, E_USER_NOTICE, E_USER_DEPRECATED.
+     *
+     * @return void
+     */
+    function wpml_trigger_error($function_name, $message, $error_level = \E_USER_NOTICE)
     {
     }
     function icl_dev_mode_warning()
@@ -73727,15 +76204,6 @@ namespace {
     function fix_icl_string_status()
     {
     }
-    function icl_upgrade_2_0_0_steps($step, $stepper)
-    {
-    }
-    function icl_migrate_2_0_0()
-    {
-    }
-    function icl_ajx_upgrade_2_0_0($call, $request)
-    {
-    }
     /**
      * @package wpml-core
      */
@@ -74060,7 +76528,7 @@ namespace {
     function action_wpml_tm_save_data($data)
     {
     }
-    function wpml_tm_add_translation_job($rid, $translator_id, $translation_package, $batch_options, $sendFrom = \null)
+    function wpml_tm_add_translation_job($rid, $translator_id, $translation_package, $batch_options, $sendFrom = \null, $addJobLogs = \false)
     {
     }
     /**
@@ -74128,9 +76596,6 @@ namespace {
     {
     }
     /** @var \WPML_Custom_Types_Translation_UI $custom_types_ui */
-    /**
-     * @param array $navigation_items
-     */
     /** @var \WPML\PHP\Logger\SitePress $sitepress */
     /** @var \WPML\PHP\Logger\ICLMenusSync $icl_menus_sync */
     /** @var \stdClass $res */
@@ -74267,10 +76732,6 @@ namespace {
     {
     }
     /**
-     * If Installer 1.7.0+ is present, unregister Installer from old WPML.
-     * Force Installer 1.7.0+ being used over older Installer versions.
-     */
-    /**
      * When all plugins load pick the newest version.
      */
     function wpml_installer_instance_delegator()
@@ -74291,28 +76752,6 @@ namespace {
     function WP_Installer_Setup($wp_installer_instance, $args = array())
     {
     }
-    /**
-     * Load the shared OTGS UI library, on demand.
-     *
-     * =================
-     * Usage
-     * =================
-     * $vendor_path = [ path to the root of your relative vendor directory housing this repository, no training slash ]
-     * $vendor_url = [ URL of the root of your relative vendor directory housing this repository, no trailing slash ]
-     * require_once( $vendor_path . '/otgs/ui/loader.php' );
-     * otgs_ui_initialize( $vendor_path . '/otgs/ui', $vendor_url . '/otgs/ui' );
-     *
-     * =================
-     * Restrictions
-     * =================
-     * - Assets are registered at init:1: doing it earlier will cause problems with core assets registered at init:0
-     * - Their handles are stored in constants that you can use as dependencies, on assets registered after init:-100.
-     *
-     * @package otgs/ui
-     */
-    /**
-     * OTGS UI version - increase after every major update.
-     */
     /**
      * @param string $vendor_path Path to the root of your relative vendor directory housing this repository (no trailing slash).
      * @param string $vendor_url  URL of the root of your relative vendor directory housing this repository, no trailing slash.
@@ -74365,10 +76804,6 @@ namespace {
     function with($object)
     {
     }
-    /**
-     * Script to merge all generated markdown documentation files into a single README.md file.
-     */
-    // Define paths
     // Function to extract PHPDoc annotations for methods from a file
     function extractPhpDocMethods($filePath)
     {
@@ -74403,6 +76838,7 @@ namespace WPML\PB\BeaverBuilder\BeaverThemer {
         const LAYOUT_CPT = 'fl-theme-layout';
         const LOCATIONS_RULES_KEY = '_fl_theme_builder_locations';
         const EXCLUSIONS_RULES_KEY = '_fl_theme_builder_exclusions';
+        const BUILDER_DATA_KEY = \WPML_Beaver_Builder_Data_Settings::META_FIELD_KEY;
         public function add_hooks()
         {
         }
@@ -74415,6 +76851,14 @@ namespace WPML\PB\BeaverBuilder\BeaverThemer {
          * @return mixed
          */
         public function translateLocationRulesMeta($copiedValue, $translatedPostId, $originalPostId, $metaKey)
+        {
+        }
+        /**
+         * @param int    $newPostId
+         * @param array  $fields
+         * @param object $job
+         */
+        public function translateConditionalLogic($newPostId, $fields, $job)
         {
         }
     }
@@ -74618,6 +77062,8 @@ namespace {
     }
     class WPML_Beaver_Builder_Data_Settings implements \IWPML_Page_Builders_Data_Settings
     {
+        const META_FIELD_KEY = '_fl_builder_data';
+        const META_FIELD_DRAFT_KEY = '_fl_builder_draft';
         /**
          * @return string
          */
@@ -74803,11 +77249,11 @@ namespace {
          *
          * @param string         $node_id  Node id.
          * @param stdClass       $settings Node settings.
-         * @param \WPML\PB\BeaverBuilder\TranslationJob\WPML_PB_String $string   String object.
+         * @param \WPML\PB\BeaverBuilder\TranslationJob\WPML_PB_String $pbString String object.
          *
          * @return stdClass
          */
-        public function update($node_id, $settings, \WPML_PB_String $string)
+        public function update($node_id, $settings, \WPML_PB_String $pbString)
         {
         }
         /**
@@ -75626,11 +78072,12 @@ namespace {
     abstract class WPML_Page_Builders_Media_Update_Factory implements \IWPML_PB_Media_Update_Factory
     {
         /**
-         * @param boolean $find_usage_instead_of_translate
+         * @param bool $find_usage_instead_of_translate
+         * @param bool $create_noop_media_find_usage
          *
          * @return \WPML\PB\Cornerstone\IWPML_PB_Media_Find_And_Translate
          */
-        protected function get_media_translate($find_usage_instead_of_translate)
+        protected function get_media_translate($find_usage_instead_of_translate, $create_noop_media_find_usage = \false)
         {
         }
     }
@@ -75923,6 +78370,41 @@ namespace WPML\Compatibility\Divi\DynamicContent {
         }
     }
 }
+namespace WPML\PB\Integrations\Divi {
+    class Helper
+    {
+        /**
+         * @return bool
+         */
+        public static function isRunningDivi5()
+        {
+        }
+        /**
+         * @param int $postId
+         *
+         * @return bool
+         */
+        public static function isPostUsingDivi5($postId)
+        {
+        }
+        /**
+         * @return bool
+         */
+        public static function isInDiviBuilder()
+        {
+        }
+        /**
+         * Check if we're in the Divi builder main window.
+         * When app_window is NOT set, we're in the main builder window.
+         * When app_window IS set, we're in the iframe preview.
+         *
+         * @return bool
+         */
+        public static function isInDiviBuilderMainWindow()
+        {
+        }
+    }
+}
 namespace WPML\Compatibility\Divi\Hooks {
     class DomainsBackendEditor implements \IWPML_Backend_Action
     {
@@ -75954,7 +78436,7 @@ namespace WPML\Compatibility\Divi\Hooks {
         {
         }
         /**
-         * @param string   $builtWithShortcodes
+         * @param bool     $builtWithShortcodes
          * @param \WP_Post $post
          *
          * @return bool
@@ -76022,6 +78504,113 @@ namespace WPML\Compatibility\Divi {
         {
         }
     }
+}
+namespace WPML\Compatibility\Divi\V5 {
+    class CanvasHooks implements \IWPML_DIC_Action, \IWPML_Backend_Action, \IWPML_Frontend_Action
+    {
+        const META_KEY = '_divi_canvas_parent_post_id';
+        const POST_TYPE = 'et_pb_canvas';
+        public function __construct(\SitePress $sitepress)
+        {
+        }
+        public function add_hooks()
+        {
+        }
+        /**
+         * @param \WP_Query $query
+         */
+        public function handleCanvasQuery($query)
+        {
+        }
+        /**
+         * @param int $postId
+         */
+        public function clearCachedCanvasesInParents($postId)
+        {
+        }
+    }
+    class DynamicContent implements \IWPML_Frontend_Action, \IWPML_Backend_Action
+    {
+        const WRAPPER_KEYS = ['before', 'after', 'custom_text'];
+        const VARIABLE = '$variable';
+        const VARIABLE_PATTERN = '/\\' . self::VARIABLE . '\((.*?)\)\$/s';
+        public function add_hooks()
+        {
+        }
+        public function replaceDynamicStringWithWrappers(array $strings, \WP_Block_Parser_Block $block)
+        {
+        }
+        /**
+         * @param \WP_Block_Parser_Block $block
+         * @param array                  $stringTranslations
+         * @param string                 $lang
+         *
+         * @return \WP_Block_Parser_Block
+         */
+        public function updateStringsInBlock(\WP_Block_Parser_Block $block, array $stringTranslations, $lang)
+        {
+        }
+    }
+    class LanguageSwitcher implements \IWPML_Frontend_Action
+    {
+        public function add_hooks()
+        {
+        }
+        /**
+         * @param string        $html
+         * @param array         $model
+         * @param \WPML_LS_Slot $slot
+         *
+         * @return string
+         */
+        public function disableInBuilder($html, $model, $slot)
+        {
+        }
+    }
+    /**
+     * This class should be removed in WPML 4.10 release, when we will merge the XML:
+     * https://github.com/OnTheGoSystems/wpml-config/pull/486
+     */
+    class MediaUrls implements \IWPML_Backend_Action, \IWPML_Frontend_Action
+    {
+        public function add_hooks()
+        {
+        }
+        /**
+         * @param array $config
+         *
+         * @return array
+         */
+        public function replaceLinkWithMediaUrl($config)
+        {
+        }
+    }
+}
+namespace WPML\Compatibility\Divi\V5\WooCommerce {
+    /**
+     * Clears Divi v5 product description transient cache when WPML completes a product translation.
+     *
+     * Divi v5 caches WooCommerce product descriptions (both long and short) in transients for 1 hour.
+     * This class ensures the cache is cleared when a product is translated so Divi regenerates
+     * the cached content with the translated version.
+     *
+     * @see \ET\Builder\Packages\ModuleLibrary\WooCommerce\ProductDescription\WooCommerceProductDescriptionModule::get_description()
+     */
+    class ProductDescriptionCache implements \IWPML_Backend_Action, \IWPML_Frontend_Action
+    {
+        const CACHE_KEY_PREFIX = 'divi_wc_product_desc_';
+        public function add_hooks()
+        {
+        }
+        /**
+         * @param int $newPostId
+         */
+        public function clearProductDescriptionCache($newPostId)
+        {
+        }
+    }
+}
+namespace WPML\Compatibility\Divi {
     class WooShortcodes implements \IWPML_Frontend_Action
     {
         const WOO_SHORTCODES = ['et_pb_wc_description', 'et_pb_wc_title'];
@@ -76076,6 +78665,14 @@ namespace {
         {
         }
         public function load_resources_if_they_are_required()
+        {
+        }
+        /**
+         * @param bool $shouldLoad
+         *
+         * @return bool
+         */
+        public function should_load_off_canvas($shouldLoad)
         {
         }
         /**
@@ -76218,7 +78815,7 @@ namespace WPML\Compatibility\Divi {
         const ENCODED_CONTENT_START = '@ET-DC@';
         const ENCODED_CONTENT_END = '@';
         /** @var array */
-        protected $positions = ['before', 'after'];
+        protected $positions = ['before', 'after', 'custom_text'];
         /**
          * Sets $positions dynamic content to be translatable.
          *
@@ -76348,6 +78945,164 @@ namespace WPML\Compatibility\Divi {
          * @return string
          */
         public function document_edit_layout_link($link, $oldLabel, $object, $prefix, $type)
+        {
+        }
+    }
+}
+namespace WPML\PB\Elementor\AutoConfig {
+    class Cache
+    {
+        const HASH_OPTION_KEY = 'wpml_elementor_auto_config_hash';
+        const CONFIG_OPTION_KEY = 'wpml_elementor_auto_config';
+        /**
+         * @param string $currentHash
+         *
+         * @return array|null
+         */
+        public function get($currentHash)
+        {
+        }
+        /**
+         * @param array  $config
+         * @param string $hash
+         */
+        public function set(array $config, $hash)
+        {
+        }
+        public function clear()
+        {
+        }
+        /**
+         * @param array $widgetInstances
+         *
+         * @return string
+         */
+        public function generateHash(array $widgetInstances)
+        {
+        }
+    }
+    class Factory implements \IWPML_Backend_Action_Loader, \IWPML_Frontend_Action_Loader
+    {
+        /**
+         * @return \IWPML_Action
+         */
+        public function create()
+        {
+        }
+    }
+    class Generator
+    {
+        /**
+         * @param \WPML\PB\Elementor\AutoConfig\Processors\WidgetProcessorInterface[] $processors
+         */
+        public function __construct(array $processors)
+        {
+        }
+        /**
+         * @param array $existingWidgets
+         * @param array $widgetInstances
+         *
+         * @return array
+         */
+        public function generate(array $existingWidgets, array $widgetInstances)
+        {
+        }
+    }
+    class Hooks implements \IWPML_Action
+    {
+        /**
+         * @param \WPML\PB\Elementor\AutoConfig\Generator $generator
+         * @param \WPML\PB\Elementor\AutoConfig\Cache     $cache
+         */
+        public function __construct(\WPML\PB\Elementor\AutoConfig\Generator $generator, \WPML\PB\Elementor\AutoConfig\Cache $cache)
+        {
+        }
+        public function add_hooks()
+        {
+        }
+        /**
+         * @param array $widgetsToTranslate
+         *
+         * @return array
+         */
+        public function extendTranslatableWidgets($widgetsToTranslate)
+        {
+        }
+        public function clearCache()
+        {
+        }
+        /**
+         * @return array
+         */
+        protected function getWidgetInstances()
+        {
+        }
+    }
+}
+namespace WPML\PB\Elementor\AutoConfig\Processors {
+    interface WidgetProcessorInterface
+    {
+        /**
+         * @param \Elementor\Widget_Base $widget
+         *
+         * @return bool
+         */
+        public function canProcess($widget);
+        /**
+         * @param \Elementor\Widget_Base $widget
+         *
+         * @return array
+         */
+        public function process($widget);
+    }
+    class AtomicWidgetProcessor implements \WPML\PB\Elementor\AutoConfig\Processors\WidgetProcessorInterface
+    {
+        const EDITOR_TYPE_MAP = ['text' => 'LINE', 'textarea' => 'AREA', 'link' => 'LINK'];
+        /**
+         * @param \Elementor\Widget_Base $widget
+         *
+         * @return bool
+         */
+        public function canProcess($widget)
+        {
+        }
+        /**
+         * @param object $widget
+         *
+         * @return array
+         */
+        public function process($widget)
+        {
+        }
+    }
+    class ClassicWidgetProcessor implements \WPML\PB\Elementor\AutoConfig\Processors\WidgetProcessorInterface
+    {
+        const EDITOR_TYPE_MAP = [\Elementor\Controls_Manager::TEXT => 'LINE', \Elementor\Controls_Manager::TEXTAREA => 'AREA', \Elementor\Controls_Manager::WYSIWYG => 'VISUAL', \Elementor\Controls_Manager::URL => 'LINK'];
+        /**
+         * @param \Elementor\Widget_Base $widget
+         *
+         * @return bool
+         */
+        public function canProcess($widget)
+        {
+        }
+        /**
+         * @param \Elementor\Widget_Base $widget
+         *
+         * @return array
+         */
+        public function process($widget)
+        {
+        }
+    }
+    class ControlNameFilter
+    {
+        /**
+         * @param string $controlName
+         *
+         * @return bool
+         */
+        public static function shouldExclude($controlName)
         {
         }
     }
@@ -76504,12 +79259,11 @@ namespace WPML\PB\Elementor\Config\DynamicElements {
     }
     class WooProduct
     {
+        const DYNAMIC_KEYS = ['title_text', 'description_text', 'image', 'link', 'editor', 'title', 'text', 'content', 'url'];
         /**
-         * @param string $widget
-         *
-         * @return array
+         * @return array[]
          */
-        public static function get($widget)
+        public static function getAll()
         {
         }
     }
@@ -76621,9 +79375,10 @@ namespace WPML\PB\Elementor\DynamicContent {
     class Strings
     {
         const KEY_SETTINGS = \WPML_Elementor_Translatable_Nodes::SETTINGS_FIELD;
-        const KEY_DYNAMIC = '__dynamic__';
         const KEY_NODE_ID = 'id';
         const KEY_ITEM_ID = '_id';
+        const KEY_DYNAMIC_V3 = '__dynamic__';
+        const KEY_DYNAMIC_V4 = '$$type';
         const SETTINGS_REGEX = '/settings="(.*?(?="]))/';
         const NAME_PREFIX = 'dynamic';
         const DELIMITER = '-';
@@ -76659,11 +79414,11 @@ namespace WPML\PB\Elementor\DynamicContent {
         }
         /**
          * @param array          $element
-         * @param \WPML_PB_String $string
+         * @param \WPML_PB_String $pbString
          *
          * @return array
          */
-        public static function updateNode(array $element, \WPML_PB_String $string)
+        public static function updateNode(array $element, \WPML_PB_String $pbString)
         {
         }
         /**
@@ -77207,6 +79962,29 @@ namespace WPML\PB\Elementor\LanguageSwitcher {
         }
     }
 }
+namespace WPML\PB\Elementor\V4 {
+    class Hooks implements \IWPML_Frontend_Action, \IWPML_DIC_Action
+    {
+        const V4_WIDGET_PREFIX = 'e-';
+        const TYPE_KEY = '$$type';
+        const DESTINATION_TYPE_PATH = ['value', 'destination', self::TYPE_KEY];
+        const ID_PATH = ['value', 'destination', 'value', 'id', 'value'];
+        public function __construct(\SitePress $sitepress)
+        {
+        }
+        public function add_hooks()
+        {
+        }
+        /**
+         * @param array $data
+         *
+         * @return array
+         */
+        public function translateLinkIds(array $data)
+        {
+        }
+    }
+}
 namespace {
     class WPML_Elementor_Adjust_Global_Widget_ID_Factory implements \IWPML_Backend_Action_Loader, \IWPML_Frontend_Action_Loader
     {
@@ -77351,7 +80129,7 @@ namespace {
     class WPML_Elementor_DB_Factory
     {
         /**
-         * @return null|\WPML\PB\Elementor\LanguageSwitcher\WPML_Elementor_DB
+         * @return null|\WPML\PB\Elementor\V4\WPML_Elementor_DB
          */
         public function create()
         {
@@ -77377,7 +80155,7 @@ namespace {
     {
         const SLUG = 'elementor';
         /**
-         * @return \WPML\PB\Elementor\LanguageSwitcher\WPML_Page_Builders_Integration
+         * @return \WPML\PB\Elementor\V4\WPML_Page_Builders_Integration
          */
         public function create()
         {
@@ -77395,12 +80173,12 @@ namespace {
     class WPML_Elementor_Register_Strings extends \WPML_Page_Builders_Register_Strings
     {
         /**
-         * @param \WPML\PB\Elementor\LanguageSwitcher\WPML_PB_String $string
+         * @param \WPML\PB\Elementor\V4\WPML_PB_String $string
          * @param string         $node_id
          * @param mixed          $element
          * @param array          $package
          *
-         * @return \WPML\PB\Elementor\LanguageSwitcher\WPML_PB_String
+         * @return \WPML\PB\Elementor\V4\WPML_PB_String
          */
         protected function filter_string_to_register(\WPML_PB_String $string, $node_id, $element, $package)
         {
@@ -77426,7 +80204,7 @@ namespace {
          * @param string|int $node_id Translatable node id.
          * @param array      $element
          *
-         * @return \WPML\PB\Elementor\LanguageSwitcher\WPML_PB_String[]
+         * @return \WPML\PB\Elementor\V4\WPML_PB_String[]
          */
         public function get($node_id, $element)
         {
@@ -77434,7 +80212,7 @@ namespace {
         /**
          * @param int|string     $node_id
          * @param array          $element
-         * @param \WPML\PB\Elementor\LanguageSwitcher\WPML_PB_String $pbString
+         * @param \WPML\PB\Elementor\V4\WPML_PB_String $pbString
          *
          * @return array
          */
@@ -77589,9 +80367,9 @@ namespace {
         {
         }
         /**
-         * @param \WPML\PB\Elementor\LanguageSwitcher\WP_Query $query
+         * @param \WPML\PB\Elementor\V4\WP_Query $query
          *
-         * @return \WPML\PB\Elementor\LanguageSwitcher\WP_Query
+         * @return \WPML\PB\Elementor\V4\WP_Query
          */
         public function do_not_suppress_filters_on_product_widget(\WP_Query $query)
         {
@@ -77632,7 +80410,7 @@ namespace {
         /**
          * @param string $type
          *
-         * @return \WPML\PB\Elementor\LanguageSwitcher\WPML_Elementor_Media_Node|null
+         * @return \WPML\PB\Elementor\V4\WPML_Elementor_Media_Node|null
          */
         public function get($type)
         {
@@ -77675,7 +80453,7 @@ namespace {
     }
     abstract class WPML_Elementor_Media_Node
     {
-        /** @var \WPML\PB\Elementor\LanguageSwitcher\IWPML_PB_Media_Find_And_Translate $media_translate */
+        /** @var \WPML\PB\Elementor\V4\IWPML_PB_Media_Find_And_Translate $media_translate */
         protected $media_translate;
         public function __construct(\IWPML_PB_Media_Find_And_Translate $media_translate)
         {
@@ -77739,6 +80517,12 @@ namespace WPML\PB\Elementor\Media\Modules {
          *
          * @return mixed
          */
+        public function translate($settings, $target_lang, $source_lang)
+        {
+        }
+    }
+    class EImage extends \WPML_Elementor_Media_Node
+    {
         public function translate($settings, $target_lang, $source_lang)
         {
         }
@@ -78454,11 +81238,11 @@ namespace WPML\Compatibility\FusionBuilder {
         /**
          * Encode a dynamic-content field.
          *
-         * @param array $field The field to encode.
+         * @param array $decodedData The decoded data to encode.
          *
          * @return string
          */
-        protected function encode_field($field)
+        protected function encode_field($decodedData)
         {
         }
     }
@@ -78505,6 +81289,43 @@ namespace WPML\Compatibility\FusionBuilder {
         {
         }
     }
+    class FormNotifications implements \IWPML_Backend_Action, \IWPML_Frontend_Action
+    {
+        const CUSTOM_FIELD_KEY = '_fusion';
+        const NOTIFICATIONS_KEY = 'notifications';
+        public function add_hooks()
+        {
+        }
+        /**
+         * This method should be removed in WPML 4.10 release, when we will merge the XML:
+         * https://github.com/OnTheGoSystems/wpml-config/pull/494
+         *
+         * @param array $config
+         *
+         * @return array
+         */
+        public function addConfigArray($config)
+        {
+        }
+        /**
+         * @param mixed  $fieldValue
+         * @param string $key
+         *
+         * @return mixed
+         */
+        public function decodeNestedSerializedData($fieldValue, $key)
+        {
+        }
+        /**
+         * @param mixed  $fieldValue
+         * @param string $key
+         *
+         * @return mixed
+         */
+        public function encodeNestedSerializedData($fieldValue, $key)
+        {
+        }
+    }
 }
 namespace WPML\Compatibility\FusionBuilder\Hooks {
     class Editor implements \IWPML_Backend_Action, \IWPML_Frontend_Action
@@ -78519,15 +81340,39 @@ namespace WPML\Compatibility\FusionBuilder\Hooks {
         {
         }
     }
-    class MultilingualOptions implements \IWPML_Backend_Action
+    class MultilingualOptions implements \IWPML_Backend_Action, \IWPML_AJAX_Action, \IWPML_REST_Action, \IWPML_DIC_Action
     {
         const OPTIONS_SCREEN_ID = 'appearance_page_avada_options';
-        // See \WPML_Multilingual_Options::addNotice() in WPML core.
         const NOTICE_GROUP = 'wpml-multilingual-options';
+        // Coming from the deprecated WPML_Multilingual_Options API in WPML core.
+        const OPTION_NAME = 'fusion_options';
+        const CONTEXT = 'admin_texts_fusion_options';
+        public function __construct(\WPML_PB_String_Translation $pbStringTranslation)
+        {
+        }
         public function add_hooks()
         {
         }
         public function multilingualOptionsNotice($screen)
+        {
+        }
+        /**
+         * @param int      $translationId
+         * @param array    $translationData
+         * @param string   $language
+         * @param int|null $stringId
+         */
+        public function syncStringsToOptions($translationId, $translationData = [], $language = '', $stringId = null)
+        {
+        }
+        public function processUpdateQueueAction()
+        {
+        }
+        /**
+         * @param array $oldOptions
+         * @param array $newOptions
+         */
+        public function syncOptionsToStrings($oldOptions, $newOptions)
         {
         }
     }
@@ -78772,7 +81617,7 @@ namespace WPML\PB\Gutenberg\ConvertIdsInBlock {
          * @param string           $elementSlug e.g. "page", "category", ...
          * @param string|null      $elementType "post" or "taxonomy".
          *
-         * @return array|int
+         * @return array|int|string
          */
         public static function convertIds($ids, $elementSlug, $elementType = null)
         {
@@ -78819,6 +81664,20 @@ namespace WPML\PB\Gutenberg\ConvertIdsInBlock {
         {
         }
         public function convert(array $block)
+        {
+        }
+    }
+}
+namespace WPML\PB\Gutenberg {
+    class MediaHooksIntegration implements \WPML\PB\Gutenberg\Integration
+    {
+        /**
+         * @param \WPML_Gutenberg_Config_Option $config
+         */
+        public function __construct(\WPML_Gutenberg_Config_Option $config)
+        {
+        }
+        public function add_hooks()
         {
         }
     }
@@ -78945,6 +81804,7 @@ namespace {
     {
         const OPTION = 'wpml-gutenberg-config';
         const OPTION_IDS_IN_BLOCKS = 'wpml-gutenberg-config-ids-in-blocks';
+        const OPTION_MEDIA_IN_BLOCKS = 'wpml-gutenberg-config-media-in-blocks';
         const SEARCH_METHOD_WILDCARD = 'wildcards';
         const SEARCH_METHOD_REGEX = 'regex';
         /**
@@ -78970,6 +81830,12 @@ namespace {
         public function get_ids_in_blocks()
         {
         }
+        /**
+         * @return array
+         */
+        public function get_media_in_blocks()
+        {
+        }
     }
     class WPML_Gutenberg_Integration_Factory
     {
@@ -78993,7 +81859,7 @@ namespace {
         const GUTENBERG_OPENING_START = '<!-- wp:';
         const GUTENBERG_CLOSING_START = '<!-- /wp:';
         const CLASSIC_BLOCK_NAME = 'core/classic-block';
-        public function __construct(\WPML\PB\Gutenberg\StringsInBlock\StringsInBlock $strings_in_block, \WPML_Gutenberg_Config_Option $config_option, \WPML_Gutenberg_Strings_Registration $strings_registration)
+        public function __construct(\WPML\PB\Gutenberg\StringsInBlock\StringsInBlock $strings_in_block, \WPML_Gutenberg_Config_Option $config_option, \WPML_Gutenberg_Strings_Registration $strings_registration, \SitePress $sitepress)
         {
         }
         public function add_hooks()
@@ -79004,14 +81870,14 @@ namespace {
          *
          * @return array
          */
-        function page_builder_support_required($plugins)
+        public function page_builder_support_required($plugins)
         {
         }
         /**
          * @param \WPML\PB\Gutenberg\WP_Post $post
-         * @param array $package_data
+         * @param array   $package_data
          */
-        function register_strings(\WP_Post $post, $package_data)
+        public function register_strings(\WP_Post $post, $package_data)
         {
         }
         public function register_strings_from_widget(array $blocks, array $package_data)
@@ -79026,11 +81892,11 @@ namespace {
         {
         }
         /**
-         * @param string $package_kind
-         * @param int $translated_post_id
+         * @param string  $package_kind
+         * @param int     $translated_post_id
          * @param \WPML\PB\Gutenberg\WP_Post $original_post
-         * @param array $string_translations
-         * @param string $lang
+         * @param array   $string_translations
+         * @param string  $lang
          */
         public function string_translated($package_kind, $translated_post_id, $original_post, $string_translations, $lang)
         {
@@ -79082,9 +81948,26 @@ namespace {
          *
          * @param array $types
          *
-         * @return mixed
+         * @return array
          */
         public function remove_package_strings_type_filter($types)
+        {
+        }
+        /**
+         * @return \WPML\PB\Gutenberg\WPML_Gutenberg_Config_Option
+         */
+        public function get_config_option()
+        {
+        }
+        /**
+         * Clear translations cache when a Gutenberg post is saved.
+         * This ensures that style changes and other block updates are properly
+         * synchronized to translations.
+         *
+         * @param int     $post_id Post ID.
+         * @param \WPML\PB\Gutenberg\WP_Post $post    Post object.
+         */
+        public function clear_translations_cache_on_post_save($post_id, $post)
         {
         }
     }
@@ -79796,14 +82679,14 @@ namespace WPML\PB\SiteOrigin {
         {
         }
         /**
-         * @param \WPML_PB_String $string
+         * @param \WPML_PB_String $pbString
          * @param string         $node_id
          * @param mixed          $element
          * @param array          $package
          *
          * @return \WPML_PB_String
          */
-        protected function filter_string_to_register(\WPML_PB_String $string, $node_id, $element, $package)
+        protected function filter_string_to_register(\WPML_PB_String $pbString, $node_id, $element, $package)
         {
         }
     }
@@ -79828,11 +82711,11 @@ namespace WPML\PB\SiteOrigin {
          *
          * @param string          $node_id  Node id.
          * @param array           $settings Node settings.
-         * @param \WPML_PB_String $string   String object.
+         * @param \WPML_PB_String $pbString   String object.
          *
          * @return mixed
          */
-        public function update($node_id, $settings, \WPML_PB_String $string)
+        public function update($node_id, $settings, \WPML_PB_String $pbString)
         {
         }
         /**
@@ -80431,16 +83314,16 @@ namespace WPML\PB\TranslationJob {
         {
         }
         /**
-         * @param string $string
+         * @param string $groupLabel
          *
          * @return array{string[], string}
          */
-        public static function parseGroupLabel($string)
+        public static function parseGroupLabel($groupLabel)
         {
         }
         /**
          * @param string $groupLabel
-         * @param string $imageId
+         * @param int    $imageId
          *
          * @return string
          */
@@ -80512,6 +83395,27 @@ namespace {
          * @return array
          */
         public function get_used_media_in_post();
+    }
+    class WPML_Page_Builders_Media_Find_Usage_Noop implements \IWPML_PB_Media_Find_And_Translate
+    {
+        public function get_used_media_in_post()
+        {
+        }
+        public function translate_image_url($url, $lang, $source_lang, $tag_name = '')
+        {
+        }
+        public function translate_id($id, $lang)
+        {
+        }
+        public function reset_translated_ids()
+        {
+        }
+        /**
+         * @return array
+         */
+        public function get_translated_ids()
+        {
+        }
     }
     class WPML_Page_Builders_Media_Find_Usage implements \IWPML_PB_Media_Find_And_Translate
     {
@@ -80685,6 +83589,95 @@ namespace {
          * @param \WPML\PB\Media\WP_Post $post
          */
         public function find_media($post)
+        {
+        }
+        /**
+         * @return array
+         */
+        public function get_media()
+        {
+        }
+    }
+    class WPML_Page_Builders_Media_Gutenberg_Update_Factory extends \WPML_Page_Builders_Media_Update_Factory
+    {
+        /**
+         * @param \WPML\PB\Media\WPML_Gutenberg_Config_Option $config_option
+         */
+        public function __construct(\WPML_Gutenberg_Config_Option $config_option)
+        {
+        }
+        /**
+         * @param bool $find_usage_instead_of_translate
+         *
+         * @return \WPML\PB\Media\WPML_Page_Builders_Media_Gutenberg_Update
+         */
+        public function create($find_usage_instead_of_translate = \false)
+        {
+        }
+    }
+    // phpcs:disable WordPress.WP.I18n.NonSingularStringLiteralText, WordPress.WP.I18n.LowLevelTranslationFunction
+    class WPML_Page_Builders_Media_Gutenberg_Update implements \IWPML_PB_Media_Update
+    {
+        /**
+         * @param \WPML\PB\Media\WPML_Translation_Element_Factory    $element_factory
+         * @param \WPML\PB\Media\WPML_Page_Builders_Media_Gutenberg  $media_gutenberg
+         * @param \WPML\PB\Media\WPML_Page_Builders_Media_Usage|null $media_usage
+         */
+        public function __construct(\WPML_Translation_Element_Factory $element_factory, \WPML_Page_Builders_Media_Gutenberg $media_gutenberg, \WPML_Page_Builders_Media_Usage $media_usage = \null)
+        {
+        }
+        /**
+         * @param \WPML\PB\Media\WP_Post $post
+         */
+        public function translate($post)
+        {
+        }
+        /**
+         * @param \WPML\PB\Media\WP_Post $post
+         */
+        public function find_media($post)
+        {
+        }
+        /**
+         * @return array
+         */
+        public function get_media()
+        {
+        }
+    }
+    class WPML_Page_Builders_Media_Gutenberg
+    {
+        const TYPE_URL = 'media-url';
+        const TYPE_IDS = 'media-ids';
+        /**
+         * @param \WPML\PB\Media\IWPML_PB_Media_Find_And_Translate $media_translate
+         * @param array                             $config
+         */
+        public function __construct(\IWPML_PB_Media_Find_And_Translate $media_translate, array $config)
+        {
+        }
+        /**
+         * @param array $block
+         *
+         * @return array
+         */
+        public function translate(array $block)
+        {
+        }
+        /**
+         * @param string $target_lang
+         *
+         * @return self
+         */
+        public function set_target_lang($target_lang)
+        {
+        }
+        /**
+         * @param string $source_lang
+         *
+         * @return self
+         */
+        public function set_source_lang($source_lang)
         {
         }
         /**
@@ -80901,7 +83894,7 @@ namespace {
         }
         /**
          * @param \WPML\PB\WPML_PB_Shortcode_Strategy $strategy
-         * @param bool $migration_mode
+         * @param bool                       $migration_mode
          *
          * @return \WPML\PB\WPML_PB_Register_Shortcodes
          */
@@ -80911,10 +83904,10 @@ namespace {
         public function get_update_post($package_data, \IWPML_PB_Strategy $strategy)
         {
         }
-        public function get_shortcode_content_updater(\IWPML_PB_Strategy $strategy)
+        public function get_shortcode_content_updater(\WPML_PB_Shortcode_Strategy $strategy)
         {
         }
-        public function get_api_hooks_content_updater(\IWPML_PB_Strategy $strategy)
+        public function get_api_hooks_content_updater(\WPML_PB_API_Hooks_Strategy $strategy)
         {
         }
         public function get_package_strings_resave()
@@ -81283,6 +84276,8 @@ namespace {
         {
         }
     }
+    // phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
+    // phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
     class WPML_PB_String_Translation
     {
         /** @var wpdb $wpdb */
@@ -81296,6 +84291,16 @@ namespace {
          * @return array
          */
         public function get_package_strings(array $package_data)
+        {
+        }
+        /**
+         * @param string $context
+         * @param array  $columns
+         * @param string $conditions
+         *
+         * @return array
+         */
+        public function getStringsInContext(string $context, array $columns = ['*'], string $conditions = '')
         {
         }
         public function remove_string(array $string_data)
@@ -81736,10 +84741,10 @@ namespace {
         const ENCODE_TYPES_VISUAL_COMPOSER_LINK = 'vc_link';
         const ENCODE_TYPES_VISUAL_COMPOSER_VALUES = 'vc_values';
         const ENCODE_TYPES_ENFOLD_LINK = 'av_link';
-        public function decode($string, $encoding, $encoding_condition = '')
+        public function decode($content, $encoding, $encoding_condition = '')
         {
         }
-        public function encode($string, $encoding)
+        public function encode($content, $encoding)
         {
         }
     }
@@ -81788,8 +84793,8 @@ namespace {
         {
         }
         /**
-         * @param string|int $post_id
-         * @param string     $content
+         * @param string|int                      $post_id
+         * @param string                          $content
          * @param \WPML\PB\Shortcode\WPML\PB\Shortcode\StringCleanUp $stringCleanUp
          *
          * @return bool
@@ -81819,8 +84824,8 @@ namespace {
         {
         }
         /**
-         * @param int $post_id
-         * @param object $post_content
+         * @param int    $post_id
+         * @param string $post_content
          */
         public function migrate_location($post_id, $post_content)
         {
@@ -82219,23 +85224,4 @@ namespace {
         {
         }
     }
-}
-namespace {
-    /**
-     * WPML Page Builders can be installed as a standalone glue plugin,
-     * but it also comes packaged with WPML Core.
-     *
-     * To include it on WPML Core, do as follows:
-     * - Include this repository as a Composer dependency.
-     * - Wait until plugins_loaded to include this loader.php file.
-     *
-     * This will ensure that the glue plugin can be used if available;
-     * otherwise, this will ensure that the WPML plugin packing the newest version will push it.
-     *
-     * $wpml_page_builders_version must be increased on every new version of the glue plugin.
-     * Also, having a negative priority ensures that the highest version number gets called first.
-     */
-    /**
-     * WARNING: INCREASE THIS LOADER VERSION ON EVERY NEW RELEASE.
-     */
 }
